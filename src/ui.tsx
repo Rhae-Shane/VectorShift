@@ -19,6 +19,7 @@ import {
   type CanvasAddNodeDetail,
 } from './utils/canvasEvents';
 import { useTrackpadPinchZoom } from './hooks/useTrackpadPinchZoom';
+import { loadViewport, saveViewport } from './utils/pipelinePersistence';
 
 import 'reactflow/dist/style.css';
 
@@ -172,6 +173,16 @@ export const PipelineUI = () => {
     reactFlowInstance.zoomOut({ duration: 180 });
   }, [reactFlowInstance, isCanvasEmpty]);
 
+  const onFlowInit = useCallback((instance: ReactFlowInstance) => {
+    setReactFlowInstance(instance);
+
+    const saved = loadViewport();
+    if (saved && useStore.getState().nodes.length > 0) {
+      instance.setViewport(saved, { duration: 0 });
+      setZoom(saved.zoom);
+    }
+  }, []);
+
   const onMove = useCallback(
     (_: unknown, viewport: { x: number; y: number; zoom: number }) => {
       const empty = useStore.getState().nodes.length === 0;
@@ -186,6 +197,14 @@ export const PipelineUI = () => {
       setZoom(viewport.zoom);
     },
     [reactFlowInstance]
+  );
+
+  const onMoveEnd = useCallback(
+    (_: unknown, viewport: { x: number; y: number; zoom: number }) => {
+      if (useStore.getState().nodes.length === 0) return;
+      saveViewport(viewport);
+    },
+    []
   );
 
   useEffect(() => {
@@ -243,7 +262,7 @@ export const PipelineUI = () => {
         onConnect={onConnect}
         onDrop={onDrop}
         onDragOver={onDragOver}
-        onInit={setReactFlowInstance}
+        onInit={onFlowInit}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         onPaneClick={() => clearPendingEdgeDelete()}
@@ -268,6 +287,7 @@ export const PipelineUI = () => {
         preventScrolling
         zoomActivationKeyCode={['Control', 'Meta']}
         onMove={onMove}
+        onMoveEnd={onMoveEnd}
       >
         <Background
           color="#d1d5db"

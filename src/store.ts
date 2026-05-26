@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import {
   addEdge,
   applyNodeChanges,
@@ -11,6 +12,11 @@ import {
   type NodeChange,
 } from 'reactflow';
 import type { PipelineNodeData } from './types/nodes';
+import {
+  mergePersistedPipeline,
+  PIPELINE_STORAGE_KEY,
+  type PersistedPipelineSlice,
+} from './utils/pipelinePersistence';
 
 export type PipelineNode = Node<PipelineNodeData>;
 
@@ -33,99 +39,138 @@ export interface StoreState {
     fieldName: string,
     fieldValue: unknown
   ) => void;
+  clearPipeline: () => void;
 }
 
-export const useStore = create<StoreState>((set, get) => ({
+const emptyPipeline: PersistedPipelineSlice = {
   nodes: [],
   edges: [],
   nodeIDs: {},
-  pendingDeleteEdgeId: null,
+};
 
-  getNodeID: (type) => {
-    const newIDs = { ...get().nodeIDs };
-    if (newIDs[type] === undefined) {
-      newIDs[type] = 0;
-    }
-    newIDs[type] += 1;
-    set({ nodeIDs: newIDs });
-    return `${type}-${newIDs[type]}`;
-  },
-
-  addNode: (node) => {
-    set({
-      nodes: [...get().nodes, node],
-    });
-  },
-
-  removeNode: (nodeId) => {
-    set({
-      nodes: get().nodes.filter((n) => n.id !== nodeId),
-      edges: get().edges.filter((e) => e.source !== nodeId && e.target !== nodeId),
+export const useStore = create<StoreState>()(
+  persist(
+    (set, get) => ({
+      nodes: [],
+      edges: [],
+      nodeIDs: {},
       pendingDeleteEdgeId: null,
-    });
-  },
 
-  removeEdge: (edgeId) => {
-    set({
-      edges: get().edges.filter((e) => e.id !== edgeId),
-      pendingDeleteEdgeId: null,
-    });
-  },
+      getNodeID: (type) => {
+        const newIDs = { ...get().nodeIDs };
+        if (newIDs[type] === undefined) {
+          newIDs[type] = 0;
+        }
+        newIDs[type] += 1;
+        set({ nodeIDs: newIDs });
+        return `${type}-${newIDs[type]}`;
+      },
 
-  handleEdgeClick: (edgeId) => {
-    const pending = get().pendingDeleteEdgeId;
-    if (pending === edgeId) {
-      get().removeEdge(edgeId);
-      return;
-    }
-    set({ pendingDeleteEdgeId: edgeId });
-  },
+      addNode: (node) => {
+        set({
+          nodes: [...get().nodes, node],
+        });
+      },
 
-  clearPendingEdgeDelete: () => {
-    if (get().pendingDeleteEdgeId !== null) {
-      set({ pendingDeleteEdgeId: null });
-    }
-  },
+      removeNode: (nodeId) => {
+        set({
+          nodes: get().nodes.filter((n) => n.id !== nodeId),
+          edges: get().edges.filter(
+            (e) => e.source !== nodeId && e.target !== nodeId
+          ),
+          pendingDeleteEdgeId: null,
+        });
+      },
 
-  onNodesChange: (changes) => {
-    set({
-      nodes: applyNodeChanges(changes, get().nodes),
-    });
-  },
+      removeEdge: (edgeId) => {
+        set({
+          edges: get().edges.filter((e) => e.id !== edgeId),
+          pendingDeleteEdgeId: null,
+        });
+      },
 
-  onEdgesChange: (changes) => {
-    set({
-      edges: applyEdgeChanges(changes, get().edges),
-    });
-  },
+      handleEdgeClick: (edgeId) => {
+        const pending = get().pendingDeleteEdgeId;
+        if (pending === edgeId) {
+          get().removeEdge(edgeId);
+          return;
+        }
+        set({ pendingDeleteEdgeId: edgeId });
+      },
 
-  onConnect: (connection) => {
-    set({
-      edges: addEdge(
-        {
-          ...connection,
-          type: 'smoothstep',
-          animated: true,
-          markerEnd: {
-            type: MarkerType.Arrow,
-            height: 20,
-            width: 20,
-          },
-        },
-        get().edges
-      ),
-    });
-  },
+      clearPendingEdgeDelete: () => {
+        if (get().pendingDeleteEdgeId !== null) {
+          set({ pendingDeleteEdgeId: null });
+        }
+      },
 
-  updateNodeField: (nodeId, fieldName, fieldValue) => {
-    set({
-      nodes: get().nodes.map((node) => {
-        if (node.id !== nodeId) return node;
-        return {
-          ...node,
-          data: { ...node.data, [fieldName]: fieldValue },
-        };
+      onNodesChange: (changes) => {
+        set({
+          nodes: applyNodeChanges(changes, get().nodes),
+        });
+      },
+
+      onEdgesChange: (changes) => {
+        set({
+          edges: applyEdgeChanges(changes, get().edges),
+        });
+      },
+
+      onConnect: (connection) => {
+        set({
+          edges: addEdge(
+            {
+              ...connection,
+              type: 'smoothstep',
+              animated: true,
+              markerEnd: {
+                type: MarkerType.Arrow,
+                height: 20,
+                width: 20,
+              },
+            },
+            get().edges
+          ),
+        });
+      },
+
+      updateNodeField: (nodeId, fieldName, fieldValue) => {
+        set({
+          nodes: get().nodes.map((node) => {
+            if (node.id !== nodeId) return node;
+            return {
+              ...node,
+              data: { ...node.data, [fieldName]: fieldValue },
+            };
+          }),
+        });
+      },
+
+      clearPipeline: () => {
+        set({ ...emptyPipeline, pendingDeleteEdgeId: null });
+      },
+    }),
+    {
+      name: PIPELINE_STORAGE_KEY,
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        nodes: state.nodes,
+        edges: state.edges,
+        nodeIDs: state.nodeIDs,
       }),
-    });
-  },
-}));
+      merge: (persistedState, currentState) => {
+        const persisted = persistedState as Partial<PersistedPipelineSlice>;
+        const merged = mergePersistedPipeline(persisted, {
+          nodes: currentState.nodes,
+          edges: currentState.edges,
+          nodeIDs: currentState.nodeIDs,
+        });
+
+        return {
+          ...currentState,
+          ...merged,
+        };
+      },
+    }
+  )
+);

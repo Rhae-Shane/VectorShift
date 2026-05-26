@@ -56,6 +56,11 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
 
   const variables = useMemo(() => parseVariables(text), [text]);
 
+  useLayoutEffect(() => {
+    const next = (data?.text as string | undefined) ?? '{{input}}';
+    setText(next);
+  }, [id, data?.text]);
+
   const handleTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
     setText(newText);
