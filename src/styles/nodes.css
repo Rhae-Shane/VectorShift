@@ -85,6 +85,18 @@
   box-shadow: var(--vs-shadow-sm);
 }
 
+.vs-node__toolbar-tooltip {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.3rem 0.5rem;
+  border-radius: 10px;
+  background: #111827;
+  color: #fff;
+  white-space: nowrap;
+  box-shadow: var(--vs-shadow-sm);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .vs-node--blue .vs-node__header {
   background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
 }

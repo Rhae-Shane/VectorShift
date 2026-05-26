@@ -7,7 +7,7 @@ import {
   type FC,
   type SVGProps,
 } from 'react';
-import { Handle, Position, type NodeProps } from 'reactflow';
+import { Handle, NodeToolbar, Position, type NodeProps } from 'reactflow';
 import { useStore } from '../store';
 import type { PipelineNodeData } from '../types/nodes';
 import '../styles/nodes.css';
@@ -102,6 +102,10 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
       className={`vs-node vs-node--purple vs-node--text ${collapsed ? 'vs-node--collapsed' : ''}`}
       style={{ width: size.width, minHeight: collapsed ? undefined : size.height }}
     >
+      <NodeToolbar isVisible={confirmDelete} position={Position.Top} align="end">
+        <div className="vs-node__toolbar-tooltip">Confirm delete</div>
+      </NodeToolbar>
+
       {variables.map((varName, index) => (
         <Handle
           key={varName}
@@ -155,7 +159,6 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
           >
             <CloseIcon style={{ width: 16, height: 16 }} />
           </button>
-          {confirmDelete && <div className="vs-node__tooltip">Confirm delete</div>}
         </div>
       </div>
 

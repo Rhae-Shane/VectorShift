@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
-import { Handle, Position } from 'reactflow';
+import { Handle, NodeToolbar, Position } from 'reactflow';
 import type { HandleConfig, NodeAccent } from '../types/nodes';
 import '../styles/nodes.css';
 import { useStore } from '../store';
@@ -78,6 +78,10 @@ export const BaseNode = ({
       className={`vs-node vs-node--${accent} ${collapsed ? 'vs-node--collapsed' : ''} ${className}`}
       style={{ minWidth, ...style }}
     >
+      <NodeToolbar isVisible={confirmDelete} position={Position.Top} align="end">
+        <div className="vs-node__toolbar-tooltip">Confirm delete</div>
+      </NodeToolbar>
+
       {handles.map((handle) => (
         <Handle
           key={handle.idSuffix}
@@ -117,7 +121,6 @@ export const BaseNode = ({
           >
             <CloseIcon style={{ width: 16, height: 16 }} />
           </button>
-          {confirmDelete && <div className="vs-node__tooltip">Confirm delete</div>}
         </div>
       </div>
 
