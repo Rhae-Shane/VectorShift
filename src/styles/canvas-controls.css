@@ -1,15 +1,15 @@
-/* Bottom-right canvas controls — 30% smaller than base (70% scale) */
+/* Bottom-right canvas controls (scaled for full-screen layout) */
 .vs-canvas-controls.react-flow__panel {
-  --vs-ctrl-mm-w: 140px;
-  --vs-ctrl-mm-h: 105px;
-  --vs-ctrl-stack-w: 140px;
-  --vs-ctrl-btn: 22px;
-  --vs-ctrl-icon: 14px;
-  --vs-ctrl-gap: 7px;
-  --vs-ctrl-stack-gap: 6px;
-  --vs-ctrl-radius: 6px;
-  --vs-ctrl-label-size: 7px;
-  --vs-ctrl-label-w: 28px;
+  --vs-ctrl-mm-w: 168px;
+  --vs-ctrl-mm-h: 126px;
+  --vs-ctrl-stack-w: 168px;
+  --vs-ctrl-btn: 28px;
+  --vs-ctrl-icon: 12px;
+  --vs-ctrl-gap: 9px;
+  --vs-ctrl-stack-gap: 8px;
+  --vs-ctrl-radius: 8px;
+  --vs-ctrl-label-size: 8px;
+  --vs-ctrl-label-w: 32px;
 
   margin: 0 8px 8px 0 !important;
   padding: 0;
@@ -44,7 +44,7 @@
   align-items: center;
   justify-content: center;
   width: var(--vs-ctrl-label-w);
-  height: 13px;
+  height: 14px;
   font-size: var(--vs-ctrl-label-size);
   font-weight: 600;
   color: #374151;
@@ -140,8 +140,8 @@
   height: var(--vs-ctrl-mm-h) !important;
   margin: 0 !important;
   border-radius: var(--vs-ctrl-radius) !important;
-  border: 1px solid #e5e7eb !important;
-  background: #f3f4f6 !important;
+  border: 1px solid #c7d2fe !important;
+  background: #ffffff !important;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.12) !important;
   overflow: hidden;
 }
@@ -152,22 +152,36 @@
   height: 100% !important;
 }
 
+/* Stronger node shapes inside minimap */
+.vs-minimap .react-flow__minimap-node {
+  fill: #818cf8 !important;
+  stroke: #4338ca !important;
+  stroke-width: 2px !important;
+}
+
+/* Dimmed area outside current viewport */
+.vs-minimap .react-flow__minimap-mask {
+  fill: rgba(15, 23, 42, 0.14) !important;
+}
+
 @media (max-width: 768px) {
   .vs-canvas-controls.react-flow__panel {
-    --vs-ctrl-mm-w: min(29.4vw, 126px);
-    --vs-ctrl-mm-h: min(22.05vw, 95px);
-    --vs-ctrl-stack-w: min(29.4vw, 126px);
-    --vs-ctrl-btn: 20px;
-    --vs-ctrl-icon: 13px;
+    --vs-ctrl-mm-w: min(34vw, 150px);
+    --vs-ctrl-mm-h: min(25.5vw, 113px);
+    --vs-ctrl-stack-w: min(34vw, 150px);
+    --vs-ctrl-btn: 26px;
+    --vs-ctrl-icon: 11px;
     margin: 0 6px 6px 0 !important;
   }
 }
 
 @media (max-width: 480px) {
   .vs-canvas-controls.react-flow__panel {
-    --vs-ctrl-mm-w: min(35vw, 112px);
-    --vs-ctrl-mm-h: min(26.25vw, 84px);
-    --vs-ctrl-stack-w: min(35vw, 112px);
+    --vs-ctrl-mm-w: min(40vw, 134px);
+    --vs-ctrl-mm-h: min(30vw, 100px);
+    --vs-ctrl-stack-w: min(40vw, 134px);
+    --vs-ctrl-btn: 24px;
+    --vs-ctrl-icon: 11px;
   }
 
   .vs-canvas-controls__layout {

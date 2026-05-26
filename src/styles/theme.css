@@ -71,5 +71,4 @@ body {
 
 .react-flow__minimap {
   border-radius: var(--vs-radius);
-  border: 1px solid var(--vs-border);
 }

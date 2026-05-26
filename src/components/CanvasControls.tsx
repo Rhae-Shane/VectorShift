@@ -143,10 +143,13 @@ export const CanvasControls = memo(function CanvasControls({
             className="vs-minimap"
             zoomable
             pannable
-            maskColor="rgba(240, 240, 240, 0.65)"
-            nodeColor="#e0e7ff"
-            nodeStrokeColor="#6366f1"
-            nodeStrokeWidth={3}
+            nodeColor="#6366f1"
+            nodeStrokeColor="#3730a3"
+            nodeStrokeWidth={2}
+            nodeBorderRadius={4}
+            maskColor="rgba(15, 23, 42, 0.2)"
+            maskStrokeColor="#6366f1"
+            maskStrokeWidth={2}
           />
         </div>
       </div>
