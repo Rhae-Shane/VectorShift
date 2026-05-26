@@ -8,6 +8,10 @@
   font-size: 0.8125rem;
 }
 
+.vs-node--collapsed {
+  min-width: 220px;
+}
+
 .vs-node--text {
   max-width: 400px;
 }
@@ -20,6 +24,11 @@
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid var(--vs-border);
   border-radius: var(--vs-radius) var(--vs-radius) 0 0;
+}
+
+.vs-node--collapsed .vs-node__header {
+  border-bottom: none;
+  border-radius: var(--vs-radius);
 }
 
 .vs-node__header-left {

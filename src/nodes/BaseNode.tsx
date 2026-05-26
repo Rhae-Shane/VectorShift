@@ -4,6 +4,7 @@ import type { HandleConfig, NodeAccent } from '../types/nodes';
 import '../styles/nodes.css';
 import { useStore } from '../store';
 import { FiX } from 'react-icons/fi';
+import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import type { FC, SVGProps } from 'react';
 
 const POSITION_MAP: Record<string, Position> = {
@@ -40,7 +41,10 @@ export const BaseNode = ({
 }: BaseNodeProps) => {
   const removeNode = useStore((s) => s.removeNode);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
+  const ChevronDownIcon = FiChevronDown as unknown as FC<SVGProps<SVGSVGElement>>;
+  const ChevronUpIcon = FiChevronUp as unknown as FC<SVGProps<SVGSVGElement>>;
 
   useEffect(() => {
     if (!confirmDelete) return;
@@ -58,7 +62,7 @@ export const BaseNode = ({
 
   return (
     <div
-      className={`vs-node vs-node--${accent} ${className}`}
+      className={`vs-node vs-node--${accent} ${collapsed ? 'vs-node--collapsed' : ''} ${className}`}
       style={{ minWidth, ...style }}
     >
       {handles.map((handle) => (
@@ -80,6 +84,19 @@ export const BaseNode = ({
         <div className="vs-node__header-right">
           <button
             type="button"
+            className="vs-node__icon-btn"
+            onClick={() => setCollapsed((v) => !v)}
+            title={collapsed ? 'Expand node' : 'Collapse node'}
+            aria-label={collapsed ? 'Expand node' : 'Collapse node'}
+          >
+            {collapsed ? (
+              <ChevronDownIcon style={{ width: 16, height: 16 }} />
+            ) : (
+              <ChevronUpIcon style={{ width: 16, height: 16 }} />
+            )}
+          </button>
+          <button
+            type="button"
             className={`vs-node__icon-btn ${confirmDelete ? 'vs-node__icon-btn--danger' : ''}`}
             onClick={onDeleteClick}
             title={confirmDelete ? 'Confirm delete' : 'Delete node'}
@@ -91,11 +108,13 @@ export const BaseNode = ({
         </div>
       </div>
 
-      <div className="vs-node__id-badge">{id}</div>
-
-      <div className="vs-node__body">{children}</div>
-
-      {error && <div className="vs-node__error">{error}</div>}
+      {!collapsed && (
+        <>
+          <div className="vs-node__id-badge">{id}</div>
+          <div className="vs-node__body">{children}</div>
+          {error && <div className="vs-node__error">{error}</div>}
+        </>
+      )}
     </div>
   );
 };

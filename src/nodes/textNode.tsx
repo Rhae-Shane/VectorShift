@@ -13,9 +13,12 @@ import type { PipelineNodeData } from '../types/nodes';
 import '../styles/nodes.css';
 import { FiType } from 'react-icons/fi';
 import { FiX } from 'react-icons/fi';
+import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
 const TypeIcon = FiType as unknown as FC<SVGProps<SVGSVGElement>>;
 const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
+const ChevronDownIcon = FiChevronDown as unknown as FC<SVGProps<SVGSVGElement>>;
+const ChevronUpIcon = FiChevronUp as unknown as FC<SVGProps<SVGSVGElement>>;
 
 const VARIABLE_REGEX = /\{\{\s*([A-Za-z_$][\w$]*)\s*\}\}/g;
 
@@ -48,6 +51,7 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const measureRef = useRef<HTMLSpanElement>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   const variables = useMemo(() => parseVariables(text), [text]);
 
@@ -68,6 +72,8 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
     const measure = measureRef.current;
     if (!el || !measure) return;
 
+    if (collapsed) return;
+
     measure.textContent = text || ' ';
     const contentWidth = Math.min(
       Math.max(measure.scrollWidth + 32, MIN_WIDTH),
@@ -76,12 +82,12 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
     el.style.height = 'auto';
     const contentHeight = Math.max(el.scrollHeight + 72, MIN_HEIGHT);
     setSize({ width: contentWidth, height: contentHeight });
-  }, [text]);
+  }, [text, collapsed]);
 
   return (
     <div
-      className="vs-node vs-node--purple vs-node--text"
-      style={{ width: size.width, minHeight: size.height }}
+      className={`vs-node vs-node--purple vs-node--text ${collapsed ? 'vs-node--collapsed' : ''}`}
+      style={{ width: size.width, minHeight: collapsed ? undefined : size.height }}
     >
       {variables.map((varName, index) => (
         <Handle
@@ -113,6 +119,19 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
         <div className="vs-node__header-right">
           <button
             type="button"
+            className="vs-node__icon-btn"
+            onClick={() => setCollapsed((v) => !v)}
+            title={collapsed ? 'Expand node' : 'Collapse node'}
+            aria-label={collapsed ? 'Expand node' : 'Collapse node'}
+          >
+            {collapsed ? (
+              <ChevronDownIcon style={{ width: 16, height: 16 }} />
+            ) : (
+              <ChevronUpIcon style={{ width: 16, height: 16 }} />
+            )}
+          </button>
+          <button
+            type="button"
             className={`vs-node__icon-btn ${confirmDelete ? 'vs-node__icon-btn--danger' : ''}`}
             onClick={() => {
               if (!confirmDelete) return setConfirmDelete(true);
@@ -127,23 +146,27 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
         </div>
       </div>
 
-      <div className="vs-node__id-badge">{id}</div>
+      {!collapsed && (
+        <>
+          <div className="vs-node__id-badge">{id}</div>
 
-      <div className="vs-node__body">
-        <div className="vs-field">
-          <label className="vs-field__label">Text</label>
-          <textarea
-            ref={textareaRef}
-            className="vs-field__textarea vs-field__textarea--grow"
-            value={text}
-            onChange={handleTextChange}
-            placeholder="Type '{{' to utilize variables"
-            rows={1}
-          />
-        </div>
-      </div>
+          <div className="vs-node__body">
+            <div className="vs-field">
+              <label className="vs-field__label">Text</label>
+              <textarea
+                ref={textareaRef}
+                className="vs-field__textarea vs-field__textarea--grow"
+                value={text}
+                onChange={handleTextChange}
+                placeholder="Type '{{' to utilize variables"
+                rows={1}
+              />
+            </div>
+          </div>
 
-      <span ref={measureRef} className="vs-text-measure" aria-hidden="true" />
+          <span ref={measureRef} className="vs-text-measure" aria-hidden="true" />
+        </>
+      )}
     </div>
   );
 };
