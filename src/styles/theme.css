@@ -1,0 +1,67 @@
+:root {
+  --vs-purple: #7c3aed;
+  --vs-purple-hover: #6d28d9;
+  --vs-purple-light: #ede9fe;
+  --vs-green: #22c55e;
+  --vs-green-hover: #16a34a;
+  --vs-border: #e5e7eb;
+  --vs-border-dark: #d1d5db;
+  --vs-bg: #ffffff;
+  --vs-bg-subtle: #f9fafb;
+  --vs-bg-canvas: #fafafa;
+  --vs-text: #111827;
+  --vs-text-muted: #6b7280;
+  --vs-radius: 8px;
+  --vs-radius-sm: 6px;
+  --vs-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --vs-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --vs-font: 'Inter', system-ui, -apple-system, sans-serif;
+  --vs-header-height: 52px;
+  --vs-palette-height: auto;
+  --vs-error: #ef4444;
+  --vs-accent-blue: #3b82f6;
+  --vs-accent-green: #22c55e;
+  --vs-accent-orange: #f97316;
+  --vs-accent-teal: #14b8a6;
+  --vs-accent-indigo: #6366f1;
+  --vs-accent-gray: #9ca3af;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--vs-font);
+  color: var(--vs-text);
+  background: var(--vs-bg-subtle);
+  -webkit-font-smoothing: antialiased;
+}
+
+.react-flow__handle {
+  width: 10px;
+  height: 10px;
+  background: #9ca3af;
+  border: 2px solid #fff;
+}
+
+.react-flow__handle:hover {
+  background: var(--vs-purple);
+}
+
+.react-flow__edge-path {
+  stroke: #9ca3af;
+  stroke-width: 2;
+}
+
+.react-flow__controls-button {
+  border-radius: var(--vs-radius-sm);
+}
+
+.react-flow__minimap {
+  border-radius: var(--vs-radius);
+  border: 1px solid var(--vs-border);
+}
