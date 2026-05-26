@@ -61,6 +61,7 @@
   background: var(--vs-bg-canvas);
   position: relative;
   border-radius: 0 0 var(--vs-app-radius) var(--vs-app-radius);
+  overflow: hidden;
 }
 
 .vs-canvas .react-flow {

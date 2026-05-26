@@ -10,6 +10,7 @@ import { shallow } from 'zustand/shallow';
 import { nodeTypes, getDefaultNodeData } from './nodes/nodeRegistry';
 import type { PipelineNode, StoreState } from './store';
 import { CanvasControls } from './components/CanvasControls';
+import { CanvasEmptyState } from './components/CanvasEmptyState';
 
 import 'reactflow/dist/style.css';
 
@@ -51,6 +52,33 @@ export const PipelineUI = () => {
       new CustomEvent('vs:toggleAllNodes', { detail: { collapsed } })
     );
   }, []);
+
+  const addFirstInputNode = useCallback(() => {
+    const type = 'customInput';
+    const nodeID = getNodeID(type);
+
+    let position = { x: 280, y: 220 };
+    if (reactFlowInstance && reactFlowWrapper.current) {
+      const bounds = reactFlowWrapper.current.getBoundingClientRect();
+      const center = reactFlowInstance.project({
+        x: bounds.width / 2,
+        y: bounds.height / 2,
+      });
+      position = {
+        x: center.x - 120,
+        y: center.y - 60,
+      };
+    }
+
+    const newNode: PipelineNode = {
+      id: nodeID,
+      type,
+      position,
+      data: getDefaultNodeData(nodeID, type),
+    };
+
+    addNode(newNode);
+  }, [addNode, getNodeID, reactFlowInstance]);
 
   const onDrop = useCallback(
     (event: DragEvent) => {
@@ -169,7 +197,7 @@ export const PipelineUI = () => {
         proOptions={proOptions}
         snapGrid={[gridSize, gridSize]}
         connectionLineType={ConnectionLineType.SmoothStep}
-        fitView
+        defaultViewport={{ x: 0, y: 0, zoom: 1 }}
         onlyRenderVisibleElements
         minZoom={0}
         maxZoom={3.5}
@@ -201,6 +229,10 @@ export const PipelineUI = () => {
           onExpandAll={() => setAllNodesCollapsed(false)}
         />
       </ReactFlow>
+
+      {nodes.length === 0 && (
+        <CanvasEmptyState onAddFirstNode={addFirstInputNode} />
+      )}
     </div>
   );
 };
