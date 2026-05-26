@@ -20,6 +20,7 @@ export interface StoreState {
   nodeIDs: Record<string, number>;
   getNodeID: (type: string) => string;
   addNode: (node: PipelineNode) => void;
+  removeNode: (nodeId: string) => void;
   onNodesChange: (changes: NodeChange[]) => void;
   onEdgesChange: (changes: EdgeChange[]) => void;
   onConnect: (connection: Connection) => void;
@@ -48,6 +49,13 @@ export const useStore = create<StoreState>((set, get) => ({
   addNode: (node) => {
     set({
       nodes: [...get().nodes, node],
+    });
+  },
+
+  removeNode: (nodeId) => {
+    set({
+      nodes: get().nodes.filter((n) => n.id !== nodeId),
+      edges: get().edges.filter((e) => e.source !== nodeId && e.target !== nodeId),
     });
   },
 

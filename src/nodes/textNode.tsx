@@ -12,8 +12,10 @@ import { useStore } from '../store';
 import type { PipelineNodeData } from '../types/nodes';
 import '../styles/nodes.css';
 import { FiType } from 'react-icons/fi';
+import { FiX } from 'react-icons/fi';
 
 const TypeIcon = FiType as unknown as FC<SVGProps<SVGSVGElement>>;
+const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
 
 const VARIABLE_REGEX = /\{\{\s*([A-Za-z_$][\w$]*)\s*\}\}/g;
 
@@ -38,12 +40,14 @@ const MAX_WIDTH = 400;
 
 export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
   const updateNodeField = useStore((s) => s.updateNodeField);
+  const removeNode = useStore((s) => s.removeNode);
   const [text, setText] = useState<string>(
     (data?.text as string | undefined) ?? '{{input}}'
   );
   const [size, setSize] = useState({ width: MIN_WIDTH, height: MIN_HEIGHT });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const measureRef = useRef<HTMLSpanElement>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const variables = useMemo(() => parseVariables(text), [text]);
 
@@ -52,6 +56,12 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
     setText(newText);
     updateNodeField(id, 'text', newText);
   };
+
+  useLayoutEffect(() => {
+    if (!confirmDelete) return;
+    const t = window.setTimeout(() => setConfirmDelete(false), 1800);
+    return () => window.clearTimeout(t);
+  }, [confirmDelete]);
 
   useLayoutEffect(() => {
     const el = textareaRef.current;
@@ -94,10 +104,27 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
       />
 
       <div className="vs-node__header">
-        <span className="vs-node__icon">
-          <TypeIcon />
-        </span>
-        <span className="vs-node__title">Text</span>
+        <div className="vs-node__header-left">
+          <span className="vs-node__icon">
+            <TypeIcon />
+          </span>
+          <span className="vs-node__title">Text</span>
+        </div>
+        <div className="vs-node__header-right">
+          <button
+            type="button"
+            className={`vs-node__icon-btn ${confirmDelete ? 'vs-node__icon-btn--danger' : ''}`}
+            onClick={() => {
+              if (!confirmDelete) return setConfirmDelete(true);
+              removeNode(id);
+            }}
+            title={confirmDelete ? 'Confirm delete' : 'Delete node'}
+            aria-label={confirmDelete ? 'Confirm delete node' : 'Delete node'}
+          >
+            <CloseIcon style={{ width: 16, height: 16 }} />
+          </button>
+          {confirmDelete && <div className="vs-node__tooltip">Confirm delete</div>}
+        </div>
       </div>
 
       <div className="vs-node__id-badge">{id}</div>
