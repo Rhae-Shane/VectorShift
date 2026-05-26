@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useStore } from './store';
 import { ResultModal } from './components/ResultModal';
-import type { PipelineParseResponse, PipelineParseErrorBody } from './types/api';
-
-const API_URL = process.env.REACT_APP_API_URL ?? 'http://127.0.0.1:8000';
+import type { PipelineParseResponse } from './types/api';
+import { parsePipeline } from './services/pipelineService';
 
 export const SubmitButton = () => {
   const [loading, setLoading] = useState(false);
@@ -17,24 +16,7 @@ export const SubmitButton = () => {
     setError(null);
 
     try {
-      const response = await fetch(`${API_URL}/pipelines/parse`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nodes, edges }),
-      });
-
-      if (!response.ok) {
-        const detail = (await response
-          .json()
-          .catch(() => ({}))) as PipelineParseErrorBody;
-        const message =
-          typeof detail.detail === 'string'
-            ? detail.detail
-            : `Request failed (${response.status})`;
-        throw new Error(message);
-      }
-
-      const data = (await response.json()) as PipelineParseResponse;
+      const data = await parsePipeline({ nodes, edges });
       setResult(data);
     } catch (err) {
       const message =

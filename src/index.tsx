@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import { ErrorBoundary } from 'react-error-boundary';
+import { AppErrorFallback } from './AppErrorFallback';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -11,6 +13,11 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <App />
+    <ErrorBoundary
+      FallbackComponent={AppErrorFallback}
+      onReset={() => window.location.reload()}
+    >
+      <App />
+    </ErrorBoundary>
   </React.StrictMode>
 );
