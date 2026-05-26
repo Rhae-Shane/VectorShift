@@ -1,0 +1,180 @@
+/* Bottom-right canvas controls — 30% smaller than base (70% scale) */
+.vs-canvas-controls.react-flow__panel {
+  --vs-ctrl-mm-w: 140px;
+  --vs-ctrl-mm-h: 105px;
+  --vs-ctrl-stack-w: 140px;
+  --vs-ctrl-btn: 22px;
+  --vs-ctrl-icon: 14px;
+  --vs-ctrl-gap: 7px;
+  --vs-ctrl-stack-gap: 6px;
+  --vs-ctrl-radius: 6px;
+  --vs-ctrl-label-size: 7px;
+  --vs-ctrl-label-w: 28px;
+
+  margin: 0 8px 8px 0 !important;
+  padding: 0;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.vs-canvas-controls__layout {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: var(--vs-ctrl-gap);
+  pointer-events: none;
+}
+
+.vs-canvas-controls__layout > * {
+  pointer-events: auto;
+}
+
+.vs-canvas-controls__zoom-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+  padding-bottom: 1px;
+}
+
+.vs-canvas-controls__zoom-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--vs-ctrl-label-w);
+  height: 13px;
+  font-size: var(--vs-ctrl-label-size);
+  font-weight: 600;
+  color: #374151;
+  line-height: 1;
+  user-select: none;
+}
+
+.vs-canvas-controls__zoom-pill {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--vs-ctrl-radius);
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
+}
+
+.vs-canvas-controls__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--vs-ctrl-stack-gap);
+  width: var(--vs-ctrl-stack-w);
+}
+
+.vs-canvas-controls__toolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-self: flex-end;
+  overflow: hidden;
+  border-radius: var(--vs-ctrl-radius);
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
+}
+
+.vs-rf-control-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--vs-ctrl-btn);
+  height: var(--vs-ctrl-btn);
+  min-width: var(--vs-ctrl-btn);
+  padding: 0;
+  border: none;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.vs-canvas-controls__zoom-pill .vs-rf-control-btn {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.vs-canvas-controls__zoom-pill .vs-rf-control-btn:last-child {
+  border-bottom: none;
+}
+
+.vs-canvas-controls__toolbar .vs-rf-control-btn {
+  border-right: 1px solid #f3f4f6;
+}
+
+.vs-canvas-controls__toolbar .vs-rf-control-btn:last-child {
+  border-right: none;
+}
+
+.vs-rf-control-btn:hover:not(:disabled) {
+  background: #f9fafb;
+  color: #111827;
+}
+
+.vs-rf-control-btn[data-active='true'] {
+  background: #1f2937;
+  color: #fff;
+}
+
+.vs-rf-control-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.vs-rf-control-icon {
+  width: var(--vs-ctrl-icon);
+  height: var(--vs-ctrl-icon);
+  flex-shrink: 0;
+}
+
+.vs-minimap.react-flow__minimap {
+  position: relative !important;
+  width: var(--vs-ctrl-mm-w) !important;
+  height: var(--vs-ctrl-mm-h) !important;
+  margin: 0 !important;
+  border-radius: var(--vs-ctrl-radius) !important;
+  border: 1px solid #e5e7eb !important;
+  background: #f3f4f6 !important;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.12) !important;
+  overflow: hidden;
+}
+
+.vs-minimap svg {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (max-width: 768px) {
+  .vs-canvas-controls.react-flow__panel {
+    --vs-ctrl-mm-w: min(29.4vw, 126px);
+    --vs-ctrl-mm-h: min(22.05vw, 95px);
+    --vs-ctrl-stack-w: min(29.4vw, 126px);
+    --vs-ctrl-btn: 20px;
+    --vs-ctrl-icon: 13px;
+    margin: 0 6px 6px 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .vs-canvas-controls.react-flow__panel {
+    --vs-ctrl-mm-w: min(35vw, 112px);
+    --vs-ctrl-mm-h: min(26.25vw, 84px);
+    --vs-ctrl-stack-w: min(35vw, 112px);
+  }
+
+  .vs-canvas-controls__layout {
+    gap: 5px;
+  }
+
+  .vs-canvas-controls__toolbar .vs-rf-control-btn--secondary-fit {
+    display: none;
+  }
+}

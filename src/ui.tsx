@@ -3,16 +3,13 @@ import ReactFlow, {
   Background,
   ConnectionLineType,
   BackgroundVariant,
-  Panel,
   type ReactFlowInstance,
 } from 'reactflow';
 import { useStore } from './store';
 import { shallow } from 'zustand/shallow';
 import { nodeTypes, getDefaultNodeData } from './nodes/nodeRegistry';
 import type { PipelineNode, StoreState } from './store';
-import { MiniMap } from 'reactflow';
-import { FiChevronsDown, FiChevronsUp, FiLock, FiMaximize2, FiMinus, FiMove, FiPlus, FiUnlock } from 'react-icons/fi';
-import type { FC, SVGProps } from 'react';
+import { CanvasControls } from './components/CanvasControls';
 
 import 'reactflow/dist/style.css';
 
@@ -46,17 +43,9 @@ export const PipelineUI = () => {
     onConnect,
   } = useStore(selector, shallow);
 
-  const LockIcon = FiLock as unknown as FC<SVGProps<SVGSVGElement>>;
-  const MaximizeIcon = FiMaximize2 as unknown as FC<SVGProps<SVGSVGElement>>;
-  const MinusIcon = FiMinus as unknown as FC<SVGProps<SVGSVGElement>>;
-  const MoveIcon = FiMove as unknown as FC<SVGProps<SVGSVGElement>>;
-  const PlusIcon = FiPlus as unknown as FC<SVGProps<SVGSVGElement>>;
-  const UnlockIcon = FiUnlock as unknown as FC<SVGProps<SVGSVGElement>>;
-  const CollapseAllIcon = FiChevronsDown as unknown as FC<SVGProps<SVGSVGElement>>;
-  const ExpandAllIcon = FiChevronsUp as unknown as FC<SVGProps<SVGSVGElement>>;
-
   const effectivePanMode = panMode || !isInteractive;
   const zoomPercent = Math.max(0, Math.min(350, Math.round(zoom * 100)));
+
   const setAllNodesCollapsed = useCallback((collapsed: boolean) => {
     window.dispatchEvent(
       new CustomEvent('vs:toggleAllNodes', { detail: { collapsed } })
@@ -106,7 +95,11 @@ export const PipelineUI = () => {
 
   const fitView = useCallback(() => {
     if (!reactFlowInstance) return;
-    reactFlowInstance.fitView({ padding: 0.2, duration: 350, includeHiddenNodes: true });
+    reactFlowInstance.fitView({
+      padding: 0.2,
+      duration: 350,
+      includeHiddenNodes: true,
+    });
   }, [reactFlowInstance]);
 
   const zoomIn = useCallback(() => {
@@ -123,7 +116,6 @@ export const PipelineUI = () => {
     setZoom(viewport.zoom);
   }, []);
 
-  // Shortcut: Ctrl + ArrowUp + Space → Fit view
   useEffect(() => {
     const pressed = new Set<string>();
 
@@ -147,7 +139,6 @@ export const PipelineUI = () => {
     };
   }, [fitView]);
 
-  // Shortcut: Ctrl + M → Minimize all, Ctrl + E → Expand all
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && (e.key === 'm' || e.key === 'M')) {
@@ -196,97 +187,19 @@ export const PipelineUI = () => {
           size={1}
           variant={BackgroundVariant.Dots}
         />
-        <Panel position="bottom-right" className="vs-canvas-tools">
-          <div className="vs-canvas-tools__grid">
-            <div className="vs-canvas-tools__left">
-              <div className="vs-canvas-tools__zoom-percent" title="Zoom (0% – 350%)">
-                {zoomPercent}%
-              </div>
-              <div className="vs-canvas-tools__zoom-buttons" aria-label="Zoom controls">
-                <button
-                  type="button"
-                  className="vs-canvas-tools__btn"
-                  onClick={zoomIn}
-                  title="Zoom in"
-                >
-                  <PlusIcon style={{ width: 16, height: 16 }} />
-                </button>
-                <button
-                  type="button"
-                  className="vs-canvas-tools__btn"
-                  onClick={zoomOut}
-                  title="Zoom out"
-                >
-                  <MinusIcon style={{ width: 16, height: 16 }} />
-                </button>
-                <button
-                  type="button"
-                  className="vs-canvas-tools__btn"
-                  onClick={fitView}
-                  title="Fit view (Ctrl + ↑ + Space)"
-                >
-                  <MaximizeIcon style={{ width: 16, height: 16 }} />
-                </button>
-              </div>
-            </div>
 
-            <div className="vs-canvas-tools__right">
-              <div className="vs-canvas-tools__top">
-                <button
-                  type="button"
-                  className="vs-canvas-tools__btn"
-                  onClick={() => setAllNodesCollapsed(true)}
-                  title="Minimize all nodes (Ctrl + M)"
-                  aria-label="Minimize all nodes"
-                >
-                  <CollapseAllIcon style={{ width: 16, height: 16 }} />
-                </button>
-
-                <button
-                  type="button"
-                  className="vs-canvas-tools__btn"
-                  onClick={() => setAllNodesCollapsed(false)}
-                  title="Expand all nodes (Ctrl + E)"
-                  aria-label="Expand all nodes"
-                >
-                  <ExpandAllIcon style={{ width: 16, height: 16 }} />
-                </button>
-                <button
-                  type="button"
-                  className="vs-canvas-tools__btn"
-                  onClick={() => setIsInteractive((v) => !v)}
-                  title={isInteractive ? 'Lock (view-only)' : 'Unlock (interactive)'}
-                  aria-pressed={!isInteractive}
-                >
-                  {isInteractive ? (
-                    <LockIcon style={{ width: 16, height: 16 }} />
-                  ) : (
-                    <UnlockIcon style={{ width: 16, height: 16 }} />
-                  )}
-                </button>
-
-                <button
-                  type="button"
-                  className="vs-canvas-tools__btn"
-                  onClick={() => setPanMode((v) => !v)}
-                  title="Pan mode"
-                  aria-pressed={panMode}
-                  data-active={panMode ? 'true' : 'false'}
-                >
-                  <MoveIcon style={{ width: 16, height: 16 }} />
-                </button>
-              </div>
-
-              <MiniMap
-                className="vs-minimap"
-                zoomable
-                pannable
-                maskColor="rgba(124, 58, 237, 0.08)"
-                style={{ width: 240, height: 160 }}
-              />
-            </div>
-          </div>
-        </Panel>
+        <CanvasControls
+          zoomPercent={zoomPercent}
+          isInteractive={isInteractive}
+          panMode={panMode}
+          onZoomIn={zoomIn}
+          onZoomOut={zoomOut}
+          onFitView={fitView}
+          onToggleInteractive={() => setIsInteractive((v) => !v)}
+          onTogglePanMode={() => setPanMode((v) => !v)}
+          onCollapseAll={() => setAllNodesCollapsed(true)}
+          onExpandAll={() => setAllNodesCollapsed(false)}
+        />
       </ReactFlow>
     </div>
   );
