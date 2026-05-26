@@ -1,0 +1,243 @@
+/* Main area: toolbar + canvas by dock side */
+.vs-main {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.vs-main--dock-top {
+  flex-direction: column;
+}
+
+.vs-main--dock-bottom {
+  flex-direction: column;
+}
+
+.vs-main--dock-left {
+  flex-direction: row;
+}
+
+.vs-main--dock-right {
+  flex-direction: row;
+}
+
+.vs-main__canvas-wrap {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.vs-main__canvas-wrap > .vs-canvas {
+  border-radius: 0;
+}
+
+.vs-main--dock-top .vs-main__canvas-wrap > .vs-canvas {
+  border-radius: 0 0 var(--vs-app-radius) var(--vs-app-radius);
+}
+
+.vs-main--dock-bottom .vs-main__canvas-wrap > .vs-canvas {
+  border-radius: var(--vs-app-radius) var(--vs-app-radius) 0 0;
+}
+
+.vs-main--dock-left .vs-main__canvas-wrap > .vs-canvas {
+  border-radius: 0 var(--vs-app-radius) var(--vs-app-radius) 0;
+}
+
+.vs-main--dock-right .vs-main__canvas-wrap > .vs-canvas {
+  border-radius: var(--vs-app-radius) 0 0 var(--vs-app-radius);
+}
+
+/* Docked toolbar shell */
+.vs-dock-toolbar {
+  display: flex;
+  flex-shrink: 0;
+  background: #f9fafb;
+  border-color: var(--vs-border);
+  z-index: 5;
+}
+
+.vs-dock-toolbar--top,
+.vs-dock-toolbar--bottom {
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+  border-style: solid;
+}
+
+.vs-dock-toolbar--top {
+  border-width: 0 0 1px;
+}
+
+.vs-dock-toolbar--bottom {
+  border-width: 1px 0 0;
+}
+
+.vs-dock-toolbar--left,
+.vs-dock-toolbar--right {
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+  max-height: 100%;
+  border-style: solid;
+}
+
+.vs-dock-toolbar--left {
+  border-width: 0 1px 0 0;
+  max-width: min(320px, 42vw);
+}
+
+.vs-dock-toolbar--right {
+  border-width: 0 0 0 1px;
+  max-width: min(320px, 42vw);
+}
+
+.vs-dock-toolbar__handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: grab;
+  touch-action: none;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.vs-dock-toolbar__handle:hover {
+  background: #e5e7eb;
+  color: #6366f1;
+}
+
+.vs-dock-toolbar__handle:active {
+  cursor: grabbing;
+  color: #4f46e5;
+}
+
+.vs-dock-toolbar--top .vs-dock-toolbar__handle,
+.vs-dock-toolbar--bottom .vs-dock-toolbar__handle {
+  width: 28px;
+  min-height: 100%;
+  border-right: 1px solid var(--vs-border);
+}
+
+.vs-dock-toolbar--bottom .vs-dock-toolbar__handle {
+  border-right: 1px solid var(--vs-border);
+  border-left: none;
+}
+
+.vs-dock-toolbar--left .vs-dock-toolbar__handle,
+.vs-dock-toolbar--right .vs-dock-toolbar__handle {
+  height: 28px;
+  width: 100%;
+  border-bottom: 1px solid var(--vs-border);
+}
+
+.vs-dock-toolbar__handle svg {
+  width: 14px;
+  height: 14px;
+}
+
+.vs-dock-toolbar--left .vs-dock-toolbar__handle svg,
+.vs-dock-toolbar--right .vs-dock-toolbar__handle svg {
+  transform: rotate(90deg);
+}
+
+.vs-dock-toolbar__content {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.vs-dock-toolbar__content > .vs-palette {
+  border: none;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Drop zones while dragging */
+.vs-main--dock-dragging {
+  user-select: none;
+}
+
+.vs-main--dock-dragging .vs-dock-toolbar__handle {
+  cursor: grabbing;
+}
+
+.vs-dock-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: 1fr 2fr 1fr;
+  grid-template-areas:
+    'top top top'
+    'left center right'
+    'bottom bottom bottom';
+  padding: 8px;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.vs-dock-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #c7d2fe;
+  border-radius: var(--vs-radius);
+  background: rgba(255, 255, 255, 0.55);
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.vs-dock-zone--top {
+  grid-area: top;
+}
+
+.vs-dock-zone--bottom {
+  grid-area: bottom;
+}
+
+.vs-dock-zone--left {
+  grid-area: left;
+}
+
+.vs-dock-zone--right {
+  grid-area: right;
+}
+
+.vs-dock-zone--active {
+  border-color: #6366f1;
+  border-style: solid;
+  background: rgba(238, 242, 255, 0.92);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+
+.vs-dock-zone--current:not(.vs-dock-zone--active) {
+  border-color: #a5b4fc;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.vs-dock-zone__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6366f1;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+}

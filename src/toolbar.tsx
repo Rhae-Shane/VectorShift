@@ -5,9 +5,13 @@ import { DraggableNode } from './draggableNode';
 import { nodeRegistry } from './nodes/nodeRegistry';
 import type { NodeRegistryEntry } from './types/nodes';
 import { requestAddNodeAtViewport } from './utils/canvasEvents';
+import { isVerticalToolbarDock } from './types/toolbarDock';
+import type { ToolbarDockPosition } from './types/toolbarDock';
 import './styles/toolbar.css';
 
 const SearchIcon = FiSearch as unknown as FC<SVGProps<SVGSVGElement>>;
+
+type CategoryId = 'start' | 'integrations' | 'logic' | 'data' | 'ai' | 'chat';
 
 type TabId =
   | 'Start'
@@ -82,14 +86,51 @@ const shouldShowSeparatorBefore = (
   return list[index - 1] != null;
 };
 
-export const PipelineToolbar = () => {
+const CATEGORIES: { id: CategoryId; label: string }[] = [
+  { id: 'start', label: 'Start' },
+  { id: 'integrations', label: 'Integrations' },
+  { id: 'logic', label: 'Logic' },
+  { id: 'data', label: 'Data' },
+  { id: 'ai', label: 'AI' },
+  { id: 'chat', label: 'Chat' },
+];
+
+const filterByCategory = (category: CategoryId, entry: NodeRegistryEntry): boolean => {
+  if (category === 'chat') return entry.type === 'note' || entry.type === 'text';
+  return entry.category === category;
+};
+
+export interface PipelineToolbarProps {
+  dockPosition?: ToolbarDockPosition;
+}
+
+export const PipelineToolbar = ({ dockPosition = 'top' }: PipelineToolbarProps) => {
   const [activeTab, setActiveTab] = useState<TabId>('Start');
   const [search, setSearch] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
 
+  const isVertical = isVerticalToolbarDock(dockPosition);
+
   const handleAddNode = useCallback((type: string) => {
     requestAddNodeAtViewport(type);
   }, []);
+
+  const verticalGroupedNodes = useMemo(() => {
+    const q = search.trim().toLowerCase();
+
+    return CATEGORIES.map((category) => {
+      const entries = nodeRegistry
+        .filter((entry) => filterByCategory(category.id, entry))
+        .filter((entry) => (q ? entry.label.toLowerCase().includes(q) : true));
+
+      const sorted =
+        category.id === 'start'
+          ? sortForTab('Start', entries)
+          : entries;
+
+      return { category, entries: sorted };
+    }).filter((group) => group.entries.length > 0);
+  }, [search]);
 
   const filteredNodes = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -102,7 +143,7 @@ export const PipelineToolbar = () => {
   }, [activeTab, search]);
 
   return (
-    <div className="vs-palette">
+    <div className={`vs-palette${isVertical ? ' vs-palette--vertical' : ''}`}>
       <div className="vs-palette__top">
         <fieldset className="vs-palette__search-fieldset">
           <div
@@ -122,39 +163,77 @@ export const PipelineToolbar = () => {
           </div>
         </fieldset>
 
-        <div className="vs-palette__tabs" role="tablist">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === tab.id}
-              className={`vs-palette__tab ${activeTab === tab.id ? 'vs-palette__tab--active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        {!isVertical && (
+          <div className="vs-palette__tabs" role="tablist">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab.id}
+                className={`vs-palette__tab ${activeTab === tab.id ? 'vs-palette__tab--active' : ''}`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
-      <div className="vs-palette__nodes-scroll">
-        <div className="vs-palette__nodes">
-          {filteredNodes.map((entry, index) => (
-            <div key={entry.type} className="vs-palette__node-slot">
-              {shouldShowSeparatorBefore(entry, index, filteredNodes) && (
-                <div className="vs-palette__divider" aria-hidden />
-              )}
-              <DraggableNode
-                type={entry.type}
-                label={entry.label}
-                icon={entry.icon}
-                onAdd={handleAddNode}
-              />
-            </div>
+      {isVertical ? (
+        <div className="vs-palette__sidebar-scroll">
+          {verticalGroupedNodes.map(({ category, entries }) => (
+            <details
+              key={category.id}
+              className="vs-palette__section"
+              open={category.id === 'start' || category.id === 'integrations'}
+            >
+              <summary className="vs-palette__section-summary">
+                <span className="vs-palette__section-title">{category.label}</span>
+                <span className="vs-palette__section-count">{entries.length}</span>
+              </summary>
+
+              <div className="vs-palette__section-body">
+                <div className="vs-palette__grid">
+                  {entries.map((entry, index) => (
+                    <div key={entry.type} className="vs-palette__grid-item">
+                      {category.id === 'start' &&
+                        shouldShowSeparatorBefore(entry, index, entries) && (
+                          <div className="vs-palette__divider" aria-hidden />
+                        )}
+                      <DraggableNode
+                        type={entry.type}
+                        label={entry.label}
+                        icon={entry.icon}
+                        onAdd={handleAddNode}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </details>
           ))}
         </div>
-      </div>
+      ) : (
+        <div className="vs-palette__nodes-scroll">
+          <div className="vs-palette__nodes">
+            {filteredNodes.map((entry, index) => (
+              <div key={entry.type} className="vs-palette__node-slot">
+                {shouldShowSeparatorBefore(entry, index, filteredNodes) && (
+                  <div className="vs-palette__divider" aria-hidden />
+                )}
+                <DraggableNode
+                  type={entry.type}
+                  label={entry.label}
+                  icon={entry.icon}
+                  onAdd={handleAddNode}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
