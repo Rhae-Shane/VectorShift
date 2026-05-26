@@ -42,8 +42,16 @@ export const DraggableNode = ({ type, label, icon, onAdd }: DraggableNodeProps) 
       }}
       draggable
     >
-      {icon && <span className="vs-draggable-node__icon">{icon}</span>}
-      <span className="vs-draggable-node__label">{label}</span>
+      <div className="vs-draggable-node__inner">
+        {icon && (
+          <div className="vs-draggable-node__icon-wrap" aria-hidden>
+            {icon}
+          </div>
+        )}
+        <div className="vs-draggable-node__label-wrap">
+          <span className="vs-draggable-node__label">{label}</span>
+        </div>
+      </div>
     </div>
   );
 };
