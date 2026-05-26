@@ -2,10 +2,9 @@ import { useMemo, useState, useCallback } from 'react';
 import { FiSearch } from 'react-icons/fi';
 import type { FC, SVGProps } from 'react';
 import { DraggableNode } from './draggableNode';
-import { nodeRegistry, getDefaultNodeData } from './nodes/nodeRegistry';
-import { useStore } from './store';
+import { nodeRegistry } from './nodes/nodeRegistry';
 import type { NodeRegistryEntry } from './types/nodes';
-import type { PipelineNode } from './store';
+import { requestAddNodeAtViewport } from './utils/canvasEvents';
 import './styles/toolbar.css';
 
 const SearchIcon = FiSearch as unknown as FC<SVGProps<SVGSVGElement>>;
@@ -88,24 +87,9 @@ export const PipelineToolbar = () => {
   const [search, setSearch] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
 
-  const getNodeID = useStore((s) => s.getNodeID);
-  const addNode = useStore((s) => s.addNode);
-
-  const handleAddNode = useCallback(
-    (type: string) => {
-      const nodeID = getNodeID(type);
-      const x = 200 + Math.random() * 100;
-      const y = 150 + Math.random() * 100;
-      const newNode: PipelineNode = {
-        id: nodeID,
-        type,
-        position: { x, y },
-        data: getDefaultNodeData(nodeID, type),
-      };
-      addNode(newNode);
-    },
-    [getNodeID, addNode]
-  );
+  const handleAddNode = useCallback((type: string) => {
+    requestAddNodeAtViewport(type);
+  }, []);
 
   const filteredNodes = useMemo(() => {
     const q = search.trim().toLowerCase();

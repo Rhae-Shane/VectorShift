@@ -11,11 +11,17 @@ import { nodeTypes, getDefaultNodeData } from './nodes/nodeRegistry';
 import type { PipelineNode, StoreState } from './store';
 import { CanvasControls } from './components/CanvasControls';
 import { CanvasEmptyState } from './components/CanvasEmptyState';
+import { getViewportNodePosition } from './utils/canvasPlacement';
+import {
+  CANVAS_ADD_NODE_EVENT,
+  type CanvasAddNodeDetail,
+} from './utils/canvasEvents';
 
 import 'reactflow/dist/style.css';
 
 const gridSize = 20;
 const proOptions = { hideAttribution: true };
+const INITIAL_VIEWPORT = { x: 0, y: 0, zoom: 1 };
 
 const selector = (state: StoreState) => ({
   nodes: state.nodes,
@@ -44,7 +50,8 @@ export const PipelineUI = () => {
     onConnect,
   } = useStore(selector, shallow);
 
-  const effectivePanMode = panMode || !isInteractive;
+  const isCanvasEmpty = nodes.length === 0;
+  const effectivePanMode = !isCanvasEmpty && (panMode || !isInteractive);
   const zoomPercent = Math.max(0, Math.min(350, Math.round(zoom * 100)));
 
   const setAllNodesCollapsed = useCallback((collapsed: boolean) => {
@@ -53,32 +60,42 @@ export const PipelineUI = () => {
     );
   }, []);
 
-  const addFirstInputNode = useCallback(() => {
-    const type = 'customInput';
-    const nodeID = getNodeID(type);
+  const addNodeAtViewport = useCallback(
+    (type: string) => {
+      if (!reactFlowInstance || !reactFlowWrapper.current) return;
 
-    let position = { x: 280, y: 220 };
-    if (reactFlowInstance && reactFlowWrapper.current) {
-      const bounds = reactFlowWrapper.current.getBoundingClientRect();
-      const center = reactFlowInstance.project({
-        x: bounds.width / 2,
-        y: bounds.height / 2,
-      });
-      position = {
-        x: center.x - 120,
-        y: center.y - 60,
+      const nodeID = getNodeID(type);
+      const position = getViewportNodePosition(
+        reactFlowInstance,
+        reactFlowWrapper.current
+      );
+
+      const newNode: PipelineNode = {
+        id: nodeID,
+        type,
+        position,
+        data: getDefaultNodeData(nodeID, type),
       };
-    }
 
-    const newNode: PipelineNode = {
-      id: nodeID,
-      type,
-      position,
-      data: getDefaultNodeData(nodeID, type),
+      addNode(newNode);
+    },
+    [addNode, getNodeID, reactFlowInstance]
+  );
+
+  const addFirstInputNode = useCallback(() => {
+    addNodeAtViewport('customInput');
+  }, [addNodeAtViewport]);
+
+  useEffect(() => {
+    const onAddNodeRequest = (event: Event) => {
+      const { type } = (event as CustomEvent<CanvasAddNodeDetail>).detail;
+      if (type) addNodeAtViewport(type);
     };
 
-    addNode(newNode);
-  }, [addNode, getNodeID, reactFlowInstance]);
+    window.addEventListener(CANVAS_ADD_NODE_EVENT, onAddNodeRequest);
+    return () =>
+      window.removeEventListener(CANVAS_ADD_NODE_EVENT, onAddNodeRequest);
+  }, [addNodeAtViewport]);
 
   const onDrop = useCallback(
     (event: DragEvent) => {
@@ -122,32 +139,51 @@ export const PipelineUI = () => {
   }, []);
 
   const fitView = useCallback(() => {
-    if (!reactFlowInstance) return;
+    if (!reactFlowInstance || isCanvasEmpty) return;
     reactFlowInstance.fitView({
       padding: 0.2,
       duration: 350,
       includeHiddenNodes: true,
     });
-  }, [reactFlowInstance]);
+  }, [reactFlowInstance, isCanvasEmpty]);
 
   const zoomIn = useCallback(() => {
-    if (!reactFlowInstance) return;
+    if (!reactFlowInstance || isCanvasEmpty) return;
     reactFlowInstance.zoomIn({ duration: 180 });
-  }, [reactFlowInstance]);
+  }, [reactFlowInstance, isCanvasEmpty]);
 
   const zoomOut = useCallback(() => {
-    if (!reactFlowInstance) return;
+    if (!reactFlowInstance || isCanvasEmpty) return;
     reactFlowInstance.zoomOut({ duration: 180 });
-  }, [reactFlowInstance]);
+  }, [reactFlowInstance, isCanvasEmpty]);
 
-  const onMove = useCallback((_: unknown, viewport: { zoom: number }) => {
-    setZoom(viewport.zoom);
-  }, []);
+  const onMove = useCallback(
+    (_: unknown, viewport: { x: number; y: number; zoom: number }) => {
+      const empty = useStore.getState().nodes.length === 0;
+      if (
+        empty &&
+        (viewport.zoom !== 1 || viewport.x !== 0 || viewport.y !== 0)
+      ) {
+        reactFlowInstance?.setViewport(INITIAL_VIEWPORT, { duration: 0 });
+        setZoom(1);
+        return;
+      }
+      setZoom(viewport.zoom);
+    },
+    [reactFlowInstance]
+  );
+
+  useEffect(() => {
+    if (!isCanvasEmpty || !reactFlowInstance) return;
+    reactFlowInstance.setViewport(INITIAL_VIEWPORT, { duration: 0 });
+    setZoom(1);
+  }, [isCanvasEmpty, reactFlowInstance]);
 
   useEffect(() => {
     const pressed = new Set<string>();
 
     const onKeyDown = (e: KeyboardEvent) => {
+      if (useStore.getState().nodes.length === 0) return;
       pressed.add(e.code);
       if (e.ctrlKey && pressed.has('ArrowUp') && pressed.has('Space')) {
         e.preventDefault();
@@ -197,16 +233,19 @@ export const PipelineUI = () => {
         proOptions={proOptions}
         snapGrid={[gridSize, gridSize]}
         connectionLineType={ConnectionLineType.SmoothStep}
-        defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+        defaultViewport={INITIAL_VIEWPORT}
         onlyRenderVisibleElements
-        minZoom={0}
-        maxZoom={3.5}
-        nodesDraggable={isInteractive && !effectivePanMode}
-        nodesConnectable={isInteractive}
-        elementsSelectable={isInteractive}
+        minZoom={isCanvasEmpty ? 1 : 0}
+        maxZoom={isCanvasEmpty ? 1 : 3.5}
+        nodesDraggable={!isCanvasEmpty && isInteractive && !effectivePanMode}
+        nodesConnectable={!isCanvasEmpty && isInteractive}
+        elementsSelectable={!isCanvasEmpty && isInteractive}
         panOnDrag={effectivePanMode}
-        panOnScroll
-        zoomOnScroll
+        panOnScroll={!isCanvasEmpty}
+        zoomOnScroll={!isCanvasEmpty}
+        zoomOnPinch={!isCanvasEmpty}
+        zoomOnDoubleClick={!isCanvasEmpty}
+        preventScrolling={isCanvasEmpty}
         onMove={onMove}
       >
         <Background
@@ -220,6 +259,7 @@ export const PipelineUI = () => {
           zoomPercent={zoomPercent}
           isInteractive={isInteractive}
           panMode={panMode}
+          canvasLocked={isCanvasEmpty}
           onZoomIn={zoomIn}
           onZoomOut={zoomOut}
           onFitView={fitView}
@@ -230,7 +270,7 @@ export const PipelineUI = () => {
         />
       </ReactFlow>
 
-      {nodes.length === 0 && (
+      {isCanvasEmpty && (
         <CanvasEmptyState onAddFirstNode={addFirstInputNode} />
       )}
     </div>

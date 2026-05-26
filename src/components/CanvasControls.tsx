@@ -17,6 +17,8 @@ export interface CanvasControlsProps {
   zoomPercent: number;
   isInteractive: boolean;
   panMode: boolean;
+  /** True when canvas has no nodes — disables pan/zoom controls. */
+  canvasLocked?: boolean;
   onZoomIn: () => void;
   onZoomOut: () => void;
   onFitView: () => void;
@@ -61,6 +63,7 @@ export const CanvasControls = memo(function CanvasControls({
   zoomPercent,
   isInteractive,
   panMode,
+  canvasLocked = false,
   onZoomIn,
   onZoomOut,
   onFitView,
@@ -82,13 +85,17 @@ export const CanvasControls = memo(function CanvasControls({
             {zoomPercent}%
           </div>
           <div className="vs-canvas-controls__zoom-pill">
-            <ControlButton label="Zoom in" onClick={onZoomIn}>
+            <ControlButton label="Zoom in" onClick={onZoomIn} disabled={canvasLocked}>
               <PlusIcon className="vs-rf-control-icon" aria-hidden />
             </ControlButton>
-            <ControlButton label="Zoom out" onClick={onZoomOut}>
+            <ControlButton label="Zoom out" onClick={onZoomOut} disabled={canvasLocked}>
               <MinusIcon className="vs-rf-control-icon" aria-hidden />
             </ControlButton>
-            <ControlButton label="Fit view (Ctrl + ↑ + Space)" onClick={onFitView}>
+            <ControlButton
+              label="Fit view (Ctrl + ↑ + Space)"
+              onClick={onFitView}
+              disabled={canvasLocked}
+            >
               <FitViewIcon className="vs-rf-control-icon" aria-hidden />
             </ControlButton>
           </div>
@@ -100,6 +107,7 @@ export const CanvasControls = memo(function CanvasControls({
               label={locked ? 'Unlock canvas' : 'Lock canvas (view only)'}
               onClick={onToggleInteractive}
               active={locked}
+              disabled={canvasLocked}
             >
               {locked ? (
                 <UnlockIcon className="vs-rf-control-icon" aria-hidden />
@@ -112,6 +120,7 @@ export const CanvasControls = memo(function CanvasControls({
               label="Fit view"
               onClick={onFitView}
               className="vs-rf-control-btn--secondary-fit"
+              disabled={canvasLocked}
             >
               <LayoutDashboardIcon className="vs-rf-control-icon" aria-hidden />
             </ControlButton>
@@ -119,6 +128,7 @@ export const CanvasControls = memo(function CanvasControls({
             <ControlButton
               label="Minimize all nodes (Ctrl + M)"
               onClick={onCollapseAll}
+              disabled={canvasLocked}
             >
               <MinimizeNodesIcon className="vs-rf-control-icon" aria-hidden />
             </ControlButton>
@@ -126,6 +136,7 @@ export const CanvasControls = memo(function CanvasControls({
             <ControlButton
               label="Expand all nodes (Ctrl + E)"
               onClick={onExpandAll}
+              disabled={canvasLocked}
             >
               <ExpandNodesIcon className="vs-rf-control-icon" aria-hidden />
             </ControlButton>
@@ -134,6 +145,7 @@ export const CanvasControls = memo(function CanvasControls({
               label="Pan mode"
               onClick={onTogglePanMode}
               active={panMode}
+              disabled={canvasLocked}
             >
               <HandIcon className="vs-rf-control-icon" aria-hidden />
             </ControlButton>
@@ -141,8 +153,8 @@ export const CanvasControls = memo(function CanvasControls({
 
           <MiniMap
             className="vs-minimap"
-            zoomable
-            pannable
+            zoomable={!canvasLocked}
+            pannable={!canvasLocked}
             nodeColor="#6366f1"
             nodeStrokeColor="#3730a3"
             nodeStrokeWidth={2}
