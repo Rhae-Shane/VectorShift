@@ -42,6 +42,7 @@ export const BaseNode = ({
   const removeNode = useStore((s) => s.removeNode);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [hoverTip, setHoverTip] = useState<'collapse' | 'delete' | null>(null);
   const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
   const ChevronDownIcon = FiChevronDown as unknown as FC<SVGProps<SVGSVGElement>>;
   const ChevronUpIcon = FiChevronUp as unknown as FC<SVGProps<SVGSVGElement>>;
@@ -73,13 +74,23 @@ export const BaseNode = ({
     removeNode(id);
   };
 
+  const hoverTooltipText = confirmDelete
+    ? 'Confirm delete'
+    : hoverTip === 'delete'
+      ? 'Delete node'
+      : hoverTip === 'collapse'
+        ? collapsed
+          ? 'Expand node'
+          : 'Collapse node'
+        : null;
+
   return (
     <div
       className={`vs-node vs-node--${accent} ${collapsed ? 'vs-node--collapsed' : ''} ${className}`}
       style={{ minWidth, ...style }}
     >
-      <NodeToolbar isVisible={confirmDelete} position={Position.Top} align="end">
-        <div className="vs-node__toolbar-tooltip">Confirm delete</div>
+      <NodeToolbar isVisible={Boolean(hoverTooltipText)} position={Position.Top} align="end">
+        <div className="vs-node__toolbar-tooltip">{hoverTooltipText}</div>
       </NodeToolbar>
 
       {handles.map((handle) => (
@@ -103,8 +114,11 @@ export const BaseNode = ({
             type="button"
             className="vs-node__icon-btn"
             onClick={() => setCollapsed((v) => !v)}
-            title={collapsed ? 'Expand node' : 'Collapse node'}
             aria-label={collapsed ? 'Expand node' : 'Collapse node'}
+            onMouseEnter={() => setHoverTip('collapse')}
+            onMouseLeave={() => setHoverTip(null)}
+            onFocus={() => setHoverTip('collapse')}
+            onBlur={() => setHoverTip(null)}
           >
             {collapsed ? (
               <ChevronDownIcon style={{ width: 16, height: 16 }} />
@@ -116,8 +130,11 @@ export const BaseNode = ({
             type="button"
             className={`vs-node__icon-btn ${confirmDelete ? 'vs-node__icon-btn--danger' : ''}`}
             onClick={onDeleteClick}
-            title={confirmDelete ? 'Confirm delete' : 'Delete node'}
             aria-label={confirmDelete ? 'Confirm delete node' : 'Delete node'}
+            onMouseEnter={() => setHoverTip('delete')}
+            onMouseLeave={() => setHoverTip(null)}
+            onFocus={() => setHoverTip('delete')}
+            onBlur={() => setHoverTip(null)}
           >
             <CloseIcon style={{ width: 16, height: 16 }} />
           </button>

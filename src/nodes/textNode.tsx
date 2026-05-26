@@ -52,6 +52,7 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
   const measureRef = useRef<HTMLSpanElement>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [hoverTip, setHoverTip] = useState<'collapse' | 'delete' | null>(null);
 
   const variables = useMemo(() => parseVariables(text), [text]);
 
@@ -97,13 +98,23 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
     setSize({ width: contentWidth, height: contentHeight });
   }, [text, collapsed]);
 
+  const hoverTooltipText = confirmDelete
+    ? 'Confirm delete'
+    : hoverTip === 'delete'
+      ? 'Delete node'
+      : hoverTip === 'collapse'
+        ? collapsed
+          ? 'Expand node'
+          : 'Collapse node'
+        : null;
+
   return (
     <div
       className={`vs-node vs-node--purple vs-node--text ${collapsed ? 'vs-node--collapsed' : ''}`}
       style={{ width: size.width, minHeight: collapsed ? undefined : size.height }}
     >
-      <NodeToolbar isVisible={confirmDelete} position={Position.Top} align="end">
-        <div className="vs-node__toolbar-tooltip">Confirm delete</div>
+      <NodeToolbar isVisible={Boolean(hoverTooltipText)} position={Position.Top} align="end">
+        <div className="vs-node__toolbar-tooltip">{hoverTooltipText}</div>
       </NodeToolbar>
 
       {variables.map((varName, index) => (
@@ -138,8 +149,11 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
             type="button"
             className="vs-node__icon-btn"
             onClick={() => setCollapsed((v) => !v)}
-            title={collapsed ? 'Expand node' : 'Collapse node'}
             aria-label={collapsed ? 'Expand node' : 'Collapse node'}
+            onMouseEnter={() => setHoverTip('collapse')}
+            onMouseLeave={() => setHoverTip(null)}
+            onFocus={() => setHoverTip('collapse')}
+            onBlur={() => setHoverTip(null)}
           >
             {collapsed ? (
               <ChevronDownIcon style={{ width: 16, height: 16 }} />
@@ -154,8 +168,11 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
               if (!confirmDelete) return setConfirmDelete(true);
               removeNode(id);
             }}
-            title={confirmDelete ? 'Confirm delete' : 'Delete node'}
             aria-label={confirmDelete ? 'Confirm delete node' : 'Delete node'}
+            onMouseEnter={() => setHoverTip('delete')}
+            onMouseLeave={() => setHoverTip(null)}
+            onFocus={() => setHoverTip('delete')}
+            onBlur={() => setHoverTip(null)}
           >
             <CloseIcon style={{ width: 16, height: 16 }} />
           </button>
