@@ -4,7 +4,15 @@ import { ResultModal } from './components/ResultModal';
 import type { PipelineParseResponse } from './types/api';
 import { parsePipeline } from './services/pipelineService';
 
-export const SubmitButton = () => {
+export interface SubmitButtonProps {
+  className?: string;
+  label?: string;
+}
+
+export const SubmitButton = ({
+  className = 'vs-btn vs-btn--submit',
+  label = 'Submit',
+}: SubmitButtonProps) => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PipelineParseResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -38,11 +46,11 @@ export const SubmitButton = () => {
     <>
       <button
         type="button"
-        className="vs-btn vs-btn--submit"
+        className={className}
         onClick={handleSubmit}
         disabled={loading}
       >
-        {loading ? 'Analyzing…' : '▶ Submit'}
+        {loading ? 'Analyzing…' : label}
       </button>
 
       <ResultModal result={result} error={error} onClose={handleClose} />

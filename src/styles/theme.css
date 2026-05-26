@@ -16,7 +16,7 @@
   --vs-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --vs-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   --vs-font: 'Inter', system-ui, -apple-system, sans-serif;
-  --vs-header-height: 52px;
+  --vs-header-height: 42px;
   --vs-palette-height: auto;
   --vs-error: #ef4444;
   --vs-accent-blue: #3b82f6;
