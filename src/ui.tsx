@@ -17,6 +17,7 @@ import {
   CANVAS_ADD_NODE_EVENT,
   type CanvasAddNodeDetail,
 } from './utils/canvasEvents';
+import { useTrackpadPinchZoom } from './hooks/useTrackpadPinchZoom';
 
 import 'reactflow/dist/style.css';
 
@@ -54,6 +55,16 @@ export const PipelineUI = () => {
   const isCanvasEmpty = nodes.length === 0;
   const effectivePanMode = !isCanvasEmpty && (panMode || !isInteractive);
   const zoomPercent = Math.max(0, Math.min(350, Math.round(zoom * 100)));
+  const maxZoom = isCanvasEmpty ? 1 : 3.5;
+  const minZoom = isCanvasEmpty ? 1 : 0;
+
+  useTrackpadPinchZoom(
+    reactFlowWrapper,
+    reactFlowInstance,
+    !isCanvasEmpty,
+    minZoom,
+    maxZoom
+  );
 
   const setAllNodesCollapsed = useCallback((collapsed: boolean) => {
     window.dispatchEvent(
@@ -236,8 +247,8 @@ export const PipelineUI = () => {
         connectionLineType={ConnectionLineType.SmoothStep}
         defaultViewport={INITIAL_VIEWPORT}
         onlyRenderVisibleElements
-        minZoom={isCanvasEmpty ? 1 : 0}
-        maxZoom={isCanvasEmpty ? 1 : 3.5}
+        minZoom={minZoom}
+        maxZoom={maxZoom}
         nodesDraggable={!isCanvasEmpty && isInteractive && !effectivePanMode}
         nodesConnectable={!isCanvasEmpty && isInteractive}
         elementsSelectable={!isCanvasEmpty && isInteractive}
