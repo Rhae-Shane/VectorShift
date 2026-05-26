@@ -63,6 +63,47 @@ body {
 .react-flow__edge-path {
   stroke: #9ca3af;
   stroke-width: 2;
+  transition: stroke 0.15s ease, stroke-width 0.15s ease;
+}
+
+.react-flow__edge.vs-edge--pending-delete .react-flow__edge-path {
+  stroke: #ef4444;
+  stroke-width: 3;
+}
+
+.vs-edge-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid #d1d5db;
+  border-radius: 50%;
+  background: #fff;
+  color: #6b7280;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.vs-edge-delete:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #374151;
+  transform: scale(1.08);
+}
+
+.vs-edge-delete--pending,
+.vs-edge-delete--pending:hover {
+  border-color: #fca5a5;
+  background: #fef2f2;
+  color: #ef4444;
 }
 
 .react-flow__controls-button {

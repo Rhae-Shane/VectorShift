@@ -18,9 +18,13 @@ export interface StoreState {
   nodes: PipelineNode[];
   edges: Edge[];
   nodeIDs: Record<string, number>;
+  pendingDeleteEdgeId: string | null;
   getNodeID: (type: string) => string;
   addNode: (node: PipelineNode) => void;
   removeNode: (nodeId: string) => void;
+  removeEdge: (edgeId: string) => void;
+  handleEdgeClick: (edgeId: string) => void;
+  clearPendingEdgeDelete: () => void;
   onNodesChange: (changes: NodeChange[]) => void;
   onEdgesChange: (changes: EdgeChange[]) => void;
   onConnect: (connection: Connection) => void;
@@ -35,6 +39,7 @@ export const useStore = create<StoreState>((set, get) => ({
   nodes: [],
   edges: [],
   nodeIDs: {},
+  pendingDeleteEdgeId: null,
 
   getNodeID: (type) => {
     const newIDs = { ...get().nodeIDs };
@@ -56,7 +61,30 @@ export const useStore = create<StoreState>((set, get) => ({
     set({
       nodes: get().nodes.filter((n) => n.id !== nodeId),
       edges: get().edges.filter((e) => e.source !== nodeId && e.target !== nodeId),
+      pendingDeleteEdgeId: null,
     });
+  },
+
+  removeEdge: (edgeId) => {
+    set({
+      edges: get().edges.filter((e) => e.id !== edgeId),
+      pendingDeleteEdgeId: null,
+    });
+  },
+
+  handleEdgeClick: (edgeId) => {
+    const pending = get().pendingDeleteEdgeId;
+    if (pending === edgeId) {
+      get().removeEdge(edgeId);
+      return;
+    }
+    set({ pendingDeleteEdgeId: edgeId });
+  },
+
+  clearPendingEdgeDelete: () => {
+    if (get().pendingDeleteEdgeId !== null) {
+      set({ pendingDeleteEdgeId: null });
+    }
   },
 
   onNodesChange: (changes) => {

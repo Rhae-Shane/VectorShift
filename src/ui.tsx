@@ -9,6 +9,7 @@ import ReactFlow, {
 import { useStore } from './store';
 import { shallow } from 'zustand/shallow';
 import { nodeTypes, getDefaultNodeData } from './nodes/nodeRegistry';
+import { edgeTypes } from './edges/edgeTypes';
 import type { PipelineNode, StoreState } from './store';
 import { CanvasControls } from './components/CanvasControls';
 import { CanvasEmptyState } from './components/CanvasEmptyState';
@@ -33,6 +34,7 @@ const selector = (state: StoreState) => ({
   onNodesChange: state.onNodesChange,
   onEdgesChange: state.onEdgesChange,
   onConnect: state.onConnect,
+  clearPendingEdgeDelete: state.clearPendingEdgeDelete,
 });
 
 export const PipelineUI = () => {
@@ -50,6 +52,7 @@ export const PipelineUI = () => {
     onNodesChange,
     onEdgesChange,
     onConnect,
+    clearPendingEdgeDelete,
   } = useStore(selector, shallow);
 
   const isCanvasEmpty = nodes.length === 0;
@@ -242,6 +245,8 @@ export const PipelineUI = () => {
         onDragOver={onDragOver}
         onInit={setReactFlowInstance}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        onPaneClick={() => clearPendingEdgeDelete()}
         proOptions={proOptions}
         snapGrid={[gridSize, gridSize]}
         connectionLineType={ConnectionLineType.SmoothStep}
