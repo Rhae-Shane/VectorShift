@@ -3,6 +3,7 @@ import ReactFlow, {
   Background,
   ConnectionLineType,
   BackgroundVariant,
+  PanOnScrollMode,
   type ReactFlowInstance,
 } from 'reactflow';
 import { useStore } from './store';
@@ -242,10 +243,14 @@ export const PipelineUI = () => {
         elementsSelectable={!isCanvasEmpty && isInteractive}
         panOnDrag={effectivePanMode}
         panOnScroll={!isCanvasEmpty}
+        panOnScrollMode={PanOnScrollMode.Free}
+        panOnScrollSpeed={0.75}
         zoomOnScroll={!isCanvasEmpty}
         zoomOnPinch={!isCanvasEmpty}
         zoomOnDoubleClick={!isCanvasEmpty}
-        preventScrolling={isCanvasEmpty}
+        /* Must stay true when wheel pan/zoom is enabled (React Flow skips wheel otherwise). */
+        preventScrolling
+        zoomActivationKeyCode={['Control', 'Meta']}
         onMove={onMove}
       >
         <Background
