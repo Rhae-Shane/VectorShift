@@ -11,7 +11,7 @@ import { shallow } from 'zustand/shallow';
 import { nodeTypes, getDefaultNodeData } from './nodes/nodeRegistry';
 import type { PipelineNode, StoreState } from './store';
 import { MiniMap } from 'reactflow';
-import { FiLock, FiMaximize2, FiMinus, FiMove, FiPlus, FiUnlock } from 'react-icons/fi';
+import { FiChevronsDown, FiChevronsUp, FiLock, FiMaximize2, FiMinus, FiMove, FiPlus, FiUnlock } from 'react-icons/fi';
 import type { FC, SVGProps } from 'react';
 
 import 'reactflow/dist/style.css';
@@ -52,9 +52,16 @@ export const PipelineUI = () => {
   const MoveIcon = FiMove as unknown as FC<SVGProps<SVGSVGElement>>;
   const PlusIcon = FiPlus as unknown as FC<SVGProps<SVGSVGElement>>;
   const UnlockIcon = FiUnlock as unknown as FC<SVGProps<SVGSVGElement>>;
+  const CollapseAllIcon = FiChevronsDown as unknown as FC<SVGProps<SVGSVGElement>>;
+  const ExpandAllIcon = FiChevronsUp as unknown as FC<SVGProps<SVGSVGElement>>;
 
   const effectivePanMode = panMode || !isInteractive;
   const zoomPercent = Math.max(0, Math.min(350, Math.round(zoom * 100)));
+  const setAllNodesCollapsed = useCallback((collapsed: boolean) => {
+    window.dispatchEvent(
+      new CustomEvent('vs:toggleAllNodes', { detail: { collapsed } })
+    );
+  }, []);
 
   const onDrop = useCallback(
     (event: DragEvent) => {
@@ -140,6 +147,22 @@ export const PipelineUI = () => {
     };
   }, [fitView]);
 
+  // Shortcut: Ctrl + M → Minimize all, Ctrl + E → Expand all
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && (e.key === 'm' || e.key === 'M')) {
+        e.preventDefault();
+        setAllNodesCollapsed(true);
+      }
+      if (e.ctrlKey && (e.key === 'e' || e.key === 'E')) {
+        e.preventDefault();
+        setAllNodesCollapsed(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [setAllNodesCollapsed]);
+
   return (
     <div ref={reactFlowWrapper} className="vs-canvas">
       <ReactFlow
@@ -209,6 +232,25 @@ export const PipelineUI = () => {
 
             <div className="vs-canvas-tools__right">
               <div className="vs-canvas-tools__top">
+                <button
+                  type="button"
+                  className="vs-canvas-tools__btn"
+                  onClick={() => setAllNodesCollapsed(true)}
+                  title="Minimize all nodes (Ctrl + M)"
+                  aria-label="Minimize all nodes"
+                >
+                  <CollapseAllIcon style={{ width: 16, height: 16 }} />
+                </button>
+
+                <button
+                  type="button"
+                  className="vs-canvas-tools__btn"
+                  onClick={() => setAllNodesCollapsed(false)}
+                  title="Expand all nodes (Ctrl + E)"
+                  aria-label="Expand all nodes"
+                >
+                  <ExpandAllIcon style={{ width: 16, height: 16 }} />
+                </button>
                 <button
                   type="button"
                   className="vs-canvas-tools__btn"

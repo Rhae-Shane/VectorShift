@@ -52,6 +52,19 @@ export const BaseNode = ({
     return () => window.clearTimeout(t);
   }, [confirmDelete]);
 
+  useEffect(() => {
+    const onToggleAll = (e: Event) => {
+      const detail = (e as CustomEvent<{ collapsed?: boolean }>).detail;
+      if (typeof detail?.collapsed === 'boolean') {
+        setCollapsed(detail.collapsed);
+      }
+    };
+    window.addEventListener('vs:toggleAllNodes', onToggleAll as EventListener);
+    return () => {
+      window.removeEventListener('vs:toggleAllNodes', onToggleAll as EventListener);
+    };
+  }, []);
+
   const onDeleteClick = () => {
     if (!confirmDelete) {
       setConfirmDelete(true);

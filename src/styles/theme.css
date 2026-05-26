@@ -25,6 +25,8 @@
   --vs-accent-teal: #14b8a6;
   --vs-accent-indigo: #6366f1;
   --vs-accent-gray: #9ca3af;
+  --vs-app-pad: 7px;
+  --vs-app-radius: 6px;
 }
 
 *,

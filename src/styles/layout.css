@@ -1,8 +1,13 @@
 .vs-app {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  height: calc(100dvh - (var(--vs-app-pad) * 2));
+  margin: var(--vs-app-pad);
   overflow: hidden;
+  border-radius: var(--vs-app-radius);
+  background: var(--vs-bg);
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
+  border: 1px solid var(--vs-border);
 }
 
 .vs-header {
@@ -122,6 +127,7 @@
   width: 100%;
   background: var(--vs-bg-canvas);
   position: relative;
+  border-radius: 0 0 var(--vs-app-radius) var(--vs-app-radius);
 }
 
 .vs-canvas .react-flow {

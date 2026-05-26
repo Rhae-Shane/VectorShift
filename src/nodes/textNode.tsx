@@ -68,6 +68,19 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
   }, [confirmDelete]);
 
   useLayoutEffect(() => {
+    const onToggleAll = (e: Event) => {
+      const detail = (e as CustomEvent<{ collapsed?: boolean }>).detail;
+      if (typeof detail?.collapsed === 'boolean') {
+        setCollapsed(detail.collapsed);
+      }
+    };
+    window.addEventListener('vs:toggleAllNodes', onToggleAll as EventListener);
+    return () => {
+      window.removeEventListener('vs:toggleAllNodes', onToggleAll as EventListener);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
     const el = textareaRef.current;
     const measure = measureRef.current;
     if (!el || !measure) return;
