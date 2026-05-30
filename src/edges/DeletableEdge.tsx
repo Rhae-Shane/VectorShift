@@ -1,4 +1,4 @@
-import { memo, type FC, type MouseEvent, type SVGProps } from 'react';
+import { memo, type MouseEvent } from 'react';
 import {
   BaseEdge,
   EdgeLabelRenderer,
@@ -6,6 +6,7 @@ import {
   type EdgeProps,
 } from 'reactflow';
 import { FiX } from 'react-icons/fi';
+import { Icon } from '../components/Icon';
 import { useStore } from '../store';
 import { shallow } from 'zustand/shallow';
 
@@ -14,8 +15,6 @@ import {
   EDGE_STROKE,
   EDGE_STROKE_WIDTH,
 } from './edgePathConfig';
-
-const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
 
 const selector = (state: {
   pendingDeleteEdgeId: string | null;
@@ -81,7 +80,7 @@ export const DeletableEdge = memo(function DeletableEdge({
             title={isPendingDelete ? 'Confirm delete connection' : 'Delete connection'}
             aria-label={isPendingDelete ? 'Confirm delete connection' : 'Delete connection'}
           >
-            <CloseIcon width={12} height={12} aria-hidden />
+            <Icon icon={FiX} width={12} height={12} aria-hidden />
           </button>
         </div>
       </EdgeLabelRenderer>

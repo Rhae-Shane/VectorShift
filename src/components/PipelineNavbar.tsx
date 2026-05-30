@@ -1,11 +1,11 @@
 import { useEffect, useCallback, useState } from 'react';
-import type { FC, SVGProps } from 'react';
 import {
   FiCornerUpLeft,
   FiCornerUpRight,
   FiMoreHorizontal,
   FiPlay,
 } from 'react-icons/fi';
+import { Icon } from './Icon';
 import { SubmitButton } from '../submit';
 import {
   useStore,
@@ -16,11 +16,6 @@ import { openCanvasPreview } from '../utils/canvasEvents';
 import { PipelineImportModal } from './PipelineImportModal';
 import { PipelineShareModal } from './PipelineShareModal';
 import '../styles/navbar.css';
-
-const DotsIcon = FiMoreHorizontal as unknown as FC<SVGProps<SVGSVGElement>>;
-const UndoIcon = FiCornerUpLeft as unknown as FC<SVGProps<SVGSVGElement>>;
-const RedoIcon = FiCornerUpRight as unknown as FC<SVGProps<SVGSVGElement>>;
-const PlayIcon = FiPlay as unknown as FC<SVGProps<SVGSVGElement>>;
 
 export const PipelineNavbar = () => {
   const canUndo = useStore(selectCanUndo);
@@ -109,7 +104,7 @@ export const PipelineNavbar = () => {
               disabled={!canUndo}
               onClick={handleUndo}
             >
-              <UndoIcon width={16} height={16} />
+              <Icon icon={FiCornerUpLeft} width={16} height={16} />
             </button>
             <button
               type="button"
@@ -118,7 +113,7 @@ export const PipelineNavbar = () => {
               disabled={!canRedo}
               onClick={handleRedo}
             >
-              <RedoIcon width={16} height={16} />
+              <Icon icon={FiCornerUpRight} width={16} height={16} />
             </button>
           </div>
 
@@ -146,7 +141,7 @@ export const PipelineNavbar = () => {
             aria-label="Preview pipeline"
             onClick={openCanvasPreview}
           >
-            <PlayIcon width={14} height={14} fill="currentColor" />
+            <Icon icon={FiPlay} width={14} height={14} fill="currentColor" />
             Preview
           </button>
 
@@ -160,7 +155,7 @@ export const PipelineNavbar = () => {
             className="vs-navbar__icon-btn vs-navbar__menu-btn"
             aria-label="More actions"
           >
-            <DotsIcon width={16} height={16} />
+            <Icon icon={FiMoreHorizontal} width={16} height={16} />
           </button>
         </div>
       </header>

@@ -1,16 +1,12 @@
-import { memo, type FC, type ReactNode, type SVGProps } from 'react';
+import { memo, type ReactNode } from 'react';
 import { MiniMap, Panel } from 'reactflow';
 import { FiLock, FiMinus, FiPlus, FiUnlock } from 'react-icons/fi';
+import { Icon } from './Icon';
 import { FitViewIcon } from './icons/FitViewIcon';
 import { HandIcon } from './icons/HandIcon';
 import { MinimizeNodesIcon } from './icons/MinimizeNodesIcon';
 import { ExpandNodesIcon } from './icons/ExpandNodesIcon';
 import '../styles/canvas-controls.css';
-
-const PlusIcon = FiPlus as unknown as FC<SVGProps<SVGSVGElement>>;
-const MinusIcon = FiMinus as unknown as FC<SVGProps<SVGSVGElement>>;
-const LockIcon = FiLock as unknown as FC<SVGProps<SVGSVGElement>>;
-const UnlockIcon = FiUnlock as unknown as FC<SVGProps<SVGSVGElement>>;
 
 export interface CanvasControlsProps {
   zoomPercent: number;
@@ -85,10 +81,10 @@ export const CanvasControls = memo(function CanvasControls({
           </div>
           <div className="vs-canvas-controls__zoom-pill">
             <ControlButton label="Zoom in" onClick={onZoomIn} disabled={canvasLocked}>
-              <PlusIcon className="vs-rf-control-icon" aria-hidden />
+              <Icon icon={FiPlus} className="vs-rf-control-icon" aria-hidden />
             </ControlButton>
             <ControlButton label="Zoom out" onClick={onZoomOut} disabled={canvasLocked}>
-              <MinusIcon className="vs-rf-control-icon" aria-hidden />
+              <Icon icon={FiMinus} className="vs-rf-control-icon" aria-hidden />
             </ControlButton>
             <ControlButton
               label="Fit view (Ctrl + ↑ + Space)"
@@ -109,9 +105,9 @@ export const CanvasControls = memo(function CanvasControls({
               disabled={canvasLocked}
             >
               {locked ? (
-                <UnlockIcon className="vs-rf-control-icon" aria-hidden />
+                <Icon icon={FiUnlock} className="vs-rf-control-icon" aria-hidden />
               ) : (
-                <LockIcon className="vs-rf-control-icon" aria-hidden />
+                <Icon icon={FiLock} className="vs-rf-control-icon" aria-hidden />
               )}
             </ControlButton>
 

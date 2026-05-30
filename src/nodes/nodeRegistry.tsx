@@ -1,4 +1,5 @@
 import { createNodeComponent } from './createNode';
+import { Icon } from '../components/Icon';
 import {
   FiArrowDownCircle,
   FiArrowUpCircle,
@@ -10,7 +11,6 @@ import {
   FiCode,
   FiType,
 } from 'react-icons/fi';
-import type { FC, SVGProps } from 'react';
 import type {
   NodeDefinition,
   NodeRegistryEntry,
@@ -20,21 +20,11 @@ import type {
 import { buildTextVariableHandles } from '../utils/textVariables';
 import { TEXT_NODE_MIN_HEIGHT } from '../constants/nodeLayout';
 
-const ArrowDownIcon = FiArrowDownCircle as unknown as FC<SVGProps<SVGSVGElement>>;
-const ArrowUpIcon = FiArrowUpCircle as unknown as FC<SVGProps<SVGSVGElement>>;
-const CpuIcon = FiCpu as unknown as FC<SVGProps<SVGSVGElement>>;
-const BranchIcon = FiGitBranch as unknown as FC<SVGProps<SVGSVGElement>>;
-const GlobeIcon = FiGlobe as unknown as FC<SVGProps<SVGSVGElement>>;
-const PlusIcon = FiPlusCircle as unknown as FC<SVGProps<SVGSVGElement>>;
-const EditIcon = FiEdit3 as unknown as FC<SVGProps<SVGSVGElement>>;
-const CodeIcon = FiCode as unknown as FC<SVGProps<SVGSVGElement>>;
-const TypeIcon = FiType as unknown as FC<SVGProps<SVGSVGElement>>;
-
 const inputDef: NodeDefinition = {
   type: 'customInput',
   label: 'Input',
   category: 'start',
-  header: { title: 'Input', icon: <ArrowDownIcon />, accent: 'blue' },
+  header: { title: 'Input', icon: <Icon icon={FiArrowDownCircle} />, accent: 'blue' },
   fields: [
     { kind: 'text', name: 'inputName', label: 'Name', defaultValue: '' },
     {
@@ -52,7 +42,7 @@ const outputDef: NodeDefinition = {
   type: 'customOutput',
   label: 'Output',
   category: 'start',
-  header: { title: 'Output', icon: <ArrowUpIcon />, accent: 'green' },
+  header: { title: 'Output', icon: <Icon icon={FiArrowUpCircle} />, accent: 'green' },
   fields: [
     { kind: 'text', name: 'outputName', label: 'Name', defaultValue: '' },
     {
@@ -70,7 +60,7 @@ const llmDef: NodeDefinition = {
   type: 'llm',
   label: 'LLM',
   category: 'ai',
-  header: { title: 'LLM', icon: <CpuIcon />, accent: 'purple' },
+  header: { title: 'LLM', icon: <Icon icon={FiCpu} />, accent: 'purple' },
   staticContent: 'Large language model node for prompt processing.',
   handles: [
     {
@@ -95,7 +85,7 @@ const conditionDef: NodeDefinition = {
   type: 'condition',
   label: 'Condition',
   category: 'logic',
-  header: { title: 'Condition', icon: <BranchIcon />, accent: 'orange' },
+  header: { title: 'Condition', icon: <Icon icon={FiGitBranch} />, accent: 'orange' },
   fields: [
     {
       kind: 'text',
@@ -134,7 +124,7 @@ const httpRequestDef: NodeDefinition = {
   type: 'httpRequest',
   label: 'HTTP Request',
   category: 'integrations',
-  header: { title: 'HTTP Request', icon: <GlobeIcon />, accent: 'teal' },
+  header: { title: 'HTTP Request', icon: <Icon icon={FiGlobe} />, accent: 'teal' },
   minWidth: 260,
   fields: [
     {
@@ -162,7 +152,7 @@ const mergeDef: NodeDefinition = {
   type: 'merge',
   label: 'Merge',
   category: 'data',
-  header: { title: 'Merge', icon: <PlusIcon />, accent: 'indigo' },
+  header: { title: 'Merge', icon: <Icon icon={FiPlusCircle} />, accent: 'indigo' },
   staticContent: 'Combines multiple inputs into one output.',
   handles: [
     { type: 'target', position: 'left', idSuffix: 'a', style: { top: '25%' }, color: 'sky' },
@@ -176,7 +166,7 @@ const noteDef: NodeDefinition = {
   type: 'note',
   label: 'Note',
   category: 'start',
-  header: { title: 'Note', icon: <EditIcon />, accent: 'gray' },
+  header: { title: 'Note', icon: <Icon icon={FiEdit3} />, accent: 'gray' },
   fields: [
     {
       kind: 'textarea',
@@ -193,7 +183,7 @@ const jsonParseDef: NodeDefinition = {
   type: 'jsonParse',
   label: 'JSON Parse',
   category: 'data',
-  header: { title: 'JSON Parse', icon: <CodeIcon />, accent: 'teal' },
+  header: { title: 'JSON Parse', icon: <Icon icon={FiCode} />, accent: 'teal' },
   fields: [
     {
       kind: 'textarea',
@@ -223,7 +213,7 @@ const textDef: NodeDefinition = {
   type: 'text',
   label: 'Text',
   category: 'start',
-  header: { title: 'Text', icon: <TypeIcon />, accent: 'purple' },
+  header: { title: 'Text', icon: <Icon icon={FiType} />, accent: 'purple' },
   className: 'vs-node--text',
   focusFallbackHeight: TEXT_NODE_MIN_HEIGHT,
   fields: [

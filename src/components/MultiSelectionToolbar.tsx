@@ -1,12 +1,9 @@
-import type { FC, SVGProps } from 'react';
 import { Panel } from 'reactflow';
 import { FiCopy, FiX } from 'react-icons/fi';
+import { Icon } from './Icon';
 import { shallow } from 'zustand/shallow';
 import { useStore } from '../store';
 import '../styles/selection-toolbar.css';
-
-const CopyIcon = FiCopy as unknown as FC<SVGProps<SVGSVGElement>>;
-const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
 
 export const MultiSelectionToolbar = () => {
   const {
@@ -37,7 +34,7 @@ export const MultiSelectionToolbar = () => {
         onClick={duplicateSelectedNodes}
         title="Duplicate selected nodes"
       >
-        <CopyIcon aria-hidden />
+        <Icon icon={FiCopy} aria-hidden />
         Duplicate
       </button>
       <button
@@ -46,7 +43,7 @@ export const MultiSelectionToolbar = () => {
         onClick={removeSelectedNodes}
         title="Delete selected nodes"
       >
-        <CloseIcon aria-hidden />
+        <Icon icon={FiX} aria-hidden />
         Delete
       </button>
       <button

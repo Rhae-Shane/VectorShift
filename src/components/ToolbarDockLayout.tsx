@@ -5,7 +5,7 @@ import {
   type ReactNode,
 } from 'react';
 import { FiPlus, FiX } from 'react-icons/fi';
-import type { FC, SVGProps } from 'react';
+import { Icon } from './Icon';
 import { DOCK_POSITION_ICONS } from './DockPositionIcons';
 import {
   TOOLBAR_DOCK_POSITIONS,
@@ -14,9 +14,6 @@ import {
   type ToolbarDockPosition,
 } from '../types/toolbarDock';
 import '../styles/dockable-toolbar.css';
-
-const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
-const PlusIcon = FiPlus as unknown as FC<SVGProps<SVGSVGElement>>;
 
 const loadToolbarVisible = (): boolean => {
   try {
@@ -124,7 +121,7 @@ export const ToolbarDockLayout = ({ renderToolbar, canvas }: ToolbarDockLayoutPr
           title="Hide node palette"
           aria-label="Hide node palette"
         >
-          <CloseIcon aria-hidden />
+          <Icon icon={FiX} aria-hidden />
         </button>
       </div>
     </aside>
@@ -152,7 +149,7 @@ export const ToolbarDockLayout = ({ renderToolbar, canvas }: ToolbarDockLayoutPr
           title="Show node palette"
           aria-label="Show node palette"
         >
-          <PlusIcon aria-hidden />
+          <Icon icon={FiPlus} aria-hidden />
         </button>
       )}
     </main>
