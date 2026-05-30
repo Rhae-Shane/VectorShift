@@ -48,6 +48,231 @@ Tests live in `/test` with a custom `jest.config.js` because Create React App on
 
 ## Architecture
 
+### System overview
+
+How the frontend, backend, and browser storage fit together.
+
+```mermaid
+flowchart TB
+  subgraph Browser["Browser"]
+    UI["React App\n(App.tsx)"]
+    RF["React Flow Canvas\n(ui.tsx)"]
+    ZS["Zustand Store\n(store.ts)"]
+    LS[("localStorage\npipeline + viewport")]
+    UI --> RF
+    RF <--> ZS
+    ZS <--> LS
+  end
+
+  subgraph Frontend["Frontend (port 3000)"]
+    UI
+    RF
+    ZS
+    PS["pipelineService.ts"]
+    UI --> PS
+  end
+
+  subgraph Backend["Backend (port 8000)"]
+    API["FastAPI\n/pipelines/parse"]
+    DAG["Kahn's algorithm\n(is_dag check)"]
+    API --> DAG
+  end
+
+  PS -->|"POST { nodes, edges }"| API
+  API -->|" { num_nodes, num_edges, is_dag } "| PS
+  PS --> RM["ResultModal"]
+```
+
+### UI component tree
+
+Layout of the main shell and where each feature lives.
+
+```mermaid
+flowchart TD
+  App["App.tsx"]
+
+  App --> Navbar["PipelineNavbar\nundo/redo · import · share · submit"]
+  App --> Dock["ToolbarDockLayout"]
+  App --> Footer["Footer hint"]
+  App --> Preview["PipelinePreview\nread-only modal canvas"]
+
+  Dock --> Toolbar["PipelineToolbar\nnode palette + search"]
+  Dock --> Canvas["PipelineUI (ui.tsx)\nReact Flow"]
+
+  Canvas --> Controls["CanvasControls\nzoom · lock · pan · fit"]
+  Canvas --> MultiSel["MultiSelectionToolbar"]
+  Canvas --> Empty["CanvasEmptyState"]
+  Canvas --> Nodes["nodeTypes\n(from nodeRegistry)"]
+  Canvas --> Edges["edgeTypes\n(DeletableEdge)"]
+
+  Navbar --> Submit["SubmitButton"]
+  Submit --> Modal["ResultModal"]
+  Navbar --> ImportM["PipelineImportModal"]
+  Navbar --> ShareM["PipelineShareModal"]
+```
+
+### User interaction flow
+
+End-to-end path from opening the app to analyzing a pipeline.
+
+```mermaid
+flowchart LR
+  A(["User opens app"]) --> B["Load pipeline\nfrom localStorage"]
+  B --> C{"Canvas empty?"}
+  C -->|Yes| D["Empty state\nor drag from toolbar"]
+  C -->|No| E["Edit existing graph"]
+  D --> F["Add nodes\n drag / click palette"]
+  E --> F
+  F --> G["Connect handles\non canvas"]
+  G --> H["Edit node fields\nstored in node.data"]
+  H --> I{"User action"}
+  I -->|Submit| J["POST /pipelines/parse"]
+  I -->|Import| K["parsePipelineImport\n→ replace store"]
+  I -->|Share| L["serializePipelineExport\n→ copy JSON"]
+  I -->|Preview| M["PipelinePreview modal"]
+  I -->|Undo/Redo| N["history stack\nin store"]
+  J --> O["ResultModal\nnodes · edges · DAG"]
+  F --> P[("Auto-save\nto localStorage")]
+  G --> P
+  H --> P
+```
+
+### Submit & backend flow
+
+Sequence for Part 4 of the assessment.
+
+```mermaid
+sequenceDiagram
+  actor User
+  participant SB as SubmitButton
+  participant Store as Zustand store
+  participant Svc as pipelineService
+  participant API as FastAPI /pipelines/parse
+  participant Modal as ResultModal
+
+  User->>SB: Click Submit
+  SB->>Store: getState() → nodes, edges
+  SB->>Svc: parsePipeline({ nodes, edges })
+  Svc->>API: POST JSON body
+  API->>API: count nodes & edges
+  API->>API: Kahn's topo sort → is_dag
+  API-->>Svc: { num_nodes, num_edges, is_dag }
+  Svc-->>SB: PipelineParseResponse
+  SB->>Modal: setResult(data)
+  Modal-->>User: Show analysis dialog
+
+  Note over API: Cycle detected when<br/>visited ≠ in_degree nodes
+  Note over SB,Modal: On fetch error →<br/>error message in modal
+```
+
+### State management
+
+What lives in Zustand and how changes propagate.
+
+```mermaid
+flowchart TB
+  subgraph Store["Zustand store (store.ts)"]
+    N["nodes[]"]
+    E["edges[]"]
+    IDs["nodeIDs{}"]
+    H["past[] / future[]\nundo/redo"]
+  end
+
+  subgraph Actions["Actions"]
+    A1["addNode / removeNode"]
+    A2["onConnect / onNodesChange / onEdgesChange"]
+    A3["updateNodeField"]
+    A4["undo / redo / importPipeline"]
+  end
+
+  subgraph Consumers["Consumers"]
+    C1["PipelineUI (React Flow)"]
+    C2["Node fields (fields.tsx)"]
+    C3["SubmitButton"]
+    C4["Import / Share modals"]
+  end
+
+  Actions --> Store
+  Store --> C1
+  Store --> C2
+  Store --> C3
+  Store --> C4
+  Store --> Persist[("persist middleware\nlocalStorage")]
+  A3 -->|"debounced"| H
+  A2 -->|"on drag start"| H
+```
+
+### Node abstraction
+
+How a new node type is declared and rendered — Part 1 core pattern.
+
+```mermaid
+flowchart TD
+  Def["NodeDefinition\n(nodeRegistry.tsx)"]
+  Def --> |"fields · handles · header"| Reg["nodeRegistry[]"]
+  Def --> |"getDynamicHandles?"| Dyn["Dynamic handles\n(e.g. Text node)"]
+  Def --> |"getError?"| Err["Inline validation\n(e.g. JSON Parse)"]
+
+  Reg --> Factory["createNodeComponent()"]
+  Factory --> Comp["PipelineNodeComponent"]
+
+  Comp --> BN["BaseNode"]
+  BN --> Hook["useNodeChrome()"]
+  BN --> NH["NodeHeader"]
+  BN --> Handles["React Flow Handles"]
+  BN --> Body["fields.tsx renderers"]
+
+  Body --> F1["TextField / SelectField"]
+  Body --> F2["TextAreaField / ToggleField"]
+  Body --> F3["GrowingTextAreaField\n(Text node only)"]
+
+  Reg --> Types["nodeTypes map"]
+  Types --> RF["React Flow canvas"]
+```
+
+**Standard node (e.g. LLM, Condition):**
+
+```mermaid
+flowchart LR
+  Config["NodeDefinition config"] --> Create["createNodeComponent"]
+  Create --> Base["BaseNode + fields"]
+  Base --> Canvas["Rendered on canvas"]
+```
+
+**Text node (Part 3 extensions):**
+
+```mermaid
+flowchart TD
+  TDef["textDef · growingTextarea field"]
+  TDef --> Live["liveText state"]
+  Live --> Size["useGrowingTextNodeSize\nauto width/height"]
+  Live --> Vars["parseTextVariables\n{{ name }}"]
+  Vars --> Handles["buildTextVariableHandles\nleft target handles"]
+  Size --> Internals["updateNodeInternals\n(handle reposition)"]
+  Handles --> Internals
+  Internals --> Base["BaseNode shell"]
+```
+
+### Text node: variable handles
+
+Detail for Part 3 — typing `{{input}}` creates input handles.
+
+```mermaid
+flowchart LR
+  Input["User types in textarea\n'Hello {{input}} and {{name}}'"]
+  Input --> Parse["parseTextVariables()"]
+  Parse --> List["['input', 'name']"]
+  List --> Build["buildTextVariableHandles()"]
+  Build --> H1["target handle: input"]
+  Build --> H2["target handle: name"]
+  Build --> Out["source handle: output\n(static, right side)"]
+  H1 & H2 & Out --> RF["React Flow node"]
+```
+
+---
+
+## Folder structure
+
 ```
 src/
 ├── App.tsx                 # Shell: navbar, dockable toolbar, canvas, preview
@@ -70,13 +295,6 @@ src/
 └── components/             # Navbar, modals, canvas controls, Icon wrapper
 test/                         # Unit & component tests
 ```
-
-### Data flow
-
-1. **Toolbar** — drag or click to add nodes; definitions come from `nodeRegistry`.
-2. **Canvas** — React Flow renders `nodeTypes` / `edgeTypes`; Zustand holds `nodes` and `edges`.
-3. **Nodes** — most types are config-only (`NodeDefinition` → `createNodeComponent` → `BaseNode`). The Text node uses a `growingTextarea` field and `getDynamicHandles()` for auto-resize and `{{var}}` inputs.
-4. **Submit** — `parsePipeline()` POSTs `{ nodes, edges }` to `/pipelines/parse`; results show in `ResultModal`.
 
 ### Key patterns
 
@@ -102,7 +320,11 @@ test/                         # Unit & component tests
 
 ## Assessment coverage
 
-- **Part 1** — Node abstraction + 5 custom nodes (Condition, HTTP Request, Merge, Note, JSON Parse)
-- **Part 2** — Unified styling (VectorShift-inspired tokens and layout)
-- **Part 3** — Text node auto-resize + `{{variable}}` handles
-- **Part 4** — Submit integration with FastAPI `/pipelines/parse`
+| Part | Feature | Implementation |
+|------|---------|----------------|
+| **1** | Node abstraction | `NodeDefinition` → `createNodeComponent` → `BaseNode` |
+| **1** | 5 custom nodes | Condition, HTTP Request, Merge, Note, JSON Parse |
+| **2** | Styling | `styles/theme.css` + component CSS, VectorShift-inspired UI |
+| **3** | Text auto-resize | `GrowingTextAreaField` + `useGrowingTextNodeSize` |
+| **3** | `{{variable}}` handles | `parseTextVariables` + `getDynamicHandles` |
+| **4** | Backend integration | `pipelineService` → `/pipelines/parse` → `ResultModal` |
