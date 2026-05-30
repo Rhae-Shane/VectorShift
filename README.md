@@ -1,70 +1,108 @@
-# Getting Started with Create React App
+# VectorFlow — Pipeline Builder (Frontend)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React + TypeScript visual pipeline editor built for the VectorShift frontend assessment. Drag nodes onto a canvas, connect handles, and submit the graph to a FastAPI backend for node/edge counts and DAG validation.
 
-## Available Scripts
+## Setup
 
-In the project directory, you can run:
+### Frontend
 
-### `npm start`
+```bash
+cd frontend
+npm install
+npm start
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+App runs at [http://localhost:3000](http://localhost:3000).
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Optional env:
 
-### `npm test`
+```bash
+# defaults to http://127.0.0.1:8000
+REACT_APP_API_URL=http://127.0.0.1:8000
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Backend (required for Submit)
 
-### `npm run build`
+From the repo root:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+API runs at [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Scripts
 
-### `npm run eject`
+| Command | Description |
+|---------|-------------|
+| `npm start` | Dev server |
+| `npm run build` | Production build |
+| `npm test` | Jest (watch mode) |
+| `npm run test:ci` | Jest (single run, CI) |
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Tests live in `/test` with a custom `jest.config.js` because Create React App only discovers tests under `/src` by default.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Architecture
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```
+src/
+├── App.tsx                 # Shell: navbar, dockable toolbar, canvas, preview
+├── ui.tsx                  # React Flow canvas (nodes, edges, controls)
+├── store.ts                # Zustand pipeline state + undo/redo + persistence
+├── submit.tsx              # Submit button → backend parse endpoint
+├── nodes/
+│   ├── nodeRegistry.tsx    # Declarative node definitions (9 types)
+│   ├── createNode.tsx      # NodeDefinition → React component factory
+│   ├── BaseNode.tsx        # Shared node shell (handles, body, collapse)
+│   ├── NodeHeader.tsx      # Toolbar actions (duplicate, collapse, delete)
+│   └── fields.tsx          # Reusable field components (+ growing textarea)
+├── hooks/
+│   ├── useNodeChrome.ts    # Shared header/toolbar behavior
+│   └── useGrowingTextNodeSize.ts
+├── utils/
+│   ├── textVariables.ts    # {{variable}} parsing + dynamic handles
+│   └── pipelineImportExport.ts
+├── services/pipelineService.ts
+└── components/             # Navbar, modals, canvas controls, Icon wrapper
+test/                         # Unit & component tests
+```
 
-## Learn More
+### Data flow
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. **Toolbar** — drag or click to add nodes; definitions come from `nodeRegistry`.
+2. **Canvas** — React Flow renders `nodeTypes` / `edgeTypes`; Zustand holds `nodes` and `edges`.
+3. **Nodes** — most types are config-only (`NodeDefinition` → `createNodeComponent` → `BaseNode`). The Text node uses a `growingTextarea` field and `getDynamicHandles()` for auto-resize and `{{var}}` inputs.
+4. **Submit** — `parsePipeline()` POSTs `{ nodes, edges }` to `/pipelines/parse`; results show in `ResultModal`.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Key patterns
 
-### Code Splitting
+- **Node abstraction** — add a node by adding a `NodeDefinition` (fields, handles, optional `getDynamicHandles`, `getError`) instead of copying a component.
+- **Shared chrome** — `useNodeChrome` + `NodeHeader` centralize duplicate/delete/collapse and canvas focus.
+- **Icons** — `<Icon icon={FiX} />` wraps react-icons with one internal type cast.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## Tradeoffs
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+| Choice | Why | Cost |
+|--------|-----|------|
+| **Config-driven nodes** | Fast to add nodes; styles stay consistent | Text node needs extra hooks (`growingTextarea`, dynamic handles) beyond plain fields |
+| **Zustand + persist** | Simple global state, survives refresh | Large pipelines increase localStorage payload |
+| **Modal vs `alert` for submit** | Better UX for errors and DAG status | Slightly deviates from bare assessment spec |
+| **Extra features** (undo/redo, import/export, preview, dock toolbar) | Demonstrates product thinking | More surface area than a minimal take-home |
+| **CRA + custom Jest config** | No eject; tests in `/test` folder | Two test setups (`react-scripts` vs `jest.config.js`) |
+| **CSS modules avoided** | Shared theme tokens in `styles/theme.css` | Global class names (`vs-*`) require naming discipline |
+| **Backend DAG check on edges only** | Matches provided API shape | Isolated nodes with no edges still count as a valid DAG |
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Assessment coverage
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **Part 1** — Node abstraction + 5 custom nodes (Condition, HTTP Request, Merge, Note, JSON Parse)
+- **Part 2** — Unified styling (VectorShift-inspired tokens and layout)
+- **Part 3** — Text node auto-resize + `{{variable}}` handles
+- **Part 4** — Submit integration with FastAPI `/pipelines/parse`
