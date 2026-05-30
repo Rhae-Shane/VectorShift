@@ -1,12 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="VectorFlow">
-  <rect width="32" height="32" rx="7" fill="#2563eb"/>
+  <rect width="32" height="32" rx="4" fill="#2563eb"/>
   <text
     x="16"
-    y="21"
+    y="16.5"
     font-family="Inter, Segoe UI, Arial, sans-serif"
-    font-size="12"
-    font-weight="700"
+    font-size="20"
+    font-weight="600"
     fill="#ffffff"
     text-anchor="middle"
+    dominant-baseline="middle"
   >VF</text>
 </svg>
