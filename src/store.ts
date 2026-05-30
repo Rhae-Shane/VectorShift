@@ -50,6 +50,10 @@ export interface StoreState {
   pushHistory: () => void;
   undo: () => void;
   redo: () => void;
+  duplicateSelectedNodes: () => void;
+  removeSelectedNodes: () => void;
+  selectAllNodes: () => void;
+  clearNodeSelection: () => void;
 }
 
 const emptyPipeline: PersistedPipelineSlice = {
@@ -205,13 +209,32 @@ export const useStore = create<StoreState>()(
       },
 
       onNodesChange: (changes) => {
-        if (changes.some((change) => change.type === 'remove')) {
+        const removedIds = changes
+          .filter((change): change is NodeChange & { type: 'remove'; id: string } =>
+            change.type === 'remove'
+          )
+          .map((change) => change.id);
+
+        if (removedIds.length > 0) {
           get().pushHistory();
         }
 
-        set({
-          nodes: applyNodeChanges(changes, get().nodes),
-        });
+        const removedSet = new Set(removedIds);
+        const nextNodes = applyNodeChanges(changes, get().nodes);
+
+        if (removedSet.size > 0) {
+          set({
+            nodes: nextNodes,
+            edges: get().edges.filter(
+              (edge) =>
+                !removedSet.has(edge.source) && !removedSet.has(edge.target)
+            ),
+            pendingDeleteEdgeId: null,
+          });
+          return;
+        }
+
+        set({ nodes: nextNodes });
       },
 
       onEdgesChange: (changes) => {
@@ -259,6 +282,71 @@ export const useStore = create<StoreState>()(
       clearPipeline: () => {
         get().pushHistory();
         set({ ...emptyPipeline, pendingDeleteEdgeId: null });
+      },
+
+      duplicateSelectedNodes: () => {
+        const selected = get().nodes.filter((node) => node.selected);
+        if (selected.length === 0) return;
+
+        get().pushHistory();
+
+        const newNodes = selected.map((node) => {
+          const type = node.type || 'customInput';
+          const newId = get().getNodeID(type);
+          return {
+            ...node,
+            id: newId,
+            position: {
+              x: node.position.x + 48,
+              y: node.position.y + 48,
+            },
+            data: {
+              ...node.data,
+              id: newId,
+            },
+            selected: true,
+          } satisfies PipelineNode;
+        });
+
+        set({
+          nodes: [
+            ...get().nodes.map((node) => ({ ...node, selected: false })),
+            ...newNodes,
+          ],
+        });
+      },
+
+      removeSelectedNodes: () => {
+        const selectedIds = new Set(
+          get()
+            .nodes.filter((node) => node.selected)
+            .map((node) => node.id)
+        );
+        if (selectedIds.size === 0) return;
+
+        get().pushHistory();
+        set({
+          nodes: get().nodes.filter((node) => !selectedIds.has(node.id)),
+          edges: get().edges.filter(
+            (edge) =>
+              !selectedIds.has(edge.source) && !selectedIds.has(edge.target)
+          ),
+          pendingDeleteEdgeId: null,
+        });
+      },
+
+      selectAllNodes: () => {
+        if (get().nodes.length === 0) return;
+        set({
+          nodes: get().nodes.map((node) => ({ ...node, selected: true })),
+        });
+      },
+
+      clearNodeSelection: () => {
+        if (!get().nodes.some((node) => node.selected)) return;
+        set({
+          nodes: get().nodes.map((node) => ({ ...node, selected: false })),
+        });
       },
     }),
     {
