@@ -290,9 +290,9 @@ export const PipelineUI = () => {
         onMoveEnd={onMoveEnd}
       >
         <Background
-          color="#d1d5db"
+          color="var(--vs-canvas-dot)"
           gap={gridSize}
-          size={1}
+          size={1.5}
           variant={BackgroundVariant.Dots}
         />
 
