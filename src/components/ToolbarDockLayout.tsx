@@ -6,16 +6,37 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react';
-import { FiMove } from 'react-icons/fi';
+import { FiMove, FiPlus, FiX } from 'react-icons/fi';
 import type { FC, SVGProps } from 'react';
 import {
   TOOLBAR_DOCK_POSITIONS,
   TOOLBAR_DOCK_STORAGE_KEY,
+  TOOLBAR_VISIBLE_STORAGE_KEY,
   type ToolbarDockPosition,
 } from '../types/toolbarDock';
 import '../styles/dockable-toolbar.css';
 
 const GripIcon = FiMove as unknown as FC<SVGProps<SVGSVGElement>>;
+const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
+const PlusIcon = FiPlus as unknown as FC<SVGProps<SVGSVGElement>>;
+
+const loadToolbarVisible = (): boolean => {
+  try {
+    const stored = localStorage.getItem(TOOLBAR_VISIBLE_STORAGE_KEY);
+    if (stored === 'false') return false;
+  } catch {
+    /* ignore */
+  }
+  return true;
+};
+
+const persistToolbarVisible = (visible: boolean) => {
+  try {
+    localStorage.setItem(TOOLBAR_VISIBLE_STORAGE_KEY, String(visible));
+  } catch {
+    /* ignore */
+  }
+};
 
 const loadDockPosition = (): ToolbarDockPosition => {
   try {
@@ -45,8 +66,19 @@ interface ToolbarDockLayoutProps {
 export const ToolbarDockLayout = ({ renderToolbar, canvas }: ToolbarDockLayoutProps) => {
   const mainRef = useRef<HTMLElement>(null);
   const [position, setPosition] = useState<ToolbarDockPosition>(loadDockPosition);
+  const [isToolbarVisible, setIsToolbarVisible] = useState(loadToolbarVisible);
   const [isDragging, setIsDragging] = useState(false);
   const [hoverZone, setHoverZone] = useState<ToolbarDockPosition | null>(null);
+
+  const hideToolbar = useCallback(() => {
+    setIsToolbarVisible(false);
+    persistToolbarVisible(false);
+  }, []);
+
+  const showToolbar = useCallback(() => {
+    setIsToolbarVisible(true);
+    persistToolbarVisible(true);
+  }, []);
 
   const applyPosition = useCallback((next: ToolbarDockPosition) => {
     setPosition(next);
@@ -148,6 +180,15 @@ export const ToolbarDockLayout = ({ renderToolbar, canvas }: ToolbarDockLayoutPr
         <GripIcon aria-hidden />
       </button>
       <div className="vs-dock-toolbar__content">{renderToolbar(position)}</div>
+      <button
+        type="button"
+        className="vs-dock-toolbar__close"
+        onClick={hideToolbar}
+        title="Hide node palette"
+        aria-label="Hide node palette"
+      >
+        <CloseIcon aria-hidden />
+      </button>
     </aside>
   );
 
@@ -157,11 +198,25 @@ export const ToolbarDockLayout = ({ renderToolbar, canvas }: ToolbarDockLayoutPr
   return (
     <main
       ref={mainRef}
-      className={`vs-main vs-main--dock-${position}${isDragging ? ' vs-main--dock-dragging' : ''}`}
+      className={`vs-main vs-main--dock-${position}${
+        isDragging ? ' vs-main--dock-dragging' : ''
+      }${!isToolbarVisible ? ' vs-main--toolbar-hidden' : ''}`}
     >
-      {toolbarFirst && dockToolbar}
+      {isToolbarVisible && toolbarFirst && dockToolbar}
       <div className="vs-main__canvas-wrap">{canvas}</div>
-      {!toolbarFirst && dockToolbar}
+      {isToolbarVisible && !toolbarFirst && dockToolbar}
+
+      {!isToolbarVisible && (
+        <button
+          type="button"
+          className={`vs-dock-toolbar__restore vs-dock-toolbar__restore--${position}`}
+          onClick={showToolbar}
+          title="Show node palette"
+          aria-label="Show node palette"
+        >
+          <PlusIcon aria-hidden />
+        </button>
+      )}
 
       {isDragging && (
         <div className="vs-dock-overlay" aria-hidden>

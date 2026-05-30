@@ -104,34 +104,37 @@
   padding: 0;
   margin: 0;
   border: none;
-  background: #f3f4f6;
-  color: #9ca3af;
+  background: var(--vs-toolbar-gradient);
+  color: #ffffff;
   cursor: grab;
   touch-action: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
   transition:
-    background 0.15s ease,
-    color 0.15s ease;
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
 }
 
 .vs-dock-toolbar__handle:hover {
-  background: #e5e7eb;
-  color: #6366f1;
+  background: var(--vs-toolbar-gradient-hover);
+  filter: brightness(1.03);
 }
 
 .vs-dock-toolbar__handle:active {
   cursor: grabbing;
-  color: #4f46e5;
+  background: var(--vs-toolbar-gradient-active);
+  filter: brightness(0.96);
 }
 
 .vs-dock-toolbar--top .vs-dock-toolbar__handle,
 .vs-dock-toolbar--bottom .vs-dock-toolbar__handle {
   width: 28px;
   min-height: 100%;
-  border-right: 1px solid var(--vs-border);
+  border-right: 1px solid var(--vs-toolbar-border-purple);
 }
 
 .vs-dock-toolbar--bottom .vs-dock-toolbar__handle {
-  border-right: 1px solid var(--vs-border);
+  border-right: 1px solid var(--vs-toolbar-border-purple);
   border-left: none;
 }
 
@@ -139,7 +142,7 @@
 .vs-dock-toolbar--right .vs-dock-toolbar__handle {
   height: 28px;
   width: 100%;
-  border-bottom: 1px solid var(--vs-border);
+  border-bottom: 1px solid var(--vs-toolbar-border-purple);
 }
 
 .vs-dock-toolbar__handle svg {
@@ -157,6 +160,124 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+}
+
+.vs-dock-toolbar__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: var(--vs-toolbar-close-gradient);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  transition:
+    background 0.2s ease,
+    filter 0.2s ease;
+}
+
+.vs-dock-toolbar__close:hover {
+  background: var(--vs-toolbar-close-gradient-hover);
+  filter: brightness(1.04);
+}
+
+.vs-dock-toolbar--top .vs-dock-toolbar__close,
+.vs-dock-toolbar--bottom .vs-dock-toolbar__close {
+  width: 28px;
+  min-height: 100%;
+  border-left: 1px solid var(--vs-toolbar-border-red);
+}
+
+.vs-dock-toolbar--left .vs-dock-toolbar__close,
+.vs-dock-toolbar--right .vs-dock-toolbar__close {
+  height: 28px;
+  width: 100%;
+  border-top: 1px solid var(--vs-toolbar-border-red);
+}
+
+.vs-dock-toolbar__close svg {
+  width: 14px;
+  height: 14px;
+}
+
+.vs-dock-toolbar__restore {
+  position: absolute;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--vs-toolbar-border-purple);
+  border-radius: var(--vs-radius-sm);
+  background: var(--vs-toolbar-gradient);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow:
+    var(--vs-toolbar-shadow-purple),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease,
+    filter 0.2s ease;
+}
+
+.vs-dock-toolbar__restore:hover {
+  background: var(--vs-toolbar-gradient-hover);
+  border-color: #4c1d95;
+  box-shadow:
+    var(--vs-toolbar-shadow-purple-hover),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  filter: brightness(1.04);
+  transform: scale(1.05);
+}
+
+.vs-dock-toolbar__restore svg {
+  width: 16px;
+  height: 16px;
+}
+
+.vs-dock-toolbar__restore--top {
+  top: 10px;
+  left: 10px;
+}
+
+.vs-dock-toolbar__restore--bottom {
+  bottom: 10px;
+  left: 10px;
+}
+
+.vs-dock-toolbar__restore--left {
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+}
+
+.vs-dock-toolbar__restore--left:hover {
+  transform: translateY(-50%) scale(1.05);
+}
+
+.vs-dock-toolbar__restore--right {
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+}
+
+.vs-dock-toolbar__restore--right:hover {
+  transform: translateY(-50%) scale(1.05);
+}
+
+.vs-main--toolbar-hidden.vs-main--dock-top .vs-main__canvas-wrap > .vs-canvas,
+.vs-main--toolbar-hidden.vs-main--dock-bottom .vs-main__canvas-wrap > .vs-canvas,
+.vs-main--toolbar-hidden.vs-main--dock-left .vs-main__canvas-wrap > .vs-canvas,
+.vs-main--toolbar-hidden.vs-main--dock-right .vs-main__canvas-wrap > .vs-canvas {
+  border-radius: var(--vs-app-radius);
 }
 
 .vs-dock-toolbar__content > .vs-palette {

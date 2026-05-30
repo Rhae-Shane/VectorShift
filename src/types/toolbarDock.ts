@@ -1,6 +1,7 @@
 export type ToolbarDockPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export const TOOLBAR_DOCK_STORAGE_KEY = 'vs-toolbar-dock';
+export const TOOLBAR_VISIBLE_STORAGE_KEY = 'vs-toolbar-visible';
 
 export const TOOLBAR_DOCK_POSITIONS: ToolbarDockPosition[] = [
   'top',

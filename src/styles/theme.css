@@ -49,6 +49,17 @@
   --vs-app-pad: 8px;
   --vs-app-radius: 8px;
 
+  /* Dock toolbar control gradients */
+  --vs-toolbar-gradient: linear-gradient(145deg, #9333ea 0%, #6366f1 52%, #2563eb 100%);
+  --vs-toolbar-gradient-hover: linear-gradient(145deg, #7c3aed 0%, #4f46e5 52%, #1d4ed8 100%);
+  --vs-toolbar-gradient-active: linear-gradient(145deg, #6d28d9 0%, #4338ca 52%, #1e40af 100%);
+  --vs-toolbar-close-gradient: linear-gradient(145deg, #f43f5e 0%, #ef4444 55%, #dc2626 100%);
+  --vs-toolbar-close-gradient-hover: linear-gradient(145deg, #e11d48 0%, #dc2626 55%, #b91c1c 100%);
+  --vs-toolbar-border-purple: #5b21b6;
+  --vs-toolbar-border-red: #991b1b;
+  --vs-toolbar-shadow-purple: 0 2px 8px rgba(91, 33, 182, 0.38);
+  --vs-toolbar-shadow-purple-hover: 0 4px 12px rgba(79, 70, 229, 0.45);
+
 }
 
 *,
@@ -72,11 +83,39 @@ body {
   border: 2px solid #ffffff !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
   z-index: 10;
-  transition: transform 0.1s ease !important;
+  transition: box-shadow 0.1s ease !important;
+}
+
+/* Preserve React Flow centering transforms — do not replace with scale(). */
+.react-flow__handle-left.vs-handle {
+  transform: translate(-50%, -50%) !important;
+}
+
+.react-flow__handle-right.vs-handle {
+  transform: translate(50%, -50%) !important;
+}
+
+.react-flow__handle-top.vs-handle {
+  transform: translate(-50%, -50%) !important;
+}
+
+.react-flow__handle-bottom.vs-handle {
+  transform: translate(-50%, 50%) !important;
 }
 
 .react-flow__handle:hover {
-  transform: scale(1.2) !important;
+  box-shadow:
+    0 0 0 3px rgba(56, 189, 248, 0.28),
+    0 1px 2px rgba(0, 0, 0, 0.12) !important;
+}
+
+.react-flow__handle.connecting,
+.react-flow__handle.valid,
+.react-flow__handle.connectingfrom,
+.react-flow__handle.connectingto {
+  box-shadow:
+    0 0 0 3px rgba(56, 189, 248, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.12) !important;
 }
 
 .react-flow__handle.vs-handle--sky {
@@ -100,6 +139,19 @@ body {
   stroke: #9ca3af;
   stroke-width: 2;
   transition: stroke 0.15s ease, stroke-width 0.15s ease;
+}
+
+.vs-connection-line path {
+  stroke: #9ca3af;
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  animation: vs-connection-flow 0.45s linear infinite;
+}
+
+@keyframes vs-connection-flow {
+  to {
+    stroke-dashoffset: -10;
+  }
 }
 
 .react-flow__edge.vs-edge--pending-delete .react-flow__edge-path {
