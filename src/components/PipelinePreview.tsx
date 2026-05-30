@@ -6,7 +6,7 @@ import ReactFlow, {
   type ReactFlowInstance,
 } from 'reactflow';
 import { FiX } from 'react-icons/fi';
-import type { FC, SVGProps } from 'react';
+import { Icon } from './Icon';
 import { shallow } from 'zustand/shallow';
 import { useStore } from '../store';
 import { nodeTypes } from '../nodes/nodeRegistry';
@@ -22,7 +22,6 @@ import '../styles/pipeline-preview.css';
 
 const gridSize = 20;
 const proOptions = { hideAttribution: true };
-const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
 
 export const PipelinePreview = () => {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -112,7 +111,7 @@ export const PipelinePreview = () => {
             aria-label="Exit preview"
             title="Exit preview (Esc)"
           >
-            <CloseIcon aria-hidden />
+            <Icon icon={FiX} aria-hidden />
           </button>
         </div>
 

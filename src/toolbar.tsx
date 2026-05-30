@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 import { FiSearch } from 'react-icons/fi';
-import type { FC, SVGProps } from 'react';
+import { Icon } from './components/Icon';
 import { DraggableNode } from './draggableNode';
 import { nodeRegistry } from './nodes/nodeRegistry';
 import type { NodeRegistryEntry } from './types/nodes';
@@ -8,8 +8,6 @@ import { requestAddNodeAtViewport } from './utils/canvasEvents';
 import { isVerticalToolbarDock } from './types/toolbarDock';
 import type { ToolbarDockPosition } from './types/toolbarDock';
 import './styles/toolbar.css';
-
-const SearchIcon = FiSearch as unknown as FC<SVGProps<SVGSVGElement>>;
 
 type CategoryId = 'start' | 'integrations' | 'logic' | 'data' | 'ai' | 'chat';
 
@@ -149,7 +147,7 @@ export const PipelineToolbar = ({ dockPosition = 'top' }: PipelineToolbarProps) 
           <div
             className={`vs-palette__search-field ${searchFocused ? 'vs-palette__search-field--focused' : ''}`}
           >
-            <SearchIcon className="vs-palette__search-icon" aria-hidden />
+            <Icon icon={FiSearch} className="vs-palette__search-icon" aria-hidden />
             <input
               type="search"
               className="vs-palette__search nodrag"

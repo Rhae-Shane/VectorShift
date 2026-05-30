@@ -1,12 +1,7 @@
 import type { ReactNode } from 'react';
 import { FiChevronDown, FiChevronUp, FiCopy, FiX } from 'react-icons/fi';
-import type { FC, SVGProps } from 'react';
+import { Icon } from '../components/Icon';
 import type { UseNodeChromeResult } from '../hooks/useNodeChrome';
-
-const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
-const CopyIcon = FiCopy as unknown as FC<SVGProps<SVGSVGElement>>;
-const ChevronDownIcon = FiChevronDown as unknown as FC<SVGProps<SVGSVGElement>>;
-const ChevronUpIcon = FiChevronUp as unknown as FC<SVGProps<SVGSVGElement>>;
 
 export interface NodeHeaderProps {
   title: string;
@@ -46,7 +41,7 @@ export const NodeHeader = ({ title, icon, chrome }: NodeHeaderProps) => {
           aria-label="Duplicate node"
           {...bindHoverTip('duplicate')}
         >
-          <CopyIcon style={{ width: 14, height: 14 }} />
+          <Icon icon={FiCopy} size={14} />
         </button>
         <button
           type="button"
@@ -55,11 +50,7 @@ export const NodeHeader = ({ title, icon, chrome }: NodeHeaderProps) => {
           aria-label={collapsed ? 'Expand node' : 'Collapse node'}
           {...bindHoverTip('collapse')}
         >
-          {collapsed ? (
-            <ChevronDownIcon style={{ width: 14, height: 14 }} />
-          ) : (
-            <ChevronUpIcon style={{ width: 14, height: 14 }} />
-          )}
+          <Icon icon={collapsed ? FiChevronDown : FiChevronUp} size={14} />
         </button>
         <button
           type="button"
@@ -68,7 +59,7 @@ export const NodeHeader = ({ title, icon, chrome }: NodeHeaderProps) => {
           aria-label={confirmDelete ? 'Confirm delete node' : 'Delete node'}
           {...bindHoverTip('delete')}
         >
-          <CloseIcon style={{ width: 14, height: 14 }} />
+          <Icon icon={FiX} size={14} />
         </button>
       </div>
     </div>
