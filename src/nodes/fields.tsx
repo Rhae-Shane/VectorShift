@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type RefObject } from 'react';
 import { useStore } from '../store';
 import type { PipelineNodeData } from '../types/nodes';
 
@@ -178,3 +178,56 @@ export const ToggleField = ({
 export const StaticContent = ({ content }: { content: string }) => (
   <p className="vs-node__static">{content}</p>
 );
+
+export interface GrowingTextAreaFieldProps extends FieldBaseProps {
+  placeholder?: string;
+  defaultValue?: string;
+  textareaRef?: RefObject<HTMLTextAreaElement>;
+  measureRef?: RefObject<HTMLSpanElement>;
+  onTextChange?: (text: string) => void;
+}
+
+export const GrowingTextAreaField = ({
+  nodeId,
+  data,
+  name,
+  label,
+  placeholder,
+  defaultValue = '',
+  textareaRef,
+  measureRef,
+  onTextChange,
+}: GrowingTextAreaFieldProps) => {
+  const [value, setValue] = useSyncedField(
+    nodeId,
+    name,
+    defaultValue,
+    data
+  );
+
+  const handleChange = (next: string) => {
+    setValue(next);
+    onTextChange?.(next);
+  };
+
+  return (
+    <>
+      <div className="vs-field">
+        <label className="vs-field__label">{label}</label>
+        <textarea
+          ref={textareaRef}
+          className="vs-field__textarea vs-field__textarea--grow"
+          value={String(value)}
+          placeholder={placeholder}
+          rows={1}
+          style={{ height: 'auto' }}
+          onChange={(e) => handleChange(e.target.value)}
+          onMouseDown={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+          onWheel={(e) => e.stopPropagation()}
+        />
+      </div>
+      <span ref={measureRef} className="vs-text-measure" aria-hidden="true" />
+    </>
+  );
+};

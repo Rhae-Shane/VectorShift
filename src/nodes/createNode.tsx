@@ -1,4 +1,5 @@
-import type { NodeProps } from 'reactflow';
+import { useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react';
+import { useUpdateNodeInternals, type NodeProps } from 'reactflow';
 import { BaseNode } from './BaseNode';
 import {
   TextField,
@@ -6,7 +7,14 @@ import {
   TextAreaField,
   ToggleField,
   StaticContent,
+  GrowingTextAreaField,
 } from './fields';
+import { useGrowingTextNodeSize } from '../hooks/useGrowingTextNodeSize';
+import {
+  TEXT_NODE_MAX_HEIGHT,
+  TEXT_NODE_MAX_WIDTH,
+  TEXT_NODE_MIN_WIDTH,
+} from '../constants/nodeLayout';
 import type {
   FieldConfig,
   NodeDefinition,
@@ -17,7 +25,12 @@ import type {
 const renderField = (
   field: FieldConfig,
   nodeId: string,
-  data: PipelineNodeData
+  data: PipelineNodeData,
+  growingTextRefs?: {
+    textareaRef: RefObject<HTMLTextAreaElement>;
+    measureRef: RefObject<HTMLSpanElement>;
+    onTextChange?: (text: string) => void;
+  }
 ) => {
   const base = { nodeId, data, name: field.name, label: field.label };
 
@@ -58,6 +71,18 @@ const renderField = (
           defaultValue={field.defaultValue}
         />
       );
+    case 'growingTextarea':
+      return (
+        <GrowingTextAreaField
+          key={field.name}
+          {...base}
+          placeholder={field.placeholder}
+          defaultValue={field.defaultValue}
+          textareaRef={growingTextRefs?.textareaRef}
+          measureRef={growingTextRefs?.measureRef}
+          onTextChange={growingTextRefs?.onTextChange}
+        />
+      );
     default:
       return null;
   }
@@ -66,6 +91,10 @@ const renderField = (
 export const createNodeComponent = (
   definition: NodeDefinition
 ): PipelineNodeComponent => {
+  const growingTextField = definition.fields?.find(
+    (field) => field.kind === 'growingTextarea'
+  );
+
   const NodeComponent = ({ id, data, selected }: NodeProps<PipelineNodeData>) => {
     const {
       header,
@@ -73,10 +102,66 @@ export const createNodeComponent = (
       handles = [],
       staticContent,
       minWidth,
+      className,
+      focusFallbackHeight,
       getError,
+      getDynamicHandles,
     } = definition;
 
+    const [collapsed, setCollapsed] = useState(false);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const measureRef = useRef<HTMLSpanElement>(null);
+    const updateNodeInternals = useUpdateNodeInternals();
+
+    const syncedTextValue = growingTextField
+      ? String(data[growingTextField.name] ?? growingTextField.defaultValue ?? '')
+      : '';
+
+    const [liveText, setLiveText] = useState(syncedTextValue);
+
+    useLayoutEffect(() => {
+      setLiveText(syncedTextValue);
+    }, [id, syncedTextValue]);
+
+    const size = useGrowingTextNodeSize(
+      liveText,
+      collapsed,
+      textareaRef,
+      measureRef
+    );
+
+    const handleData = useMemo(() => {
+      if (!growingTextField) return data as Record<string, unknown>;
+      return { ...data, [growingTextField.name]: liveText };
+    }, [data, liveText]);
+
+    const dynamicHandles = useMemo(
+      () => getDynamicHandles?.(handleData) ?? [],
+      [handleData, getDynamicHandles]
+    );
+    const mergedHandles = useMemo(
+      () => [...dynamicHandles, ...handles],
+      [dynamicHandles, handles]
+    );
+
     const error = getError?.(data as Record<string, unknown>) ?? null;
+
+    const growingTextStyle = growingTextField
+      ? {
+          width: size.width,
+          minWidth: TEXT_NODE_MIN_WIDTH,
+          maxWidth: TEXT_NODE_MAX_WIDTH,
+          minHeight: collapsed ? undefined : size.height,
+          maxHeight: collapsed ? undefined : TEXT_NODE_MAX_HEIGHT,
+        }
+      : undefined;
+
+    const handleKey = mergedHandles.map((handle) => handle.idSuffix).join('|');
+
+    useLayoutEffect(() => {
+      if (!growingTextField) return;
+      updateNodeInternals(id);
+    }, [id, size.width, size.height, collapsed, handleKey, updateNodeInternals]);
 
     return (
       <BaseNode
@@ -84,13 +169,30 @@ export const createNodeComponent = (
         title={header.title}
         icon={header.icon}
         accent={header.accent ?? 'purple'}
-        handles={handles}
+        handles={mergedHandles}
         minWidth={minWidth}
+        className={className}
+        style={growingTextStyle}
+        focusFallbackHeight={focusFallbackHeight}
         error={error}
         selected={selected}
+        onCollapsedChange={setCollapsed}
       >
         {staticContent && <StaticContent content={staticContent} />}
-        {fields.map((field) => renderField(field, id, data))}
+        {fields.map((field) =>
+          renderField(
+            field,
+            id,
+            data,
+            growingTextField
+              ? {
+                  textareaRef,
+                  measureRef,
+                  onTextChange: setLiveText,
+                }
+              : undefined
+          )
+        )}
       </BaseNode>
     );
   };
