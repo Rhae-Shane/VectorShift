@@ -179,4 +179,65 @@
   padding: 0.75rem 1.25rem 1.25rem;
   display: flex;
   justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.vs-modal--import {
+  max-width: 560px;
+}
+
+.vs-import-modal__hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--vs-text-muted);
+  line-height: 1.45;
+}
+
+.vs-import-modal__textarea {
+  display: block;
+  width: 100%;
+  min-height: 220px;
+  padding: 0.75rem;
+  border: 1px solid var(--vs-border-dark);
+  border-radius: var(--vs-radius-sm);
+  background: #fff;
+  color: var(--vs-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.vs-import-modal__textarea:focus {
+  outline: none;
+  border-color: var(--vs-purple);
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15);
+}
+
+.vs-import-modal__textarea--readonly {
+  cursor: text;
+  background: #f9fafb;
+}
+
+.vs-share-modal__steps {
+  margin-bottom: 0.75rem;
+}
+
+.vs-share-modal__list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  font-size: 0.8125rem;
+  color: var(--vs-text-muted);
+  line-height: 1.55;
+}
+
+.vs-share-modal__list li + li {
+  margin-top: 0.35rem;
+}
+
+.vs-share-modal__meta {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--vs-text-muted);
 }

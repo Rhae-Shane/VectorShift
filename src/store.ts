@@ -22,6 +22,7 @@ import {
   PIPELINE_STORAGE_KEY,
   type PersistedPipelineSlice,
 } from './utils/pipelinePersistence';
+import { parsePipelineImport } from './utils/pipelineImportExport';
 
 export type PipelineNode = Node<PipelineNodeData>;
 
@@ -54,6 +55,7 @@ export interface StoreState {
   removeSelectedNodes: () => void;
   selectAllNodes: () => void;
   clearNodeSelection: () => void;
+  importPipeline: (raw: string) => string | null;
 }
 
 const emptyPipeline: PersistedPipelineSlice = {
@@ -347,6 +349,19 @@ export const useStore = create<StoreState>()(
         set({
           nodes: get().nodes.map((node) => ({ ...node, selected: false })),
         });
+      },
+
+      importPipeline: (raw) => {
+        const parsed = parsePipelineImport(raw);
+        if (!parsed.ok) return parsed.error;
+
+        get().pushHistory();
+        set({
+          ...clonePipelineSlice(parsed.pipeline),
+          pendingDeleteEdgeId: null,
+          future: [],
+        });
+        return null;
       },
     }),
     {

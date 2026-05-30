@@ -1,12 +1,10 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import type { FC, SVGProps } from 'react';
 import {
-  FiCode,
   FiCornerUpLeft,
   FiCornerUpRight,
   FiMoreHorizontal,
   FiPlay,
-  FiHash,
 } from 'react-icons/fi';
 import { SubmitButton } from '../submit';
 import {
@@ -15,13 +13,13 @@ import {
   selectCanRedo,
 } from '../store';
 import { openCanvasPreview } from '../utils/canvasEvents';
+import { PipelineImportModal } from './PipelineImportModal';
+import { PipelineShareModal } from './PipelineShareModal';
 import '../styles/navbar.css';
 
 const DotsIcon = FiMoreHorizontal as unknown as FC<SVGProps<SVGSVGElement>>;
 const UndoIcon = FiCornerUpLeft as unknown as FC<SVGProps<SVGSVGElement>>;
 const RedoIcon = FiCornerUpRight as unknown as FC<SVGProps<SVGSVGElement>>;
-const CodeIcon = FiCode as unknown as FC<SVGProps<SVGSVGElement>>;
-const VariableIcon = FiHash as unknown as FC<SVGProps<SVGSVGElement>>;
 const PlayIcon = FiPlay as unknown as FC<SVGProps<SVGSVGElement>>;
 
 export const PipelineNavbar = () => {
@@ -30,6 +28,9 @@ export const PipelineNavbar = () => {
   const hasNodes = useStore((s) => s.nodes.length > 0);
   const undo = useStore((s) => s.undo);
   const redo = useStore((s) => s.redo);
+  const importPipeline = useStore((s) => s.importPipeline);
+  const [importOpen, setImportOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const handleUndo = useCallback(() => {
     undo();
@@ -38,6 +39,11 @@ export const PipelineNavbar = () => {
   const handleRedo = useCallback(() => {
     redo();
   }, [redo]);
+
+  const handleImport = useCallback(
+    (raw: string) => importPipeline(raw),
+    [importPipeline]
+  );
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -76,95 +82,99 @@ export const PipelineNavbar = () => {
   }, [handleUndo, handleRedo]);
 
   return (
-    <header className="vs-navbar">
-      <div className="vs-navbar__left">
-        <a className="vs-navbar__brand" href="/" aria-label="VectorFlow home">
-          <img
-            src={`${process.env.PUBLIC_URL}/logo.png`}
-            alt=""
-            className="vs-navbar__logo"
-          />
-        </a>
-        <span className="vs-navbar__sep" aria-hidden="true">
-          /
-        </span>
-        <span className="vs-navbar__brand-name">VectorFlow</span>
-      </div>
-
-      <h1 className="vs-navbar__center">Workflow</h1>
-
-      <div className="vs-navbar__right">
-        <div className="vs-navbar__right-group">
-          <button
-            type="button"
-            className="vs-navbar__icon-btn"
-            aria-label="Undo"
-            disabled={!canUndo}
-            onClick={handleUndo}
-          >
-            <UndoIcon width={16} height={16} />
-          </button>
-          <button
-            type="button"
-            className="vs-navbar__icon-btn"
-            aria-label="Redo"
-            disabled={!canRedo}
-            onClick={handleRedo}
-          >
-            <RedoIcon width={16} height={16} />
-          </button>
+    <>
+      <header className="vs-navbar">
+        <div className="vs-navbar__left">
+          <a className="vs-navbar__brand" href="/" aria-label="VectorFlow home">
+            <img
+              src={`${process.env.PUBLIC_URL}/logo.png`}
+              alt=""
+              className="vs-navbar__logo"
+            />
+          </a>
+          <span className="vs-navbar__sep" aria-hidden="true">
+            /
+          </span>
+          <span className="vs-navbar__brand-name">VectorFlow</span>
         </div>
 
-        <button type="button" className="vs-navbar__btn vs-navbar__btn--ghost" disabled>
-          Versions
-        </button>
+        <h1 className="vs-navbar__center">Workflow</h1>
 
-        <button
-          type="button"
-          className="vs-navbar__icon-btn vs-navbar__icon-btn--desktop"
-          aria-label="View code"
-          disabled
-        >
-          <CodeIcon width={16} height={16} />
-        </button>
+        <div className="vs-navbar__right">
+          <div className="vs-navbar__right-group">
+            <button
+              type="button"
+              className="vs-navbar__icon-btn"
+              aria-label="Undo"
+              disabled={!canUndo}
+              onClick={handleUndo}
+            >
+              <UndoIcon width={16} height={16} />
+            </button>
+            <button
+              type="button"
+              className="vs-navbar__icon-btn"
+              aria-label="Redo"
+              disabled={!canRedo}
+              onClick={handleRedo}
+            >
+              <RedoIcon width={16} height={16} />
+            </button>
+          </div>
 
-        <button
-          type="button"
-          className="vs-navbar__icon-btn vs-navbar__icon-btn--desktop"
-          aria-label="Variables"
-          disabled
-        >
-          <VariableIcon width={16} height={16} />
-        </button>
+          <button
+            type="button"
+            className="vs-navbar__btn vs-navbar__btn--ghost vs-navbar__btn--desktop"
+            onClick={() => setImportOpen(true)}
+          >
+            Import
+          </button>
 
-        <button type="button" className="vs-navbar__btn vs-navbar__btn--ghost vs-navbar__btn--desktop" disabled>
-          Share
-        </button>
+          <button
+            type="button"
+            className="vs-navbar__btn vs-navbar__btn--ghost vs-navbar__btn--desktop"
+            disabled={!hasNodes}
+            onClick={() => setShareOpen(true)}
+          >
+            Share
+          </button>
 
-        <button
-          type="button"
-          className="vs-navbar__btn vs-navbar__btn--run vs-navbar__btn--desktop"
-          disabled={!hasNodes}
-          aria-label="Preview pipeline"
-          onClick={openCanvasPreview}
-        >
-          <PlayIcon width={14} height={14} fill="currentColor" />
-          Preview
-        </button>
+          <button
+            type="button"
+            className="vs-navbar__btn vs-navbar__btn--run vs-navbar__btn--desktop"
+            disabled={!hasNodes}
+            aria-label="Preview pipeline"
+            onClick={openCanvasPreview}
+          >
+            <PlayIcon width={14} height={14} fill="currentColor" />
+            Preview
+          </button>
 
-        <SubmitButton
-          className="vs-navbar__btn vs-navbar__btn--primary"
-          label="Submit"
+          <SubmitButton
+            className="vs-navbar__btn vs-navbar__btn--primary"
+            label="Submit"
+          />
+
+          <button
+            type="button"
+            className="vs-navbar__icon-btn vs-navbar__menu-btn"
+            aria-label="More actions"
+          >
+            <DotsIcon width={16} height={16} />
+          </button>
+        </div>
+      </header>
+
+      {importOpen ? (
+        <PipelineImportModal
+          onClose={() => setImportOpen(false)}
+          onImport={handleImport}
         />
+      ) : null}
 
-        <button
-          type="button"
-          className="vs-navbar__icon-btn vs-navbar__menu-btn"
-          aria-label="More actions"
-        >
-          <DotsIcon width={16} height={16} />
-        </button>
-      </div>
-    </header>
+      {shareOpen ? (
+        <PipelineShareModal onClose={() => setShareOpen(false)} />
+      ) : null}
+    </>
   );
 };
