@@ -36,6 +36,7 @@ const selector = (state: StoreState) => ({
   onEdgesChange: state.onEdgesChange,
   onConnect: state.onConnect,
   clearPendingEdgeDelete: state.clearPendingEdgeDelete,
+  pushHistory: state.pushHistory,
 });
 
 export const PipelineUI = () => {
@@ -54,6 +55,7 @@ export const PipelineUI = () => {
     onEdgesChange,
     onConnect,
     clearPendingEdgeDelete,
+    pushHistory,
   } = useStore(selector, shallow);
 
   const isCanvasEmpty = nodes.length === 0;
@@ -153,6 +155,10 @@ export const PipelineUI = () => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
   }, []);
+
+  const onNodeDragStart = useCallback(() => {
+    pushHistory();
+  }, [pushHistory]);
 
   const fitView = useCallback(() => {
     if (!reactFlowInstance || isCanvasEmpty) return;
@@ -262,6 +268,7 @@ export const PipelineUI = () => {
         onConnect={onConnect}
         onDrop={onDrop}
         onDragOver={onDragOver}
+        onNodeDragStart={onNodeDragStart}
         onInit={onFlowInit}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
@@ -290,9 +297,9 @@ export const PipelineUI = () => {
         onMoveEnd={onMoveEnd}
       >
         <Background
-          color="#d1d5db"
+          color="var(--vs-canvas-dot)"
           gap={gridSize}
-          size={1}
+          size={1.5}
           variant={BackgroundVariant.Dots}
         />
 
