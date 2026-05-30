@@ -13,6 +13,11 @@ import {
 } from 'reactflow';
 import type { PipelineNodeData } from './types/nodes';
 import {
+  clonePipelineSlice,
+  FIELD_EDIT_HISTORY_DEBOUNCE_MS,
+  trimHistory,
+} from './utils/pipelineHistory';
+import {
   mergePersistedPipeline,
   PIPELINE_STORAGE_KEY,
   type PersistedPipelineSlice,
@@ -25,6 +30,8 @@ export interface StoreState {
   edges: Edge[];
   nodeIDs: Record<string, number>;
   pendingDeleteEdgeId: string | null;
+  past: PersistedPipelineSlice[];
+  future: PersistedPipelineSlice[];
   getNodeID: (type: string) => string;
   addNode: (node: PipelineNode) => void;
   removeNode: (nodeId: string) => void;
@@ -40,12 +47,46 @@ export interface StoreState {
     fieldValue: unknown
   ) => void;
   clearPipeline: () => void;
+  pushHistory: () => void;
+  undo: () => void;
+  redo: () => void;
 }
 
 const emptyPipeline: PersistedPipelineSlice = {
   nodes: [],
   edges: [],
   nodeIDs: {},
+};
+
+let isApplyingHistory = false;
+let fieldEditSessionKey: string | null = null;
+let fieldEditSessionTimer: ReturnType<typeof setTimeout> | null = null;
+
+const snapshotFromState = (state: StoreState): PersistedPipelineSlice =>
+  clonePipelineSlice({
+    nodes: state.nodes,
+    edges: state.edges,
+    nodeIDs: state.nodeIDs,
+  });
+
+const resetFieldEditSession = () => {
+  fieldEditSessionKey = null;
+  if (fieldEditSessionTimer) {
+    clearTimeout(fieldEditSessionTimer);
+    fieldEditSessionTimer = null;
+  }
+};
+
+const beginFieldEditSession = (get: () => StoreState, sessionKey: string) => {
+  if (fieldEditSessionKey === sessionKey) return;
+
+  resetFieldEditSession();
+  fieldEditSessionKey = sessionKey;
+  get().pushHistory();
+  fieldEditSessionTimer = setTimeout(() => {
+    fieldEditSessionKey = null;
+    fieldEditSessionTimer = null;
+  }, FIELD_EDIT_HISTORY_DEBOUNCE_MS);
 };
 
 export const useStore = create<StoreState>()(
@@ -55,6 +96,62 @@ export const useStore = create<StoreState>()(
       edges: [],
       nodeIDs: {},
       pendingDeleteEdgeId: null,
+      past: [],
+      future: [],
+
+      pushHistory: () => {
+        if (isApplyingHistory) return;
+
+        const snapshot = snapshotFromState(get());
+        set({
+          past: trimHistory([...get().past, snapshot]),
+          future: [],
+        });
+      },
+
+      undo: () => {
+        const { past } = get();
+        if (past.length === 0) return;
+
+        isApplyingHistory = true;
+        resetFieldEditSession();
+
+        try {
+          const previous = past[past.length - 1];
+          const current = snapshotFromState(get());
+
+          set({
+            ...clonePipelineSlice(previous),
+            past: past.slice(0, -1),
+            future: [current, ...get().future],
+            pendingDeleteEdgeId: null,
+          });
+        } finally {
+          isApplyingHistory = false;
+        }
+      },
+
+      redo: () => {
+        const { future } = get();
+        if (future.length === 0) return;
+
+        isApplyingHistory = true;
+        resetFieldEditSession();
+
+        try {
+          const next = future[0];
+          const current = snapshotFromState(get());
+
+          set({
+            ...clonePipelineSlice(next),
+            past: trimHistory([...get().past, current]),
+            future: future.slice(1),
+            pendingDeleteEdgeId: null,
+          });
+        } finally {
+          isApplyingHistory = false;
+        }
+      },
 
       getNodeID: (type) => {
         const newIDs = { ...get().nodeIDs };
@@ -67,12 +164,14 @@ export const useStore = create<StoreState>()(
       },
 
       addNode: (node) => {
+        get().pushHistory();
         set({
           nodes: [...get().nodes, node],
         });
       },
 
       removeNode: (nodeId) => {
+        get().pushHistory();
         set({
           nodes: get().nodes.filter((n) => n.id !== nodeId),
           edges: get().edges.filter(
@@ -83,6 +182,7 @@ export const useStore = create<StoreState>()(
       },
 
       removeEdge: (edgeId) => {
+        get().pushHistory();
         set({
           edges: get().edges.filter((e) => e.id !== edgeId),
           pendingDeleteEdgeId: null,
@@ -105,18 +205,27 @@ export const useStore = create<StoreState>()(
       },
 
       onNodesChange: (changes) => {
+        if (changes.some((change) => change.type === 'remove')) {
+          get().pushHistory();
+        }
+
         set({
           nodes: applyNodeChanges(changes, get().nodes),
         });
       },
 
       onEdgesChange: (changes) => {
+        if (changes.some((change) => change.type === 'remove')) {
+          get().pushHistory();
+        }
+
         set({
           edges: applyEdgeChanges(changes, get().edges),
         });
       },
 
       onConnect: (connection) => {
+        get().pushHistory();
         set({
           edges: addEdge(
             {
@@ -135,6 +244,7 @@ export const useStore = create<StoreState>()(
       },
 
       updateNodeField: (nodeId, fieldName, fieldValue) => {
+        beginFieldEditSession(get, `${nodeId}:${fieldName}`);
         set({
           nodes: get().nodes.map((node) => {
             if (node.id !== nodeId) return node;
@@ -147,6 +257,7 @@ export const useStore = create<StoreState>()(
       },
 
       clearPipeline: () => {
+        get().pushHistory();
         set({ ...emptyPipeline, pendingDeleteEdgeId: null });
       },
     }),
@@ -169,8 +280,13 @@ export const useStore = create<StoreState>()(
         return {
           ...currentState,
           ...merged,
+          past: [],
+          future: [],
         };
       },
     }
   )
 );
+
+export const selectCanUndo = (state: StoreState) => state.past.length > 0;
+export const selectCanRedo = (state: StoreState) => state.future.length > 0;

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState, useEffect, useCallback } from 'react';
 import type { FC, SVGProps } from 'react';
 import {
   FiChevronDown,
@@ -11,6 +11,11 @@ import {
   FiHash,
 } from 'react-icons/fi';
 import { SubmitButton } from '../submit';
+import {
+  useStore,
+  selectCanUndo,
+  selectCanRedo,
+} from '../store';
 import '../styles/navbar.css';
 
 const SidebarIcon = FiSidebar as unknown as FC<SVGProps<SVGSVGElement>>;
@@ -42,6 +47,54 @@ export const PipelineNavbar = () => {
   const [indicator, setIndicator] = useState({ left: 4, width: 77 });
   const tabListRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<Partial<Record<ViewTabId, HTMLButtonElement>>>({});
+  const canUndo = useStore(selectCanUndo);
+  const canRedo = useStore(selectCanRedo);
+  const undo = useStore((s) => s.undo);
+  const redo = useStore((s) => s.redo);
+
+  const handleUndo = useCallback(() => {
+    undo();
+  }, [undo]);
+
+  const handleRedo = useCallback(() => {
+    redo();
+  }, [redo]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target;
+      if (
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT')
+      ) {
+        return;
+      }
+
+      const mod = event.ctrlKey || event.metaKey;
+      if (!mod) return;
+
+      if (event.key === 'z' || event.key === 'Z') {
+        event.preventDefault();
+        if (event.shiftKey) {
+          handleRedo();
+        } else {
+          handleUndo();
+        }
+        return;
+      }
+
+      if (event.key === 'y' || event.key === 'Y') {
+        event.preventDefault();
+        handleRedo();
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [handleUndo, handleRedo]);
 
   useLayoutEffect(() => {
     const btn = tabRefs.current[activeView];
@@ -142,10 +195,22 @@ export const PipelineNavbar = () => {
 
       <div className="vs-navbar__right">
         <div className="vs-navbar__right-group">
-          <button type="button" className="vs-navbar__icon-btn" aria-label="Undo" disabled>
+          <button
+            type="button"
+            className="vs-navbar__icon-btn"
+            aria-label="Undo"
+            disabled={!canUndo}
+            onClick={handleUndo}
+          >
             <UndoIcon width={16} height={16} />
           </button>
-          <button type="button" className="vs-navbar__icon-btn" aria-label="Redo" disabled>
+          <button
+            type="button"
+            className="vs-navbar__icon-btn"
+            aria-label="Redo"
+            disabled={!canRedo}
+            onClick={handleRedo}
+          >
             <RedoIcon width={16} height={16} />
           </button>
         </div>
