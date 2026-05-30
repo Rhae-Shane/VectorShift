@@ -13,8 +13,8 @@ import {
   selectCanRedo,
 } from '../store';
 import { openCanvasPreview } from '../utils/canvasEvents';
-import { serializePipelineExport } from '../utils/pipelineImportExport';
 import { PipelineImportModal } from './PipelineImportModal';
+import { PipelineShareModal } from './PipelineShareModal';
 import '../styles/navbar.css';
 
 const DotsIcon = FiMoreHorizontal as unknown as FC<SVGProps<SVGSVGElement>>;
@@ -30,7 +30,7 @@ export const PipelineNavbar = () => {
   const redo = useStore((s) => s.redo);
   const importPipeline = useStore((s) => s.importPipeline);
   const [importOpen, setImportOpen] = useState(false);
-  const [shareCopied, setShareCopied] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const handleUndo = useCallback(() => {
     undo();
@@ -39,21 +39,6 @@ export const PipelineNavbar = () => {
   const handleRedo = useCallback(() => {
     redo();
   }, [redo]);
-
-  const handleShare = useCallback(async () => {
-    const { nodes, edges, nodeIDs } = useStore.getState();
-    if (nodes.length === 0) return;
-
-    const payload = serializePipelineExport({ nodes, edges, nodeIDs });
-
-    try {
-      await navigator.clipboard.writeText(payload);
-      setShareCopied(true);
-      window.setTimeout(() => setShareCopied(false), 2000);
-    } catch {
-      window.prompt('Copy this workflow JSON:', payload);
-    }
-  }, []);
 
   const handleImport = useCallback(
     (raw: string) => importPipeline(raw),
@@ -149,10 +134,9 @@ export const PipelineNavbar = () => {
             type="button"
             className="vs-navbar__btn vs-navbar__btn--ghost vs-navbar__btn--desktop"
             disabled={!hasNodes}
-            onClick={handleShare}
-            title={shareCopied ? 'Copied to clipboard' : 'Copy workflow to clipboard'}
+            onClick={() => setShareOpen(true)}
           >
-            {shareCopied ? 'Copied!' : 'Share'}
+            Share
           </button>
 
           <button
@@ -186,6 +170,10 @@ export const PipelineNavbar = () => {
           onClose={() => setImportOpen(false)}
           onImport={handleImport}
         />
+      ) : null}
+
+      {shareOpen ? (
+        <PipelineShareModal onClose={() => setShareOpen(false)} />
       ) : null}
     </>
   );
