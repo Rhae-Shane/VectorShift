@@ -49,6 +49,17 @@
   --vs-app-pad: 8px;
   --vs-app-radius: 8px;
 
+  /* Dock toolbar control gradients */
+  --vs-toolbar-gradient: linear-gradient(145deg, #9333ea 0%, #6366f1 52%, #2563eb 100%);
+  --vs-toolbar-gradient-hover: linear-gradient(145deg, #7c3aed 0%, #4f46e5 52%, #1d4ed8 100%);
+  --vs-toolbar-gradient-active: linear-gradient(145deg, #6d28d9 0%, #4338ca 52%, #1e40af 100%);
+  --vs-toolbar-close-gradient: linear-gradient(145deg, #f43f5e 0%, #ef4444 55%, #dc2626 100%);
+  --vs-toolbar-close-gradient-hover: linear-gradient(145deg, #e11d48 0%, #dc2626 55%, #b91c1c 100%);
+  --vs-toolbar-border-purple: #5b21b6;
+  --vs-toolbar-border-red: #991b1b;
+  --vs-toolbar-shadow-purple: 0 2px 8px rgba(91, 33, 182, 0.38);
+  --vs-toolbar-shadow-purple-hover: 0 4px 12px rgba(79, 70, 229, 0.45);
+
 }
 
 *,
