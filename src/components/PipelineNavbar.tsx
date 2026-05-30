@@ -14,6 +14,7 @@ import {
   selectCanUndo,
   selectCanRedo,
 } from '../store';
+import { openCanvasPreview } from '../utils/canvasEvents';
 import '../styles/navbar.css';
 
 const DotsIcon = FiMoreHorizontal as unknown as FC<SVGProps<SVGSVGElement>>;
@@ -26,6 +27,7 @@ const PlayIcon = FiPlay as unknown as FC<SVGProps<SVGSVGElement>>;
 export const PipelineNavbar = () => {
   const canUndo = useStore(selectCanUndo);
   const canRedo = useStore(selectCanRedo);
+  const hasNodes = useStore((s) => s.nodes.length > 0);
   const undo = useStore((s) => s.undo);
   const redo = useStore((s) => s.redo);
 
@@ -142,11 +144,12 @@ export const PipelineNavbar = () => {
         <button
           type="button"
           className="vs-navbar__btn vs-navbar__btn--run vs-navbar__btn--desktop"
-          disabled
-          aria-label="Run pipeline"
+          disabled={!hasNodes}
+          aria-label="Preview pipeline"
+          onClick={openCanvasPreview}
         >
           <PlayIcon width={14} height={14} fill="currentColor" />
-          Run
+          Preview
         </button>
 
         <SubmitButton

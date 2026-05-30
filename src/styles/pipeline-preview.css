@@ -1,0 +1,100 @@
+.vs-preview {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  background: var(--vs-bg-canvas);
+}
+
+.vs-preview__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  height: 42px;
+  padding: 0 12px 0 16px;
+  border-bottom: 1px solid var(--vs-border-dark);
+  background: var(--vs-bg);
+}
+
+.vs-preview__title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--vs-text);
+}
+
+.vs-preview__canvas {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  background: var(--vs-bg-canvas);
+}
+
+.vs-preview__canvas .react-flow {
+  width: 100%;
+  height: 100%;
+}
+
+.vs-preview__canvas .react-flow__background {
+  background-color: var(--vs-bg-canvas);
+}
+
+.vs-preview__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid #dc2626;
+  border-radius: 5px;
+  background: #ef4444;
+  color: #ffffff;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.vs-preview__close:hover {
+  background: #dc2626;
+  border-color: #b91c1c;
+  color: #ffffff;
+}
+
+.vs-preview__close svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
+}
+
+/* Read-only: hide edit affordances */
+.vs-preview .react-flow__handle {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.vs-preview .vs-edge-delete {
+  display: none !important;
+}
+
+.vs-preview .vs-node__icon-btn {
+  display: none !important;
+}
+
+.vs-preview .react-flow__node-toolbar,
+.vs-preview .vs-node__toolbar-tooltip {
+  display: none !important;
+}
+
+.vs-preview .react-flow__edge.selected .react-flow__edge-path,
+.vs-preview .react-flow__node.selected {
+  outline: none;
+  box-shadow: none;
+}
+
+.vs-preview .vs-node--selected {
+  box-shadow: var(--vs-shadow-xs);
+}
