@@ -24,6 +24,7 @@ export interface HandleConfig {
   position: HandlePosition;
   idSuffix: string;
   style?: CSSProperties;
+  color?: 'sky' | 'amber' | 'rose' | 'teal' | 'gray';
 }
 
 export interface NodeHeaderConfig {

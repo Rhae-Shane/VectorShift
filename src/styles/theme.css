@@ -29,6 +29,15 @@
   --vs-border-primary: #cbd5e1;
   --vs-shadow-xs: 0 1px 2px rgba(17, 24, 39, 0.08);
 
+  /* New tokens for beautiful node UI redesign */
+  --vs-bg-secondary: #f1f5f9; /* Slate 100 for rows background */
+  --vs-border-secondary: #e2e8f0;
+  --vs-handle-sky: #38bdf8;
+  --vs-handle-amber: #f59e0b; /* Yellow-orange from image */
+  --vs-handle-rose: #f43f5e;
+  --vs-handle-teal: #06b6d4; /* Turquoise-teal from image */
+  --vs-handle-gray: #94a3b8;
+
   /* App frame (matches vs-m-8 / rounded-lg feel) */
   --vs-app-pad: 8px;
   --vs-app-radius: 8px;
@@ -50,15 +59,35 @@ body {
 }
 
 .react-flow__handle {
-  width: 10px;
-  height: 10px;
-  background: #9ca3af;
-  border: 2px solid #fff;
+  width: 16px !important;
+  height: 16px !important;
+  background-color: var(--vs-handle-gray) !important;
+  border: 3px solid #ffffff !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  z-index: 10;
+  transition: transform 0.1s ease !important;
 }
 
 .react-flow__handle:hover {
-  background: var(--vs-purple);
+  transform: scale(1.2) !important;
 }
+
+.react-flow__handle.vs-handle--sky {
+  background-color: var(--vs-handle-sky) !important;
+}
+.react-flow__handle.vs-handle--amber {
+  background-color: var(--vs-handle-amber) !important;
+}
+.react-flow__handle.vs-handle--rose {
+  background-color: var(--vs-handle-rose) !important;
+}
+.react-flow__handle.vs-handle--teal {
+  background-color: var(--vs-handle-teal) !important;
+}
+.react-flow__handle.vs-handle--gray {
+  background-color: var(--vs-handle-gray) !important;
+}
+
 
 .react-flow__edge-path {
   stroke: #9ca3af;

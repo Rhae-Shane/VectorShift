@@ -44,7 +44,7 @@ const inputDef: NodeDefinition = {
       defaultValue: 'Text',
     },
   ],
-  handles: [{ type: 'source', position: 'right', idSuffix: 'value' }],
+  handles: [{ type: 'source', position: 'right', idSuffix: 'value', color: 'sky' }],
 };
 
 const outputDef: NodeDefinition = {
@@ -62,7 +62,7 @@ const outputDef: NodeDefinition = {
       defaultValue: 'Text',
     },
   ],
-  handles: [{ type: 'target', position: 'left', idSuffix: 'value' }],
+  handles: [{ type: 'target', position: 'left', idSuffix: 'value', color: 'sky' }],
 };
 
 const llmDef: NodeDefinition = {
@@ -77,14 +77,16 @@ const llmDef: NodeDefinition = {
       position: 'left',
       idSuffix: 'system',
       style: { top: '33%' },
+      color: 'amber',
     },
     {
       type: 'target',
       position: 'left',
       idSuffix: 'prompt',
       style: { top: '66%' },
+      color: 'amber',
     },
-    { type: 'source', position: 'right', idSuffix: 'response' },
+    { type: 'source', position: 'right', idSuffix: 'response', color: 'amber' },
   ],
 };
 
@@ -115,13 +117,14 @@ const conditionDef: NodeDefinition = {
     },
   ],
   handles: [
-    { type: 'target', position: 'left', idSuffix: 'input' },
-    { type: 'source', position: 'right', idSuffix: 'true' },
+    { type: 'target', position: 'left', idSuffix: 'input', color: 'rose' },
+    { type: 'source', position: 'right', idSuffix: 'true', color: 'rose' },
     {
       type: 'source',
       position: 'right',
       idSuffix: 'false',
       style: { top: '70%' },
+      color: 'rose',
     },
   ],
 };
@@ -149,8 +152,8 @@ const httpRequestDef: NodeDefinition = {
     { kind: 'toggle', name: 'useAuth', label: 'Use Auth', defaultValue: false },
   ],
   handles: [
-    { type: 'target', position: 'left', idSuffix: 'body' },
-    { type: 'source', position: 'right', idSuffix: 'response' },
+    { type: 'target', position: 'left', idSuffix: 'body', color: 'teal' },
+    { type: 'source', position: 'right', idSuffix: 'response', color: 'teal' },
   ],
 };
 
@@ -161,10 +164,10 @@ const mergeDef: NodeDefinition = {
   header: { title: 'Merge', icon: <PlusIcon />, accent: 'indigo' },
   staticContent: 'Combines multiple inputs into one output.',
   handles: [
-    { type: 'target', position: 'left', idSuffix: 'a', style: { top: '25%' } },
-    { type: 'target', position: 'left', idSuffix: 'b', style: { top: '50%' } },
-    { type: 'target', position: 'left', idSuffix: 'c', style: { top: '75%' } },
-    { type: 'source', position: 'right', idSuffix: 'merged' },
+    { type: 'target', position: 'left', idSuffix: 'a', style: { top: '25%' }, color: 'sky' },
+    { type: 'target', position: 'left', idSuffix: 'b', style: { top: '50%' }, color: 'sky' },
+    { type: 'target', position: 'left', idSuffix: 'c', style: { top: '75%' }, color: 'sky' },
+    { type: 'source', position: 'right', idSuffix: 'merged', color: 'sky' },
   ],
 };
 
@@ -200,8 +203,8 @@ const jsonParseDef: NodeDefinition = {
     },
   ],
   handles: [
-    { type: 'target', position: 'left', idSuffix: 'input' },
-    { type: 'source', position: 'right', idSuffix: 'parsed' },
+    { type: 'target', position: 'left', idSuffix: 'input', color: 'sky' },
+    { type: 'source', position: 'right', idSuffix: 'parsed', color: 'sky' },
   ],
   getError: (data) => {
     const jsonInput = data?.jsonInput;

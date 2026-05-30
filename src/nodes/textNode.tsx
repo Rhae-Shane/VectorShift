@@ -7,16 +7,16 @@ import {
   type FC,
   type SVGProps,
 } from 'react';
-import { Handle, NodeToolbar, Position, type NodeProps } from 'reactflow';
+import { Handle, NodeToolbar, Position, useReactFlow, type NodeProps } from 'reactflow';
 import { useStore } from '../store';
 import type { PipelineNodeData } from '../types/nodes';
 import '../styles/nodes.css';
-import { FiType } from 'react-icons/fi';
-import { FiX } from 'react-icons/fi';
+import { FiType, FiX, FiCopy } from 'react-icons/fi';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
 const TypeIcon = FiType as unknown as FC<SVGProps<SVGSVGElement>>;
 const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
+const CopyIcon = FiCopy as unknown as FC<SVGProps<SVGSVGElement>>;
 const ChevronDownIcon = FiChevronDown as unknown as FC<SVGProps<SVGSVGElement>>;
 const ChevronUpIcon = FiChevronUp as unknown as FC<SVGProps<SVGSVGElement>>;
 
@@ -37,13 +37,16 @@ const parseVariables = (text: string): string[] => {
   return variables;
 };
 
-const MIN_WIDTH = 200;
-const MIN_HEIGHT = 100;
-const MAX_WIDTH = 400;
+const MIN_WIDTH = 380;
+const MIN_HEIGHT = 120;
+const MAX_WIDTH = 420;
 
-export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
+export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) => {
   const updateNodeField = useStore((s) => s.updateNodeField);
   const removeNode = useStore((s) => s.removeNode);
+  const getNodeID = useStore((s) => s.getNodeID);
+  const addNode = useStore((s) => s.addNode);
+  const { getNode, setCenter } = useReactFlow();
   const [text, setText] = useState<string>(
     (data?.text as string | undefined) ?? '{{input}}'
   );
@@ -52,7 +55,7 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
   const measureRef = useRef<HTMLSpanElement>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const [hoverTip, setHoverTip] = useState<'collapse' | 'delete' | null>(null);
+  const [hoverTip, setHoverTip] = useState<'collapse' | 'delete' | 'duplicate' | null>(null);
 
   const variables = useMemo(() => parseVariables(text), [text]);
 
@@ -86,6 +89,52 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
     };
   }, []);
 
+  const onCopyClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const node = getNode(id);
+    if (!node) return;
+
+    const newId = getNodeID('text');
+    const newPosition = {
+      x: node.position.x + 60,
+      y: node.position.y + 60,
+    };
+
+    // Deep copy data and assign the new ID
+    const newData = {
+      ...node.data,
+      id: newId,
+    };
+
+    const newNode = {
+      id: newId,
+      type: 'text',
+      position: newPosition,
+      data: newData,
+    };
+
+    addNode(newNode);
+  };
+
+  const handleDoubleClick = () => {
+    const node = getNode(id);
+    if (!node) return;
+    
+    const { position, width, height } = node;
+    if (!position) return;
+
+    const w = width ?? MIN_WIDTH;
+    const h = height ?? MIN_HEIGHT;
+
+    const x = position.x + w / 2;
+    const y = position.y + h / 2;
+    
+    setCenter(x, y, {
+      zoom: 0.95,
+      duration: 500,
+    });
+  };
+
   useLayoutEffect(() => {
     const el = textareaRef.current;
     const measure = measureRef.current;
@@ -99,7 +148,7 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
       MAX_WIDTH
     );
     el.style.height = 'auto';
-    const contentHeight = Math.max(el.scrollHeight + 72, MIN_HEIGHT);
+    const contentHeight = Math.max(el.scrollHeight + 84, MIN_HEIGHT);
     setSize({ width: contentWidth, height: contentHeight });
   }, [text, collapsed]);
 
@@ -111,11 +160,14 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
         ? collapsed
           ? 'Expand node'
           : 'Collapse node'
-        : null;
+        : hoverTip === 'duplicate'
+          ? 'Duplicate node'
+          : null;
 
   return (
     <div
-      className={`vs-node vs-node--purple vs-node--text ${collapsed ? 'vs-node--collapsed' : ''}`}
+      onDoubleClick={handleDoubleClick}
+      className={`vs-node vs-node--purple vs-node--text ${collapsed ? 'vs-node--collapsed' : ''} ${selected ? 'vs-node--selected' : ''}`}
       style={{ width: size.width, minHeight: collapsed ? undefined : size.height }}
     >
       <NodeToolbar isVisible={Boolean(hoverTooltipText)} position={Position.Top} align="end">
@@ -128,7 +180,7 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
           type="target"
           position={Position.Left}
           id={`${id}-${varName}`}
-          className="vs-handle"
+          className="vs-handle vs-handle--amber"
           style={{
             top: `${((index + 1) / (variables.length + 1)) * 100}%`,
           }}
@@ -139,7 +191,7 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
         type="source"
         position={Position.Right}
         id={`${id}-output`}
-        className="vs-handle"
+        className="vs-handle vs-handle--amber"
       />
 
       <div className="vs-node__header">
@@ -153,7 +205,22 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
           <button
             type="button"
             className="vs-node__icon-btn"
-            onClick={() => setCollapsed((v) => !v)}
+            onClick={onCopyClick}
+            aria-label="Duplicate node"
+            onMouseEnter={() => setHoverTip('duplicate')}
+            onMouseLeave={() => setHoverTip(null)}
+            onFocus={() => setHoverTip('duplicate')}
+            onBlur={() => setHoverTip(null)}
+          >
+            <CopyIcon style={{ width: 14, height: 14 }} />
+          </button>
+          <button
+            type="button"
+            className="vs-node__icon-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              setCollapsed((v) => !v);
+            }}
             aria-label={collapsed ? 'Expand node' : 'Collapse node'}
             onMouseEnter={() => setHoverTip('collapse')}
             onMouseLeave={() => setHoverTip(null)}
@@ -161,15 +228,16 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
             onBlur={() => setHoverTip(null)}
           >
             {collapsed ? (
-              <ChevronDownIcon style={{ width: 16, height: 16 }} />
+              <ChevronDownIcon style={{ width: 14, height: 14 }} />
             ) : (
-              <ChevronUpIcon style={{ width: 16, height: 16 }} />
+              <ChevronUpIcon style={{ width: 14, height: 14 }} />
             )}
           </button>
           <button
             type="button"
             className={`vs-node__icon-btn ${confirmDelete ? 'vs-node__icon-btn--danger' : ''}`}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               if (!confirmDelete) return setConfirmDelete(true);
               removeNode(id);
             }}
@@ -179,15 +247,14 @@ export const TextNode = ({ id, data }: NodeProps<PipelineNodeData>) => {
             onFocus={() => setHoverTip('delete')}
             onBlur={() => setHoverTip(null)}
           >
-            <CloseIcon style={{ width: 16, height: 16 }} />
+            <CloseIcon style={{ width: 14, height: 14 }} />
           </button>
         </div>
       </div>
 
+
       {!collapsed && (
         <>
-          <div className="vs-node__id-badge">{id}</div>
-
           <div className="vs-node__body">
             <div className="vs-field">
               <label className="vs-field__label">Text</label>
