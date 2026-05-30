@@ -66,7 +66,7 @@ const renderField = (
 export const createNodeComponent = (
   definition: NodeDefinition
 ): PipelineNodeComponent => {
-  const NodeComponent = ({ id, data }: NodeProps<PipelineNodeData>) => {
+  const NodeComponent = ({ id, data, selected }: NodeProps<PipelineNodeData>) => {
     const {
       header,
       fields = [],
@@ -87,6 +87,7 @@ export const createNodeComponent = (
         handles={handles}
         minWidth={minWidth}
         error={error}
+        selected={selected}
       >
         {staticContent && <StaticContent content={staticContent} />}
         {fields.map((field) => renderField(field, id, data))}

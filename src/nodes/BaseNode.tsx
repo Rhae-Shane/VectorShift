@@ -1,9 +1,9 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
-import { Handle, NodeToolbar, Position } from 'reactflow';
+import { Handle, NodeToolbar, Position, useReactFlow } from 'reactflow';
 import type { HandleConfig, NodeAccent } from '../types/nodes';
 import '../styles/nodes.css';
 import { useStore } from '../store';
-import { FiX } from 'react-icons/fi';
+import { FiX, FiCopy } from 'react-icons/fi';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import type { FC, SVGProps } from 'react';
 
@@ -25,6 +25,7 @@ export interface BaseNodeProps {
   style?: CSSProperties;
   error?: string | null;
   minWidth?: number;
+  selected?: boolean;
 }
 
 export const BaseNode = ({
@@ -38,12 +39,17 @@ export const BaseNode = ({
   style = {},
   error,
   minWidth,
+  selected = false,
 }: BaseNodeProps) => {
   const removeNode = useStore((s) => s.removeNode);
+  const getNodeID = useStore((s) => s.getNodeID);
+  const addNode = useStore((s) => s.addNode);
+  const { getNode, setCenter } = useReactFlow();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const [hoverTip, setHoverTip] = useState<'collapse' | 'delete' | null>(null);
+  const [hoverTip, setHoverTip] = useState<'collapse' | 'delete' | 'duplicate' | null>(null);
   const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
+  const CopyIcon = FiCopy as unknown as FC<SVGProps<SVGSVGElement>>;
   const ChevronDownIcon = FiChevronDown as unknown as FC<SVGProps<SVGSVGElement>>;
   const ChevronUpIcon = FiChevronUp as unknown as FC<SVGProps<SVGSVGElement>>;
 
@@ -66,12 +72,61 @@ export const BaseNode = ({
     };
   }, []);
 
-  const onDeleteClick = () => {
+  const onDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!confirmDelete) {
       setConfirmDelete(true);
       return;
     }
     removeNode(id);
+  };
+
+  const onCopyClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const node = getNode(id);
+    if (!node) return;
+
+    const nodeType = node.type || 'customInput';
+    const newId = getNodeID(nodeType);
+    const newPosition = {
+      x: node.position.x + 60,
+      y: node.position.y + 60,
+    };
+
+    // Deep copy data and assign the new ID
+    const newData = {
+      ...node.data,
+      id: newId,
+    };
+
+    const newNode = {
+      id: newId,
+      type: nodeType,
+      position: newPosition,
+      data: newData,
+    };
+
+    addNode(newNode);
+  };
+
+  const handleDoubleClick = () => {
+    const node = getNode(id);
+    if (!node) return;
+    
+    const { position, width, height } = node;
+    if (!position) return;
+
+    // Use measured width/height or fallback to standard node dimensions
+    const w = width ?? 380;
+    const h = height ?? 200;
+
+    const x = position.x + w / 2;
+    const y = position.y + h / 2;
+    
+    setCenter(x, y, {
+      zoom: 0.95,
+      duration: 500,
+    });
   };
 
   const hoverTooltipText = confirmDelete
@@ -82,12 +137,15 @@ export const BaseNode = ({
         ? collapsed
           ? 'Expand node'
           : 'Collapse node'
-        : null;
+        : hoverTip === 'duplicate'
+          ? 'Duplicate node'
+          : null;
 
   return (
     <div
-      className={`vs-node vs-node--${accent} ${collapsed ? 'vs-node--collapsed' : ''} ${className}`}
-      style={{ minWidth, ...style }}
+      onDoubleClick={handleDoubleClick}
+      className={`vs-node vs-node--${accent} ${collapsed ? 'vs-node--collapsed' : ''} ${selected ? 'vs-node--selected' : ''} ${className}`}
+      style={{ minWidth: minWidth ?? 380, ...style }}
     >
       <NodeToolbar isVisible={Boolean(hoverTooltipText)} position={Position.Top} align="end">
         <div className="vs-node__toolbar-tooltip">{hoverTooltipText}</div>
@@ -100,7 +158,7 @@ export const BaseNode = ({
           position={POSITION_MAP[handle.position] ?? Position.Right}
           id={`${id}-${handle.idSuffix}`}
           style={handle.style}
-          className="vs-handle"
+          className={`vs-handle vs-handle--${handle.color ?? 'gray'}`}
         />
       ))}
 
@@ -113,7 +171,22 @@ export const BaseNode = ({
           <button
             type="button"
             className="vs-node__icon-btn"
-            onClick={() => setCollapsed((v) => !v)}
+            onClick={onCopyClick}
+            aria-label="Duplicate node"
+            onMouseEnter={() => setHoverTip('duplicate')}
+            onMouseLeave={() => setHoverTip(null)}
+            onFocus={() => setHoverTip('duplicate')}
+            onBlur={() => setHoverTip(null)}
+          >
+            <CopyIcon style={{ width: 14, height: 14 }} />
+          </button>
+          <button
+            type="button"
+            className="vs-node__icon-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              setCollapsed((v) => !v);
+            }}
             aria-label={collapsed ? 'Expand node' : 'Collapse node'}
             onMouseEnter={() => setHoverTip('collapse')}
             onMouseLeave={() => setHoverTip(null)}
@@ -121,9 +194,9 @@ export const BaseNode = ({
             onBlur={() => setHoverTip(null)}
           >
             {collapsed ? (
-              <ChevronDownIcon style={{ width: 16, height: 16 }} />
+              <ChevronDownIcon style={{ width: 14, height: 14 }} />
             ) : (
-              <ChevronUpIcon style={{ width: 16, height: 16 }} />
+              <ChevronUpIcon style={{ width: 14, height: 14 }} />
             )}
           </button>
           <button
@@ -136,14 +209,13 @@ export const BaseNode = ({
             onFocus={() => setHoverTip('delete')}
             onBlur={() => setHoverTip(null)}
           >
-            <CloseIcon style={{ width: 16, height: 16 }} />
+            <CloseIcon style={{ width: 14, height: 14 }} />
           </button>
         </div>
       </div>
 
       {!collapsed && (
         <>
-          <div className="vs-node__id-badge">{id}</div>
           <div className="vs-node__body">{children}</div>
           {error && <div className="vs-node__error">{error}</div>}
         </>
@@ -151,3 +223,5 @@ export const BaseNode = ({
     </div>
   );
 };
+
+
