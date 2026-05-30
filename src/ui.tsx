@@ -4,6 +4,7 @@ import ReactFlow, {
   ConnectionLineType,
   BackgroundVariant,
   PanOnScrollMode,
+  SelectionMode,
   type ReactFlowInstance,
 } from 'reactflow';
 import { useStore } from './store';
@@ -14,6 +15,7 @@ import { ConnectionLine } from './edges/ConnectionLine';
 import type { PipelineNode, StoreState } from './store';
 import { CanvasControls } from './components/CanvasControls';
 import { CanvasEmptyState } from './components/CanvasEmptyState';
+import { MultiSelectionToolbar } from './components/MultiSelectionToolbar';
 import { getViewportNodePosition } from './utils/canvasPlacement';
 import {
   CANVAS_ADD_NODE_EVENT,
@@ -39,6 +41,7 @@ const selector = (state: StoreState) => ({
   onConnect: state.onConnect,
   clearPendingEdgeDelete: state.clearPendingEdgeDelete,
   pushHistory: state.pushHistory,
+  selectAllNodes: state.selectAllNodes,
 });
 
 export const PipelineUI = () => {
@@ -58,10 +61,12 @@ export const PipelineUI = () => {
     onConnect,
     clearPendingEdgeDelete,
     pushHistory,
+    selectAllNodes,
   } = useStore(selector, shallow);
 
   const isCanvasEmpty = nodes.length === 0;
   const effectivePanMode = !isCanvasEmpty && (panMode || !isInteractive);
+  const selectionEnabled = !isCanvasEmpty && isInteractive && !effectivePanMode;
   const zoomPercent = Math.max(1, Math.min(350, Math.round(zoom * 100)));
   const maxZoom = isCanvasEmpty ? 1 : VIEWPORT_MAX_ZOOM;
   const minZoom = isCanvasEmpty ? 1 : VIEWPORT_MIN_ZOOM;
@@ -268,6 +273,31 @@ export const PipelineUI = () => {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      const target = e.target;
+      if (
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT')
+      ) {
+        return;
+      }
+
+      if (useStore.getState().nodes.length === 0) return;
+
+      const mod = e.ctrlKey || e.metaKey;
+      if (mod && (e.key === 'a' || e.key === 'A')) {
+        e.preventDefault();
+        selectAllNodes();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [selectAllNodes]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && (e.key === 'm' || e.key === 'M')) {
         e.preventDefault();
         setAllNodesCollapsed(true);
@@ -298,6 +328,12 @@ export const PipelineUI = () => {
         onPaneClick={() => clearPendingEdgeDelete()}
         proOptions={proOptions}
         snapGrid={[gridSize, gridSize]}
+        selectionOnDrag={selectionEnabled}
+        selectionMode={SelectionMode.Partial}
+        multiSelectionKeyCode="Shift"
+        deleteKeyCode={['Backspace', 'Delete']}
+        panOnDrag={effectivePanMode ? true : [1, 2]}
+        selectionKeyCode={null}
         connectionLineType={ConnectionLineType.Bezier}
         connectionLineComponent={ConnectionLine}
         connectionLineStyle={{
@@ -311,7 +347,6 @@ export const PipelineUI = () => {
         nodesDraggable={!isCanvasEmpty && isInteractive && !effectivePanMode}
         nodesConnectable={!isCanvasEmpty && isInteractive}
         elementsSelectable={!isCanvasEmpty && isInteractive}
-        panOnDrag={effectivePanMode}
         panOnScroll={!isCanvasEmpty}
         panOnScrollMode={PanOnScrollMode.Free}
         panOnScrollSpeed={0.75}
@@ -344,6 +379,8 @@ export const PipelineUI = () => {
           onCollapseAll={() => setAllNodesCollapsed(true)}
           onExpandAll={() => setAllNodesCollapsed(false)}
         />
+
+        <MultiSelectionToolbar />
       </ReactFlow>
 
       {isCanvasEmpty && (

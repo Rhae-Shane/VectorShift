@@ -68,20 +68,22 @@ export const DeletableEdge = memo(function DeletableEdge({
         }}
       />
       <EdgeLabelRenderer>
-        <button
-          type="button"
-          className={`vs-edge-delete${isPendingDelete ? ' vs-edge-delete--pending' : ''}`}
+        <div
+          className="vs-edge-delete-wrap"
           style={{
-            position: 'absolute',
             transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
-            pointerEvents: 'all',
           }}
-          onClick={onDeleteClick}
-          title={isPendingDelete ? 'Confirm delete connection' : 'Delete connection'}
-          aria-label={isPendingDelete ? 'Confirm delete connection' : 'Delete connection'}
         >
-          <CloseIcon width={12} height={12} aria-hidden />
-        </button>
+          <button
+            type="button"
+            className={`vs-edge-delete${isPendingDelete ? ' vs-edge-delete--pending' : ''}`}
+            onClick={onDeleteClick}
+            title={isPendingDelete ? 'Confirm delete connection' : 'Delete connection'}
+            aria-label={isPendingDelete ? 'Confirm delete connection' : 'Delete connection'}
+          >
+            <CloseIcon width={12} height={12} aria-hidden />
+          </button>
+        </div>
       </EdgeLabelRenderer>
     </>
   );

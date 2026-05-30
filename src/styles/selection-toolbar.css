@@ -1,0 +1,71 @@
+.vs-selection-toolbar.react-flow__panel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px !important;
+  padding: 6px 10px;
+  border: 1px solid var(--vs-border-dark);
+  border-radius: var(--vs-radius);
+  background: #ffffff;
+  box-shadow: var(--vs-shadow-xs);
+  pointer-events: all;
+}
+
+.vs-selection-toolbar__count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--vs-text-muted);
+  white-space: nowrap;
+  padding-right: 4px;
+}
+
+.vs-selection-toolbar__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--vs-border-dark);
+  border-radius: var(--vs-radius-sm);
+  background: #ffffff;
+  color: var(--vs-text);
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.vs-selection-toolbar__btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.vs-selection-toolbar__btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.vs-selection-toolbar__btn--danger {
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+.vs-selection-toolbar__btn--danger:hover {
+  background: #fef2f2;
+  border-color: #f87171;
+  color: #b91c1c;
+}
+
+.vs-selection-toolbar__btn--ghost {
+  color: var(--vs-text-muted);
+}
+
+.react-flow__selection {
+  background: rgba(124, 58, 237, 0.08);
+  border: 1px solid rgba(124, 58, 237, 0.45);
+  border-radius: 4px;
+}

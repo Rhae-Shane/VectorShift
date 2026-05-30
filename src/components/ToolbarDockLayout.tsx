@@ -1,13 +1,12 @@
 import {
   useCallback,
-  useEffect,
   useRef,
   useState,
-  type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react';
-import { FiMove, FiPlus, FiX } from 'react-icons/fi';
+import { FiPlus, FiX } from 'react-icons/fi';
 import type { FC, SVGProps } from 'react';
+import { DOCK_POSITION_ICONS } from './DockPositionIcons';
 import {
   TOOLBAR_DOCK_POSITIONS,
   TOOLBAR_DOCK_STORAGE_KEY,
@@ -16,7 +15,6 @@ import {
 } from '../types/toolbarDock';
 import '../styles/dockable-toolbar.css';
 
-const GripIcon = FiMove as unknown as FC<SVGProps<SVGSVGElement>>;
 const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
 const PlusIcon = FiPlus as unknown as FC<SVGProps<SVGSVGElement>>;
 
@@ -67,8 +65,6 @@ export const ToolbarDockLayout = ({ renderToolbar, canvas }: ToolbarDockLayoutPr
   const mainRef = useRef<HTMLElement>(null);
   const [position, setPosition] = useState<ToolbarDockPosition>(loadDockPosition);
   const [isToolbarVisible, setIsToolbarVisible] = useState(loadToolbarVisible);
-  const [isDragging, setIsDragging] = useState(false);
-  const [hoverZone, setHoverZone] = useState<ToolbarDockPosition | null>(null);
 
   const hideToolbar = useCallback(() => {
     setIsToolbarVisible(false);
@@ -85,84 +81,15 @@ export const ToolbarDockLayout = ({ renderToolbar, canvas }: ToolbarDockLayoutPr
     persistDockPosition(next);
   }, []);
 
-  const detectZone = useCallback(
-    (clientX: number, clientY: number): ToolbarDockPosition | null => {
-      const el = mainRef.current;
-      if (!el) return null;
-
-      const rect = el.getBoundingClientRect();
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
-      const w = rect.width;
-      const h = rect.height;
-
-      const edge = Math.min(w, h) * 0.22;
-
-      const distTop = y;
-      const distBottom = h - y;
-      const distLeft = x;
-      const distRight = w - x;
-
-      const min = Math.min(distTop, distBottom, distLeft, distRight);
-
-      if (min > edge) return null;
-
-      if (min === distTop) return 'top';
-      if (min === distBottom) return 'bottom';
-      if (min === distLeft) return 'left';
-      return 'right';
-    },
-    []
-  );
-
-  const endDrag = useCallback(
-    (clientX: number, clientY: number) => {
-      const zone = detectZone(clientX, clientY);
-      if (zone) {
-        applyPosition(zone);
+  const selectDockPosition = useCallback(
+    (next: ToolbarDockPosition) => {
+      applyPosition(next);
+      if (!isToolbarVisible) {
+        showToolbar();
       }
-      setIsDragging(false);
-      setHoverZone(null);
     },
-    [applyPosition, detectZone]
+    [applyPosition, isToolbarVisible, showToolbar]
   );
-
-  useEffect(() => {
-    if (!isDragging) return;
-
-    const onMove = (e: PointerEvent) => {
-      setHoverZone(detectZone(e.clientX, e.clientY));
-    };
-
-    const onUp = (e: PointerEvent) => {
-      endDrag(e.clientX, e.clientY);
-    };
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsDragging(false);
-        setHoverZone(null);
-      }
-    };
-
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onUp);
-    window.addEventListener('keydown', onKey);
-
-    return () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
-      window.removeEventListener('keydown', onKey);
-    };
-  }, [isDragging, detectZone, endDrag]);
-
-  const onHandlePointerDown = (e: ReactPointerEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.currentTarget.setPointerCapture(e.pointerId);
-    setIsDragging(true);
-    setHoverZone(position);
-  };
 
   const dockToolbar = (
     <aside
@@ -170,25 +97,36 @@ export const ToolbarDockLayout = ({ renderToolbar, canvas }: ToolbarDockLayoutPr
       data-dock={position}
       aria-label="Node palette"
     >
-      <button
-        type="button"
-        className="vs-dock-toolbar__handle"
-        onPointerDown={onHandlePointerDown}
-        title="Drag to dock palette (top, right, bottom, left)"
-        aria-label="Drag to reposition node palette"
-      >
-        <GripIcon aria-hidden />
-      </button>
       <div className="vs-dock-toolbar__content">{renderToolbar(position)}</div>
-      <button
-        type="button"
-        className="vs-dock-toolbar__close"
-        onClick={hideToolbar}
-        title="Hide node palette"
-        aria-label="Hide node palette"
-      >
-        <CloseIcon aria-hidden />
-      </button>
+      <div className="vs-dock-toolbar__chrome" role="toolbar" aria-label="Toolbar controls">
+        {TOOLBAR_DOCK_POSITIONS.map((zone) => {
+          const ZoneIcon = DOCK_POSITION_ICONS[zone];
+          return (
+            <button
+              key={zone}
+              type="button"
+              className={`vs-dock-toolbar__position vs-dock-toolbar__chrome-btn${
+                position === zone ? ' vs-dock-toolbar__position--active' : ''
+              }`}
+              onClick={() => selectDockPosition(zone)}
+              title={`Dock to ${zone}`}
+              aria-label={`Dock to ${zone}`}
+              aria-pressed={position === zone}
+            >
+              <ZoneIcon aria-hidden />
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          className="vs-dock-toolbar__close vs-dock-toolbar__chrome-btn"
+          onClick={hideToolbar}
+          title="Hide node palette"
+          aria-label="Hide node palette"
+        >
+          <CloseIcon aria-hidden />
+        </button>
+      </div>
     </aside>
   );
 
@@ -199,8 +137,8 @@ export const ToolbarDockLayout = ({ renderToolbar, canvas }: ToolbarDockLayoutPr
     <main
       ref={mainRef}
       className={`vs-main vs-main--dock-${position}${
-        isDragging ? ' vs-main--dock-dragging' : ''
-      }${!isToolbarVisible ? ' vs-main--toolbar-hidden' : ''}`}
+        !isToolbarVisible ? ' vs-main--toolbar-hidden' : ''
+      }`}
     >
       {isToolbarVisible && toolbarFirst && dockToolbar}
       <div className="vs-main__canvas-wrap">{canvas}</div>
@@ -209,30 +147,13 @@ export const ToolbarDockLayout = ({ renderToolbar, canvas }: ToolbarDockLayoutPr
       {!isToolbarVisible && (
         <button
           type="button"
-          className={`vs-dock-toolbar__restore vs-dock-toolbar__restore--${position}`}
+          className={`vs-dock-toolbar__restore vs-dock-toolbar__chrome-btn vs-dock-toolbar__restore--${position}`}
           onClick={showToolbar}
           title="Show node palette"
           aria-label="Show node palette"
         >
           <PlusIcon aria-hidden />
         </button>
-      )}
-
-      {isDragging && (
-        <div className="vs-dock-overlay" aria-hidden>
-          {TOOLBAR_DOCK_POSITIONS.map((zone) => (
-            <div
-              key={zone}
-              className={`vs-dock-zone vs-dock-zone--${zone}${
-                hoverZone === zone ? ' vs-dock-zone--active' : ''
-              }${position === zone && hoverZone !== zone ? ' vs-dock-zone--current' : ''}`}
-            >
-              <span className="vs-dock-zone__label">
-                {zone.charAt(0).toUpperCase() + zone.slice(1)}
-              </span>
-            </div>
-          ))}
-        </div>
       )}
     </main>
   );

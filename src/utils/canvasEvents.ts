@@ -12,3 +12,15 @@ export function requestAddNodeAtViewport(type: string): void {
     })
   );
 }
+
+/** Open fullscreen read-only canvas preview (Run). */
+export const CANVAS_PREVIEW_OPEN_EVENT = 'vs:canvas-preview-open';
+export const CANVAS_PREVIEW_CLOSE_EVENT = 'vs:canvas-preview-close';
+
+export function openCanvasPreview(): void {
+  window.dispatchEvent(new CustomEvent(CANVAS_PREVIEW_OPEN_EVENT));
+}
+
+export function closeCanvasPreview(): void {
+  window.dispatchEvent(new CustomEvent(CANVAS_PREVIEW_CLOSE_EVENT));
+}
