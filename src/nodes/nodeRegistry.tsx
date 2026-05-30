@@ -17,7 +17,7 @@ import type {
   PipelineNodeData,
   PipelineNodeComponent,
 } from '../types/nodes';
-import { parseTextVariables } from '../utils/textVariables';
+import { buildTextVariableHandles } from '../utils/textVariables';
 import { TEXT_NODE_MIN_HEIGHT } from '../constants/nodeLayout';
 
 const ArrowDownIcon = FiArrowDownCircle as unknown as FC<SVGProps<SVGSVGElement>>;
@@ -238,15 +238,7 @@ const textDef: NodeDefinition = {
   handles: [{ type: 'source', position: 'right', idSuffix: 'output', color: 'amber' }],
   getDynamicHandles: (data) => {
     const text = typeof data.text === 'string' ? data.text : '{{input}}';
-    const variables = parseTextVariables(text);
-
-    return variables.map((varName, index) => ({
-      type: 'target' as const,
-      position: 'left' as const,
-      idSuffix: varName,
-      color: 'amber' as const,
-      style: { top: `${((index + 1) / (variables.length + 1)) * 100}%` },
-    }));
+    return buildTextVariableHandles(text);
   },
 };
 
