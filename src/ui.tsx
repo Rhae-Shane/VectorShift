@@ -297,7 +297,7 @@ export const PipelineUI = () => {
         onPaneClick={() => clearPendingEdgeDelete()}
         proOptions={proOptions}
         snapGrid={[gridSize, gridSize]}
-        connectionLineType={ConnectionLineType.SmoothStep}
+        connectionLineType={ConnectionLineType.Bezier}
         defaultViewport={INITIAL_VIEWPORT}
         onlyRenderVisibleElements={false}
         minZoom={minZoom}

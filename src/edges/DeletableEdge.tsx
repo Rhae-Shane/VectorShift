@@ -2,12 +2,15 @@ import { memo, type FC, type MouseEvent, type SVGProps } from 'react';
 import {
   BaseEdge,
   EdgeLabelRenderer,
-  getSmoothStepPath,
+  getBezierPath,
   type EdgeProps,
 } from 'reactflow';
 import { FiX } from 'react-icons/fi';
 import { useStore } from '../store';
 import { shallow } from 'zustand/shallow';
+
+/** Slightly stronger than React Flow default (0.25) for gentler S-curves. */
+const EDGE_CURVATURE = 0.38;
 
 const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
 
@@ -33,13 +36,14 @@ export const DeletableEdge = memo(function DeletableEdge({
   const { pendingDeleteEdgeId, handleEdgeClick } = useStore(selector, shallow);
   const isPendingDelete = pendingDeleteEdgeId === id;
 
-  const [edgePath, labelX, labelY] = getSmoothStepPath({
+  const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
     sourcePosition,
     targetX,
     targetY,
     targetPosition,
+    curvature: EDGE_CURVATURE,
   });
 
   const onDeleteClick = (event: MouseEvent) => {
