@@ -27,6 +27,8 @@ export interface BaseNodeProps {
   error?: string | null;
   minWidth?: number;
   selected?: boolean;
+  focusFallbackHeight?: number;
+  onCollapsedChange?: (collapsed: boolean) => void;
 }
 
 export const BaseNode = ({
@@ -41,6 +43,8 @@ export const BaseNode = ({
   error,
   minWidth,
   selected = false,
+  focusFallbackHeight,
+  onCollapsedChange,
 }: BaseNodeProps) => {
   const removeNode = useStore((s) => s.removeNode);
   const getNodeID = useStore((s) => s.getNodeID);
@@ -72,6 +76,10 @@ export const BaseNode = ({
       window.removeEventListener('vs:toggleAllNodes', onToggleAll as EventListener);
     };
   }, []);
+
+  useEffect(() => {
+    onCollapsedChange?.(collapsed);
+  }, [collapsed, onCollapsedChange]);
 
   const onDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -119,7 +127,7 @@ export const BaseNode = ({
 
     // Use measured width/height or fallback to standard node dimensions
     const w = width ?? NODE_DEFAULT_WIDTH;
-    const h = height ?? 200;
+    const h = height ?? focusFallbackHeight ?? 200;
 
     const x = position.x + w / 2;
     const y = position.y + h / 2;

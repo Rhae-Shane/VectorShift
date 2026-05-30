@@ -62,11 +62,18 @@ export interface ToggleFieldConfig extends BaseFieldConfig {
   defaultValue?: boolean;
 }
 
+export interface GrowingTextAreaFieldConfig extends BaseFieldConfig {
+  kind: 'growingTextarea';
+  placeholder?: string;
+  defaultValue?: string;
+}
+
 export type FieldConfig =
   | TextFieldConfig
   | SelectFieldConfig
   | TextAreaFieldConfig
-  | ToggleFieldConfig;
+  | ToggleFieldConfig
+  | GrowingTextAreaFieldConfig;
 
 export interface NodeDefinition {
   type: string;
@@ -77,8 +84,11 @@ export interface NodeDefinition {
   handles?: HandleConfig[];
   staticContent?: string;
   minWidth?: number;
+  className?: string;
+  focusFallbackHeight?: number;
   defaultData?: Record<string, unknown>;
   getError?: (data: Record<string, unknown>) => string | null;
+  getDynamicHandles?: (data: Record<string, unknown>) => HandleConfig[];
 }
 
 export type PipelineNodeData = Record<string, unknown> & {

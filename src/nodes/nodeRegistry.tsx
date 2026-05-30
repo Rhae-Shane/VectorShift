@@ -1,5 +1,4 @@
 import { createNodeComponent } from './createNode';
-import { TextNode } from './textNode';
 import {
   FiArrowDownCircle,
   FiArrowUpCircle,
@@ -18,6 +17,8 @@ import type {
   PipelineNodeData,
   PipelineNodeComponent,
 } from '../types/nodes';
+import { parseTextVariables } from '../utils/textVariables';
+import { TEXT_NODE_MIN_HEIGHT } from '../constants/nodeLayout';
 
 const ArrowDownIcon = FiArrowDownCircle as unknown as FC<SVGProps<SVGSVGElement>>;
 const ArrowUpIcon = FiArrowUpCircle as unknown as FC<SVGProps<SVGSVGElement>>;
@@ -218,6 +219,37 @@ const jsonParseDef: NodeDefinition = {
   },
 };
 
+const textDef: NodeDefinition = {
+  type: 'text',
+  label: 'Text',
+  category: 'start',
+  header: { title: 'Text', icon: <TypeIcon />, accent: 'purple' },
+  className: 'vs-node--text',
+  focusFallbackHeight: TEXT_NODE_MIN_HEIGHT,
+  fields: [
+    {
+      kind: 'growingTextarea',
+      name: 'text',
+      label: 'Text',
+      placeholder: "Type '{{' to utilize variables",
+      defaultValue: '{{input}}',
+    },
+  ],
+  handles: [{ type: 'source', position: 'right', idSuffix: 'output', color: 'amber' }],
+  getDynamicHandles: (data) => {
+    const text = typeof data.text === 'string' ? data.text : '{{input}}';
+    const variables = parseTextVariables(text);
+
+    return variables.map((varName, index) => ({
+      type: 'target' as const,
+      position: 'left' as const,
+      idSuffix: varName,
+      color: 'amber' as const,
+      style: { top: `${((index + 1) / (variables.length + 1)) * 100}%` },
+    }));
+  },
+};
+
 const definitions: NodeDefinition[] = [
   inputDef,
   outputDef,
@@ -227,6 +259,7 @@ const definitions: NodeDefinition[] = [
   mergeDef,
   noteDef,
   jsonParseDef,
+  textDef,
 ];
 
 const configNodes: NodeRegistryEntry[] = definitions.map((def) => ({
@@ -238,16 +271,7 @@ const configNodes: NodeRegistryEntry[] = definitions.map((def) => ({
   defaultData: def.defaultData,
 }));
 
-export const nodeRegistry: NodeRegistryEntry[] = [
-  ...configNodes,
-  {
-    type: 'text',
-    label: 'Text',
-    category: 'start',
-    component: TextNode as PipelineNodeComponent,
-    icon: <TypeIcon />,
-  },
-];
+export const nodeRegistry: NodeRegistryEntry[] = configNodes;
 
 export const nodeTypes: Record<string, PipelineNodeComponent> = Object.fromEntries(
   nodeRegistry.map((entry) => [entry.type, entry.component])
