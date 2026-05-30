@@ -102,21 +102,22 @@ export const PipelinePreview = () => {
 
   return (
     <div className="vs-preview" role="dialog" aria-modal="true" aria-label="Preview">
-      <div className="vs-preview__header">
-        <span className="vs-preview__title">Preview</span>
-        <button
-          type="button"
-          className="vs-preview__close"
-          onClick={handleClose}
-          aria-label="Exit preview"
-          title="Exit preview (Esc)"
-        >
-          <CloseIcon aria-hidden />
-        </button>
-      </div>
+      <div className="vs-app vs-preview__shell">
+        <div className="vs-preview__header">
+          <span className="vs-preview__title">Preview</span>
+          <button
+            type="button"
+            className="vs-preview__close"
+            onClick={handleClose}
+            aria-label="Exit preview"
+            title="Exit preview (Esc)"
+          >
+            <CloseIcon aria-hidden />
+          </button>
+        </div>
 
-      <div ref={wrapperRef} className="vs-preview__canvas">
-        <ReactFlow
+        <div ref={wrapperRef} className="vs-preview__canvas vs-canvas">
+          <ReactFlow
           nodes={nodes}
           edges={previewEdges}
           nodeTypes={nodeTypes}
@@ -147,6 +148,7 @@ export const PipelinePreview = () => {
             variant={BackgroundVariant.Dots}
           />
         </ReactFlow>
+        </div>
       </div>
     </div>
   );

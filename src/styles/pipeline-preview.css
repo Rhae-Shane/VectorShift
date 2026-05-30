@@ -2,9 +2,18 @@
   position: fixed;
   inset: 0;
   z-index: 2000;
+  box-sizing: border-box;
+  padding: var(--vs-app-pad);
+  background: var(--vs-bg-subtle);
   display: flex;
-  flex-direction: column;
-  background: var(--vs-bg-canvas);
+}
+
+.vs-preview__shell {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  margin: 0;
+  height: 100%;
 }
 
 .vs-preview__header {
@@ -30,6 +39,8 @@
   min-height: 0;
   width: 100%;
   background: var(--vs-bg-canvas);
+  border-radius: 0 0 var(--vs-app-radius) var(--vs-app-radius);
+  overflow: hidden;
 }
 
 .vs-preview__canvas .react-flow {
