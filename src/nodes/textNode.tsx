@@ -7,10 +7,21 @@ import {
   type FC,
   type SVGProps,
 } from 'react';
-import { Handle, NodeToolbar, Position, useReactFlow, type NodeProps } from 'reactflow';
+import { Handle, NodeToolbar, Position, useReactFlow, useUpdateNodeInternals, type NodeProps } from 'reactflow';
 import { useStore } from '../store';
 import type { PipelineNodeData } from '../types/nodes';
 import '../styles/nodes.css';
+import {
+  TEXT_NODE_FIELD_HORIZONTAL_PAD,
+  TEXT_NODE_MAX_HEIGHT,
+  TEXT_NODE_MAX_TEXTAREA_HEIGHT,
+  TEXT_NODE_MAX_WIDTH,
+  TEXT_NODE_MIN_HEIGHT,
+  TEXT_NODE_MIN_TEXTAREA_HEIGHT,
+  TEXT_NODE_MIN_WIDTH,
+  TEXT_NODE_VERTICAL_CHROME,
+  NODE_DEFAULT_WIDTH,
+} from '../constants/nodeLayout';
 import { FiType, FiX, FiCopy } from 'react-icons/fi';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
@@ -37,9 +48,14 @@ const parseVariables = (text: string): string[] => {
   return variables;
 };
 
-const MIN_WIDTH = 380;
-const MIN_HEIGHT = 120;
-const MAX_WIDTH = 420;
+const MIN_WIDTH = TEXT_NODE_MIN_WIDTH;
+const MIN_HEIGHT = TEXT_NODE_MIN_HEIGHT;
+const MAX_WIDTH = TEXT_NODE_MAX_WIDTH;
+const MIN_TEXTAREA_HEIGHT = TEXT_NODE_MIN_TEXTAREA_HEIGHT;
+const MAX_TEXTAREA_HEIGHT = TEXT_NODE_MAX_TEXTAREA_HEIGHT;
+const FIELD_HORIZONTAL_PAD = TEXT_NODE_FIELD_HORIZONTAL_PAD;
+const NODE_VERTICAL_CHROME = TEXT_NODE_VERTICAL_CHROME;
+const MAX_NODE_HEIGHT = TEXT_NODE_MAX_HEIGHT;
 
 export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) => {
   const updateNodeField = useStore((s) => s.updateNodeField);
@@ -47,10 +63,11 @@ export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) =>
   const getNodeID = useStore((s) => s.getNodeID);
   const addNode = useStore((s) => s.addNode);
   const { getNode, setCenter } = useReactFlow();
+  const updateNodeInternals = useUpdateNodeInternals();
   const [text, setText] = useState<string>(
     (data?.text as string | undefined) ?? '{{input}}'
   );
-  const [size, setSize] = useState({ width: MIN_WIDTH, height: MIN_HEIGHT });
+  const [size, setSize] = useState({ width: NODE_DEFAULT_WIDTH, height: MIN_HEIGHT });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const measureRef = useRef<HTMLSpanElement>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -138,19 +155,48 @@ export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) =>
   useLayoutEffect(() => {
     const el = textareaRef.current;
     const measure = measureRef.current;
-    if (!el || !measure) return;
+    if (!el || !measure || collapsed) return;
 
-    if (collapsed) return;
+    const lines = text.split('\n');
+    let maxLineWidth = 0;
 
-    measure.textContent = text || ' ';
-    const contentWidth = Math.min(
-      Math.max(measure.scrollWidth + 32, MIN_WIDTH),
+    measure.style.whiteSpace = 'pre';
+    measure.style.maxWidth = 'none';
+    measure.style.width = 'auto';
+
+    for (const line of lines) {
+      measure.textContent = line || ' ';
+      maxLineWidth = Math.max(maxLineWidth, measure.scrollWidth);
+    }
+
+    const nodeWidth = Math.min(
+      Math.max(maxLineWidth + FIELD_HORIZONTAL_PAD, MIN_WIDTH),
       MAX_WIDTH
     );
+
+    const textareaContentWidth = nodeWidth - FIELD_HORIZONTAL_PAD;
+    measure.style.whiteSpace = 'pre-wrap';
+    measure.style.width = `${textareaContentWidth}px`;
+    measure.style.maxWidth = `${textareaContentWidth}px`;
+    measure.textContent = text || ' ';
+
+    el.style.width = '100%';
     el.style.height = 'auto';
-    const contentHeight = Math.max(el.scrollHeight + 84, MIN_HEIGHT);
-    setSize({ width: contentWidth, height: contentHeight });
+    const naturalHeight = Math.max(el.scrollHeight, MIN_TEXTAREA_HEIGHT);
+    const textareaHeight = Math.min(naturalHeight, MAX_TEXTAREA_HEIGHT);
+    el.style.height = `${textareaHeight}px`;
+    el.style.overflowY = naturalHeight > MAX_TEXTAREA_HEIGHT ? 'auto' : 'hidden';
+
+    const nodeHeight = Math.max(
+      Math.min(textareaHeight + NODE_VERTICAL_CHROME, MAX_NODE_HEIGHT),
+      MIN_HEIGHT
+    );
+    setSize({ width: nodeWidth, height: nodeHeight });
   }, [text, collapsed]);
+
+  useLayoutEffect(() => {
+    updateNodeInternals(id);
+  }, [id, size.width, size.height, collapsed, updateNodeInternals]);
 
   const hoverTooltipText = confirmDelete
     ? 'Confirm delete'
@@ -168,7 +214,13 @@ export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) =>
     <div
       onDoubleClick={handleDoubleClick}
       className={`vs-node vs-node--purple vs-node--text ${collapsed ? 'vs-node--collapsed' : ''} ${selected ? 'vs-node--selected' : ''}`}
-      style={{ width: size.width, minHeight: collapsed ? undefined : size.height }}
+      style={{
+        width: size.width,
+        minWidth: MIN_WIDTH,
+        maxWidth: MAX_WIDTH,
+        minHeight: collapsed ? undefined : size.height,
+        maxHeight: collapsed ? undefined : MAX_NODE_HEIGHT,
+      }}
     >
       <NodeToolbar isVisible={Boolean(hoverTooltipText)} position={Position.Top} align="end">
         <div className="vs-node__toolbar-tooltip">{hoverTooltipText}</div>
@@ -265,6 +317,10 @@ export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) =>
                 onChange={handleTextChange}
                 placeholder="Type '{{' to utilize variables"
                 rows={1}
+                style={{ height: 'auto' }}
+                onMouseDown={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                onWheel={(e) => e.stopPropagation()}
               />
             </div>
           </div>
