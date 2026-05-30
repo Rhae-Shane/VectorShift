@@ -159,6 +159,11 @@ body {
   stroke-width: 3;
 }
 
+.vs-edge-delete-wrap {
+  position: absolute;
+  pointer-events: all;
+}
+
 .vs-edge-delete {
   display: flex;
   align-items: center;
@@ -176,8 +181,7 @@ body {
   transition:
     background 0.15s ease,
     border-color 0.15s ease,
-    color 0.15s ease,
-    transform 0.15s ease;
+    color 0.15s ease;
 }
 
 .vs-edge-delete:hover {
