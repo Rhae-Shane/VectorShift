@@ -19,13 +19,14 @@ import {
   type CanvasAddNodeDetail,
 } from './utils/canvasEvents';
 import { useTrackpadPinchZoom } from './hooks/useTrackpadPinchZoom';
-import { loadViewport, saveViewport } from './utils/pipelinePersistence';
+import { loadViewport, saveViewport, VIEWPORT_MIN_ZOOM, VIEWPORT_MAX_ZOOM, DEFAULT_VIEWPORT } from './utils/pipelinePersistence';
+import { fitPipelineView, isValidViewport } from './utils/fitPipelineView';
 
 import 'reactflow/dist/style.css';
 
 const gridSize = 20;
 const proOptions = { hideAttribution: true };
-const INITIAL_VIEWPORT = { x: 0, y: 0, zoom: 1 };
+const INITIAL_VIEWPORT = DEFAULT_VIEWPORT;
 
 const selector = (state: StoreState) => ({
   nodes: state.nodes,
@@ -60,9 +61,9 @@ export const PipelineUI = () => {
 
   const isCanvasEmpty = nodes.length === 0;
   const effectivePanMode = !isCanvasEmpty && (panMode || !isInteractive);
-  const zoomPercent = Math.max(0, Math.min(350, Math.round(zoom * 100)));
-  const maxZoom = isCanvasEmpty ? 1 : 3.5;
-  const minZoom = isCanvasEmpty ? 1 : 0;
+  const zoomPercent = Math.max(1, Math.min(350, Math.round(zoom * 100)));
+  const maxZoom = isCanvasEmpty ? 1 : VIEWPORT_MAX_ZOOM;
+  const minZoom = isCanvasEmpty ? 1 : VIEWPORT_MIN_ZOOM;
 
   useTrackpadPinchZoom(
     reactFlowWrapper,
@@ -162,11 +163,7 @@ export const PipelineUI = () => {
 
   const fitView = useCallback(() => {
     if (!reactFlowInstance || isCanvasEmpty) return;
-    reactFlowInstance.fitView({
-      padding: 0.2,
-      duration: 350,
-      includeHiddenNodes: true,
-    });
+    void fitPipelineView(reactFlowInstance);
   }, [reactFlowInstance, isCanvasEmpty]);
 
   const zoomIn = useCallback(() => {
@@ -182,6 +179,12 @@ export const PipelineUI = () => {
   const onFlowInit = useCallback((instance: ReactFlowInstance) => {
     setReactFlowInstance(instance);
 
+    const current = instance.getViewport();
+    if (!isValidViewport(current)) {
+      instance.setViewport(DEFAULT_VIEWPORT, { duration: 0 });
+      setZoom(DEFAULT_VIEWPORT.zoom);
+    }
+
     const saved = loadViewport();
     if (saved && useStore.getState().nodes.length > 0) {
       instance.setViewport(saved, { duration: 0 });
@@ -191,15 +194,33 @@ export const PipelineUI = () => {
 
   const onMove = useCallback(
     (_: unknown, viewport: { x: number; y: number; zoom: number }) => {
+      if (!isValidViewport(viewport)) {
+        reactFlowInstance?.setViewport(DEFAULT_VIEWPORT, { duration: 0 });
+        setZoom(DEFAULT_VIEWPORT.zoom);
+        return;
+      }
+
       const empty = useStore.getState().nodes.length === 0;
       if (
         empty &&
-        (viewport.zoom !== 1 || viewport.x !== 0 || viewport.y !== 0)
+        (viewport.zoom !== DEFAULT_VIEWPORT.zoom ||
+          viewport.x !== DEFAULT_VIEWPORT.x ||
+          viewport.y !== DEFAULT_VIEWPORT.y)
       ) {
-        reactFlowInstance?.setViewport(INITIAL_VIEWPORT, { duration: 0 });
-        setZoom(1);
+        reactFlowInstance?.setViewport(DEFAULT_VIEWPORT, { duration: 0 });
+        setZoom(DEFAULT_VIEWPORT.zoom);
         return;
       }
+
+      if (!empty && viewport.zoom < VIEWPORT_MIN_ZOOM) {
+        reactFlowInstance?.setViewport(
+          { ...viewport, zoom: VIEWPORT_MIN_ZOOM },
+          { duration: 0 }
+        );
+        setZoom(VIEWPORT_MIN_ZOOM);
+        return;
+      }
+
       setZoom(viewport.zoom);
     },
     [reactFlowInstance]
@@ -208,6 +229,7 @@ export const PipelineUI = () => {
   const onMoveEnd = useCallback(
     (_: unknown, viewport: { x: number; y: number; zoom: number }) => {
       if (useStore.getState().nodes.length === 0) return;
+      if (!isValidViewport(viewport)) return;
       saveViewport(viewport);
     },
     []
@@ -215,8 +237,8 @@ export const PipelineUI = () => {
 
   useEffect(() => {
     if (!isCanvasEmpty || !reactFlowInstance) return;
-    reactFlowInstance.setViewport(INITIAL_VIEWPORT, { duration: 0 });
-    setZoom(1);
+    reactFlowInstance.setViewport(DEFAULT_VIEWPORT, { duration: 0 });
+    setZoom(DEFAULT_VIEWPORT.zoom);
   }, [isCanvasEmpty, reactFlowInstance]);
 
   useEffect(() => {
@@ -277,7 +299,7 @@ export const PipelineUI = () => {
         snapGrid={[gridSize, gridSize]}
         connectionLineType={ConnectionLineType.SmoothStep}
         defaultViewport={INITIAL_VIEWPORT}
-        onlyRenderVisibleElements
+        onlyRenderVisibleElements={false}
         minZoom={minZoom}
         maxZoom={maxZoom}
         nodesDraggable={!isCanvasEmpty && isInteractive && !effectivePanMode}
@@ -287,8 +309,8 @@ export const PipelineUI = () => {
         panOnScroll={!isCanvasEmpty}
         panOnScrollMode={PanOnScrollMode.Free}
         panOnScrollSpeed={0.75}
-        zoomOnScroll={!isCanvasEmpty}
-        zoomOnPinch={!isCanvasEmpty}
+        zoomOnScroll={false}
+        zoomOnPinch={false}
         zoomOnDoubleClick={!isCanvasEmpty}
         /* Must stay true when wheel pan/zoom is enabled (React Flow skips wheel otherwise). */
         preventScrolling
@@ -297,9 +319,9 @@ export const PipelineUI = () => {
         onMoveEnd={onMoveEnd}
       >
         <Background
-          color="var(--vs-canvas-dot)"
+          color="#b8bec7"
           gap={gridSize}
-          size={1.5}
+          size={1}
           variant={BackgroundVariant.Dots}
         />
 

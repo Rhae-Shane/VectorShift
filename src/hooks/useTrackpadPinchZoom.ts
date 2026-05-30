@@ -1,28 +1,41 @@
 import { useEffect, type RefObject } from 'react';
 import type { ReactFlowInstance } from 'reactflow';
 
-/** Match React Flow's internal wheel delta for pinch gestures. */
-function getPinchZoomDelta(event: WheelEvent): number {
-  const boost = 10;
-  const modeScale =
-    event.deltaMode === 1 ? 0.05 : event.deltaMode ? 1 : 0.002;
-  return -event.deltaY * modeScale * boost;
-}
-
-function isPinchWheelEvent(event: WheelEvent): boolean {
-  // Browsers emit trackpad pinch as wheel + ctrlKey (Windows, macOS, Linux Chromium).
-  return event.ctrlKey;
+/** Ctrl/Meta + wheel (mouse wheel or trackpad pinch). */
+function isZoomWheelEvent(event: WheelEvent): boolean {
+  return event.ctrlKey || event.metaKey;
 }
 
 /**
- * Pinch-to-zoom on trackpads for non-macOS / when React Flow's built-in path does not run.
- * Uses capture phase so ctrl+wheel pinch is not treated as pan-on-scroll.
+ * Smooth exponential zoom multiplier tuned per delta mode.
+ * Avoids the large jumps from React Flow's default wheel steps.
+ */
+function getSmoothZoomMultiplier(event: WheelEvent): number {
+  const direction = event.deltaY < 0 ? 1 : -1;
+  const magnitude = Math.abs(event.deltaY);
+
+  if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) {
+    const lines = Math.min(magnitude / 3, 4);
+    return Math.pow(1.055, direction * lines);
+  }
+
+  if (event.deltaMode === WheelEvent.DOM_DELTA_PAGE) {
+    return Math.pow(1.08, direction);
+  }
+
+  const normalized = Math.min(magnitude / 100, 2);
+  return Math.pow(1.035, direction * normalized * 2);
+}
+
+/**
+ * Smooth Ctrl/Meta + wheel zoom (mouse wheel and trackpad pinch).
+ * Replaces React Flow's built-in wheel zoom for finer, steadier steps.
  */
 export function useTrackpadPinchZoom(
   wrapperRef: RefObject<HTMLDivElement | null>,
   instance: ReactFlowInstance | null,
   enabled: boolean,
-  minZoom = 0,
+  minZoom = 0.01,
   maxZoom = 3.5
 ): void {
   useEffect(() => {
@@ -30,7 +43,7 @@ export function useTrackpadPinchZoom(
     if (!el || !instance || !enabled) return;
 
     const onWheel = (event: WheelEvent) => {
-      if (!isPinchWheelEvent(event)) return;
+      if (!isZoomWheelEvent(event)) return;
 
       const target = event.target as HTMLElement | null;
       if (target?.closest('.nowheel')) return;
@@ -43,13 +56,13 @@ export function useTrackpadPinchZoom(
       const clientY = event.clientY - rect.top;
 
       const zoom = instance.getZoom();
-      const pinchDelta = getPinchZoomDelta(event);
+      const multiplier = getSmoothZoomMultiplier(event);
       const nextZoom = Math.min(
         maxZoom,
-        Math.max(minZoom, zoom * Math.pow(2, pinchDelta))
+        Math.max(minZoom, zoom * multiplier)
       );
 
-      if (nextZoom === zoom) return;
+      if (Math.abs(nextZoom - zoom) < 0.0001) return;
 
       const flowPos = instance.project({ x: clientX, y: clientY });
 

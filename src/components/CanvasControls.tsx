@@ -80,7 +80,7 @@ export const CanvasControls = memo(function CanvasControls({
         <div className="vs-canvas-controls__zoom-col" aria-label="Zoom controls">
           <div
             className="vs-canvas-controls__zoom-label"
-            title={`Zoom ${zoomPercent}% (0% – 350%)`}
+            title={`Zoom ${zoomPercent}% (1% – 350%)`}
           >
             {zoomPercent}%
           </div>
@@ -155,11 +155,12 @@ export const CanvasControls = memo(function CanvasControls({
             className="vs-minimap"
             zoomable={!canvasLocked}
             pannable={!canvasLocked}
+            ariaLabel="Pipeline minimap"
             nodeColor="#6366f1"
-            nodeStrokeColor="#3730a3"
+            nodeStrokeColor="#4338ca"
             nodeStrokeWidth={2}
             nodeBorderRadius={4}
-            maskColor="rgba(15, 23, 42, 0.2)"
+            maskColor="rgba(15, 23, 42, 0.14)"
             maskStrokeColor="#6366f1"
             maskStrokeWidth={2}
           />

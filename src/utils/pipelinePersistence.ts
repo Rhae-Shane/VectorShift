@@ -4,6 +4,40 @@ import type { PipelineNode } from '../store';
 export const PIPELINE_STORAGE_KEY = 'vs-pipeline-state';
 export const PIPELINE_VIEWPORT_KEY = 'vs-pipeline-viewport';
 
+export const VIEWPORT_MIN_ZOOM = 0.01;
+export const VIEWPORT_MAX_ZOOM = 3.5;
+
+export const DEFAULT_VIEWPORT: PersistedViewport = { x: 0, y: 0, zoom: 1 };
+
+export const clampViewportZoom = (zoom: number): number => {
+  if (!Number.isFinite(zoom) || zoom <= 0) return DEFAULT_VIEWPORT.zoom;
+  return Math.min(VIEWPORT_MAX_ZOOM, Math.max(VIEWPORT_MIN_ZOOM, zoom));
+};
+
+export const normalizeViewport = (
+  viewport: Partial<PersistedViewport> | null | undefined
+): PersistedViewport => {
+  if (!viewport) return DEFAULT_VIEWPORT;
+
+  const x = viewport.x;
+  const y = viewport.y;
+  const zoom = viewport.zoom;
+
+  if (
+    typeof x !== 'number' ||
+    typeof y !== 'number' ||
+    typeof zoom !== 'number' ||
+    !Number.isFinite(x) ||
+    !Number.isFinite(y) ||
+    !Number.isFinite(zoom) ||
+    zoom <= 0
+  ) {
+    return DEFAULT_VIEWPORT;
+  }
+
+  return { x, y, zoom: clampViewportZoom(zoom) };
+};
+
 export interface PersistedViewport {
   x: number;
   y: number;
@@ -69,7 +103,7 @@ export const loadViewport = (): PersistedViewport | null => {
       typeof parsed.y === 'number' &&
       typeof parsed.zoom === 'number'
     ) {
-      return parsed;
+      return normalizeViewport(parsed);
     }
   } catch {
     /* ignore */
@@ -79,7 +113,11 @@ export const loadViewport = (): PersistedViewport | null => {
 
 export const saveViewport = (viewport: PersistedViewport) => {
   try {
-    localStorage.setItem(PIPELINE_VIEWPORT_KEY, JSON.stringify(viewport));
+    const normalized = normalizeViewport(viewport);
+    localStorage.setItem(
+      PIPELINE_VIEWPORT_KEY,
+      JSON.stringify(normalized)
+    );
   } catch {
     /* ignore */
   }

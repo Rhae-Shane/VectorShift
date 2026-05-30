@@ -2,6 +2,7 @@ import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { Handle, NodeToolbar, Position, useReactFlow } from 'reactflow';
 import type { HandleConfig, NodeAccent } from '../types/nodes';
 import '../styles/nodes.css';
+import { NODE_DEFAULT_WIDTH } from '../constants/nodeLayout';
 import { useStore } from '../store';
 import { FiX, FiCopy } from 'react-icons/fi';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
@@ -117,7 +118,7 @@ export const BaseNode = ({
     if (!position) return;
 
     // Use measured width/height or fallback to standard node dimensions
-    const w = width ?? 380;
+    const w = width ?? NODE_DEFAULT_WIDTH;
     const h = height ?? 200;
 
     const x = position.x + w / 2;
@@ -145,7 +146,7 @@ export const BaseNode = ({
     <div
       onDoubleClick={handleDoubleClick}
       className={`vs-node vs-node--${accent} ${collapsed ? 'vs-node--collapsed' : ''} ${selected ? 'vs-node--selected' : ''} ${className}`}
-      style={{ minWidth: minWidth ?? 380, ...style }}
+      style={{ minWidth: minWidth ?? NODE_DEFAULT_WIDTH, ...style }}
     >
       <NodeToolbar isVisible={Boolean(hoverTooltipText)} position={Position.Top} align="end">
         <div className="vs-node__toolbar-tooltip">{hoverTooltipText}</div>

@@ -7,10 +7,21 @@ import {
   type FC,
   type SVGProps,
 } from 'react';
-import { Handle, NodeToolbar, Position, useReactFlow, type NodeProps } from 'reactflow';
+import { Handle, NodeToolbar, Position, useReactFlow, useUpdateNodeInternals, type NodeProps } from 'reactflow';
 import { useStore } from '../store';
 import type { PipelineNodeData } from '../types/nodes';
 import '../styles/nodes.css';
+import {
+  TEXT_NODE_FIELD_HORIZONTAL_PAD,
+  TEXT_NODE_MAX_HEIGHT,
+  TEXT_NODE_MAX_TEXTAREA_HEIGHT,
+  TEXT_NODE_MAX_WIDTH,
+  TEXT_NODE_MIN_HEIGHT,
+  TEXT_NODE_MIN_TEXTAREA_HEIGHT,
+  TEXT_NODE_MIN_WIDTH,
+  TEXT_NODE_VERTICAL_CHROME,
+  NODE_DEFAULT_WIDTH,
+} from '../constants/nodeLayout';
 import { FiType, FiX, FiCopy } from 'react-icons/fi';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
@@ -37,11 +48,14 @@ const parseVariables = (text: string): string[] => {
   return variables;
 };
 
-const MIN_WIDTH = 380;
-const MIN_HEIGHT = 120;
-const MAX_WIDTH = 560;
-const FIELD_HORIZONTAL_PAD = 56;
-const NODE_VERTICAL_CHROME = 84;
+const MIN_WIDTH = TEXT_NODE_MIN_WIDTH;
+const MIN_HEIGHT = TEXT_NODE_MIN_HEIGHT;
+const MAX_WIDTH = TEXT_NODE_MAX_WIDTH;
+const MIN_TEXTAREA_HEIGHT = TEXT_NODE_MIN_TEXTAREA_HEIGHT;
+const MAX_TEXTAREA_HEIGHT = TEXT_NODE_MAX_TEXTAREA_HEIGHT;
+const FIELD_HORIZONTAL_PAD = TEXT_NODE_FIELD_HORIZONTAL_PAD;
+const NODE_VERTICAL_CHROME = TEXT_NODE_VERTICAL_CHROME;
+const MAX_NODE_HEIGHT = TEXT_NODE_MAX_HEIGHT;
 
 export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) => {
   const updateNodeField = useStore((s) => s.updateNodeField);
@@ -49,10 +63,11 @@ export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) =>
   const getNodeID = useStore((s) => s.getNodeID);
   const addNode = useStore((s) => s.addNode);
   const { getNode, setCenter } = useReactFlow();
+  const updateNodeInternals = useUpdateNodeInternals();
   const [text, setText] = useState<string>(
     (data?.text as string | undefined) ?? '{{input}}'
   );
-  const [size, setSize] = useState({ width: MIN_WIDTH, height: MIN_HEIGHT });
+  const [size, setSize] = useState({ width: NODE_DEFAULT_WIDTH, height: MIN_HEIGHT });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const measureRef = useRef<HTMLSpanElement>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -167,12 +182,21 @@ export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) =>
 
     el.style.width = '100%';
     el.style.height = 'auto';
-    const textareaHeight = Math.max(el.scrollHeight, 40);
+    const naturalHeight = Math.max(el.scrollHeight, MIN_TEXTAREA_HEIGHT);
+    const textareaHeight = Math.min(naturalHeight, MAX_TEXTAREA_HEIGHT);
     el.style.height = `${textareaHeight}px`;
+    el.style.overflowY = naturalHeight > MAX_TEXTAREA_HEIGHT ? 'auto' : 'hidden';
 
-    const nodeHeight = Math.max(textareaHeight + NODE_VERTICAL_CHROME, MIN_HEIGHT);
+    const nodeHeight = Math.max(
+      Math.min(textareaHeight + NODE_VERTICAL_CHROME, MAX_NODE_HEIGHT),
+      MIN_HEIGHT
+    );
     setSize({ width: nodeWidth, height: nodeHeight });
   }, [text, collapsed]);
+
+  useLayoutEffect(() => {
+    updateNodeInternals(id);
+  }, [id, size.width, size.height, collapsed, updateNodeInternals]);
 
   const hoverTooltipText = confirmDelete
     ? 'Confirm delete'
@@ -195,6 +219,7 @@ export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) =>
         minWidth: MIN_WIDTH,
         maxWidth: MAX_WIDTH,
         minHeight: collapsed ? undefined : size.height,
+        maxHeight: collapsed ? undefined : MAX_NODE_HEIGHT,
       }}
     >
       <NodeToolbar isVisible={Boolean(hoverTooltipText)} position={Position.Top} align="end">
@@ -295,6 +320,7 @@ export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) =>
                 style={{ height: 'auto' }}
                 onMouseDown={(e) => e.stopPropagation()}
                 onPointerDown={(e) => e.stopPropagation()}
+                onWheel={(e) => e.stopPropagation()}
               />
             </div>
           </div>
