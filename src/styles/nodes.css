@@ -247,11 +247,27 @@
   min-height: 2.5rem;
 }
 
+.vs-node.vs-node--text {
+  width: auto;
+  min-width: 380px;
+  max-width: 560px;
+  user-select: auto;
+  cursor: default;
+}
+
+.vs-node.vs-node--text .vs-field__textarea {
+  user-select: text;
+  cursor: text;
+  box-sizing: border-box;
+}
+
 .vs-field__textarea--grow {
   resize: none;
   overflow: hidden;
   line-height: 1.45;
   background: #ffffff;
+  width: 100%;
+  min-height: 2.5rem;
 }
 
 /* Glassmorphic slider buttons */
@@ -293,9 +309,10 @@
   white-space: pre-wrap;
   word-wrap: break-word;
   font-size: 0.8125rem;
+  line-height: 1.45;
   font-family: inherit;
   padding: 8px 12px;
-  max-width: 388px;
+  box-sizing: border-box;
   pointer-events: none;
 }
 

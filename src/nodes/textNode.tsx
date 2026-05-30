@@ -39,7 +39,9 @@ const parseVariables = (text: string): string[] => {
 
 const MIN_WIDTH = 380;
 const MIN_HEIGHT = 120;
-const MAX_WIDTH = 420;
+const MAX_WIDTH = 560;
+const FIELD_HORIZONTAL_PAD = 56;
+const NODE_VERTICAL_CHROME = 84;
 
 export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) => {
   const updateNodeField = useStore((s) => s.updateNodeField);
@@ -138,18 +140,38 @@ export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) =>
   useLayoutEffect(() => {
     const el = textareaRef.current;
     const measure = measureRef.current;
-    if (!el || !measure) return;
+    if (!el || !measure || collapsed) return;
 
-    if (collapsed) return;
+    const lines = text.split('\n');
+    let maxLineWidth = 0;
 
-    measure.textContent = text || ' ';
-    const contentWidth = Math.min(
-      Math.max(measure.scrollWidth + 32, MIN_WIDTH),
+    measure.style.whiteSpace = 'pre';
+    measure.style.maxWidth = 'none';
+    measure.style.width = 'auto';
+
+    for (const line of lines) {
+      measure.textContent = line || ' ';
+      maxLineWidth = Math.max(maxLineWidth, measure.scrollWidth);
+    }
+
+    const nodeWidth = Math.min(
+      Math.max(maxLineWidth + FIELD_HORIZONTAL_PAD, MIN_WIDTH),
       MAX_WIDTH
     );
+
+    const textareaContentWidth = nodeWidth - FIELD_HORIZONTAL_PAD;
+    measure.style.whiteSpace = 'pre-wrap';
+    measure.style.width = `${textareaContentWidth}px`;
+    measure.style.maxWidth = `${textareaContentWidth}px`;
+    measure.textContent = text || ' ';
+
+    el.style.width = '100%';
     el.style.height = 'auto';
-    const contentHeight = Math.max(el.scrollHeight + 84, MIN_HEIGHT);
-    setSize({ width: contentWidth, height: contentHeight });
+    const textareaHeight = Math.max(el.scrollHeight, 40);
+    el.style.height = `${textareaHeight}px`;
+
+    const nodeHeight = Math.max(textareaHeight + NODE_VERTICAL_CHROME, MIN_HEIGHT);
+    setSize({ width: nodeWidth, height: nodeHeight });
   }, [text, collapsed]);
 
   const hoverTooltipText = confirmDelete
@@ -168,7 +190,12 @@ export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) =>
     <div
       onDoubleClick={handleDoubleClick}
       className={`vs-node vs-node--purple vs-node--text ${collapsed ? 'vs-node--collapsed' : ''} ${selected ? 'vs-node--selected' : ''}`}
-      style={{ width: size.width, minHeight: collapsed ? undefined : size.height }}
+      style={{
+        width: size.width,
+        minWidth: MIN_WIDTH,
+        maxWidth: MAX_WIDTH,
+        minHeight: collapsed ? undefined : size.height,
+      }}
     >
       <NodeToolbar isVisible={Boolean(hoverTooltipText)} position={Position.Top} align="end">
         <div className="vs-node__toolbar-tooltip">{hoverTooltipText}</div>
@@ -265,6 +292,9 @@ export const TextNode = ({ id, data, selected }: NodeProps<PipelineNodeData>) =>
                 onChange={handleTextChange}
                 placeholder="Type '{{' to utilize variables"
                 rows={1}
+                style={{ height: 'auto' }}
+                onMouseDown={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
               />
             </div>
           </div>
