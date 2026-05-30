@@ -10,6 +10,7 @@ import { useStore } from './store';
 import { shallow } from 'zustand/shallow';
 import { nodeTypes, getDefaultNodeData } from './nodes/nodeRegistry';
 import { edgeTypes } from './edges/edgeTypes';
+import { ConnectionLine } from './edges/ConnectionLine';
 import type { PipelineNode, StoreState } from './store';
 import { CanvasControls } from './components/CanvasControls';
 import { CanvasEmptyState } from './components/CanvasEmptyState';
@@ -298,6 +299,11 @@ export const PipelineUI = () => {
         proOptions={proOptions}
         snapGrid={[gridSize, gridSize]}
         connectionLineType={ConnectionLineType.Bezier}
+        connectionLineComponent={ConnectionLine}
+        connectionLineStyle={{
+          stroke: '#9ca3af',
+          strokeWidth: 2,
+        }}
         defaultViewport={INITIAL_VIEWPORT}
         onlyRenderVisibleElements={false}
         minZoom={minZoom}

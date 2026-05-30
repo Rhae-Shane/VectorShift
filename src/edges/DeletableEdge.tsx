@@ -9,8 +9,11 @@ import { FiX } from 'react-icons/fi';
 import { useStore } from '../store';
 import { shallow } from 'zustand/shallow';
 
-/** Slightly stronger than React Flow default (0.25) for gentler S-curves. */
-const EDGE_CURVATURE = 0.38;
+import {
+  EDGE_CURVATURE,
+  EDGE_STROKE,
+  EDGE_STROKE_WIDTH,
+} from './edgePathConfig';
 
 const CloseIcon = FiX as unknown as FC<SVGProps<SVGSVGElement>>;
 
@@ -60,8 +63,8 @@ export const DeletableEdge = memo(function DeletableEdge({
         interactionWidth={24}
         style={{
           ...style,
-          stroke: isPendingDelete ? '#ef4444' : style?.stroke ?? '#9ca3af',
-          strokeWidth: isPendingDelete ? 3 : 2,
+          stroke: isPendingDelete ? '#ef4444' : style?.stroke ?? EDGE_STROKE,
+          strokeWidth: isPendingDelete ? 3 : EDGE_STROKE_WIDTH,
         }}
       />
       <EdgeLabelRenderer>
