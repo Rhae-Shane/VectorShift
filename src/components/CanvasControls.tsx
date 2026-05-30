@@ -3,7 +3,6 @@ import { MiniMap, Panel } from 'reactflow';
 import { FiLock, FiMinus, FiPlus, FiUnlock } from 'react-icons/fi';
 import { FitViewIcon } from './icons/FitViewIcon';
 import { HandIcon } from './icons/HandIcon';
-import { LayoutDashboardIcon } from './icons/LayoutDashboardIcon';
 import { MinimizeNodesIcon } from './icons/MinimizeNodesIcon';
 import { ExpandNodesIcon } from './icons/ExpandNodesIcon';
 import '../styles/canvas-controls.css';
@@ -114,15 +113,6 @@ export const CanvasControls = memo(function CanvasControls({
               ) : (
                 <LockIcon className="vs-rf-control-icon" aria-hidden />
               )}
-            </ControlButton>
-
-            <ControlButton
-              label="Fit view"
-              onClick={onFitView}
-              className="vs-rf-control-btn--secondary-fit"
-              disabled={canvasLocked}
-            >
-              <LayoutDashboardIcon className="vs-rf-control-icon" aria-hidden />
             </ControlButton>
 
             <ControlButton
