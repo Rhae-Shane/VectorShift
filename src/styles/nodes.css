@@ -439,11 +439,11 @@
   transform: translateX(16px);
 }
 
-/* Handles */
+/* Handles — sit half outside the node border */
 .react-flow__handle-left.vs-handle {
-  left: -6px !important;
+  left: calc(var(--vs-handle-offset) * -1) !important;
 }
 
 .react-flow__handle-right.vs-handle {
-  right: -6px !important;
+  right: calc(var(--vs-handle-offset) * -1) !important;
 }
