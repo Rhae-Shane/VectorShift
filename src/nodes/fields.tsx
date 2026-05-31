@@ -179,6 +179,47 @@ export const StaticContent = ({ content }: { content: string }) => (
   <p className="vs-node__static">{content}</p>
 );
 
+export interface NumberFieldProps extends FieldBaseProps {
+  defaultValue?: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  unit?: string;
+}
+
+/** Custom field type example — numeric input synced to node.data via useSyncedField. */
+export const NumberField = ({
+  nodeId,
+  data,
+  name,
+  label,
+  defaultValue = 0,
+  min,
+  max,
+  step = 1,
+  unit,
+}: NumberFieldProps) => {
+  const [value, setValue] = useSyncedField(nodeId, name, defaultValue, data);
+
+  return (
+    <div className="vs-field">
+      <label className="vs-field__label">
+        {label}
+        {unit ? ` (${unit})` : ''}
+      </label>
+      <input
+        className="vs-field__input"
+        type="number"
+        value={Number(value)}
+        min={min}
+        max={max}
+        step={step}
+        onChange={(e) => setValue(Number(e.target.value))}
+      />
+    </div>
+  );
+};
+
 export interface GrowingTextAreaFieldProps extends FieldBaseProps {
   placeholder?: string;
   defaultValue?: string;

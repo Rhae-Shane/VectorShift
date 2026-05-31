@@ -8,6 +8,7 @@ import {
   ToggleField,
   StaticContent,
   GrowingTextAreaField,
+  NumberField,
 } from './fields';
 import { useGrowingTextNodeSize } from '../hooks/useGrowingTextNodeSize';
 import {
@@ -81,6 +82,18 @@ const renderField = (
           textareaRef={growingTextRefs?.textareaRef}
           measureRef={growingTextRefs?.measureRef}
           onTextChange={growingTextRefs?.onTextChange}
+        />
+      );
+    case 'number':
+      return (
+        <NumberField
+          key={field.name}
+          {...base}
+          defaultValue={field.defaultValue}
+          min={field.min}
+          max={field.max}
+          step={field.step}
+          unit={field.unit}
         />
       );
     default:

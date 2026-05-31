@@ -68,12 +68,23 @@ export interface GrowingTextAreaFieldConfig extends BaseFieldConfig {
   defaultValue?: string;
 }
 
+/** Example custom field — see docs/EXTENDING_NODES.md */
+export interface NumberFieldConfig extends BaseFieldConfig {
+  kind: 'number';
+  defaultValue?: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  unit?: string;
+}
+
 export type FieldConfig =
   | TextFieldConfig
   | SelectFieldConfig
   | TextAreaFieldConfig
   | ToggleFieldConfig
-  | GrowingTextAreaFieldConfig;
+  | GrowingTextAreaFieldConfig
+  | NumberFieldConfig;
 
 export interface NodeDefinition {
   type: string;

@@ -271,6 +271,32 @@ flowchart LR
 
 ---
 
+## Extending the abstraction
+
+Full step-by-step guide: **[docs/EXTENDING_NODES.md](docs/EXTENDING_NODES.md)**
+
+### At a glance
+
+| Goal | What to change | Example in repo |
+|------|----------------|-----------------|
+| New node type | Add `NodeDefinition` to `nodeRegistry.tsx` | Condition, Merge, Note |
+| New field type | `types/nodes.ts` → `fields.tsx` → `renderField` switch | **`number`** field (`NumberField`) |
+| Dynamic handles | `getDynamicHandles` on definition | Text node `{{var}}` inputs |
+| Validation banner | `getError` on definition | JSON Parse node |
+| Node-level layout | Hooks in `createNodeComponent` | Text auto-resize |
+
+### Field kinds (6 total)
+
+| Kind | Purpose |
+|------|---------|
+| `text` / `select` / `textarea` / `toggle` | Standard inputs |
+| `growingTextarea` | Auto-resize + variable handles (advanced factory logic) |
+| `number` | **Custom extension demo** — used on HTTP Request (`timeoutMs`) |
+
+Adding a node is usually **config only**. Adding a field is **3 files** (types, component, factory switch). See the doc for copy-paste templates and checklists.
+
+---
+
 ## Folder structure
 
 ```
@@ -284,7 +310,9 @@ src/
 │   ├── createNode.tsx      # NodeDefinition → React component factory
 │   ├── BaseNode.tsx        # Shared node shell (handles, body, collapse)
 │   ├── NodeHeader.tsx      # Toolbar actions (duplicate, collapse, delete)
-│   └── fields.tsx          # Reusable field components (+ growing textarea)
+│   └── fields.tsx          # Field components (text, select, number, …)
+├── docs/
+│   └── EXTENDING_NODES.md  # How to add nodes & custom field types
 ├── hooks/
 │   ├── useNodeChrome.ts    # Shared header/toolbar behavior
 │   └── useGrowingTextNodeSize.ts
@@ -298,7 +326,8 @@ test/                         # Unit & component tests
 
 ### Key patterns
 
-- **Node abstraction** — add a node by adding a `NodeDefinition` (fields, handles, optional `getDynamicHandles`, `getError`) instead of copying a component.
+- **Node abstraction** — add a `NodeDefinition` in `nodeRegistry.tsx`; see [docs/EXTENDING_NODES.md](docs/EXTENDING_NODES.md).
+- **Custom fields** — extend the `FieldConfig` union + `fields.tsx` + `renderField`; `number` is the worked example.
 - **Shared chrome** — `useNodeChrome` + `NodeHeader` centralize duplicate/delete/collapse and canvas focus.
 - **Icons** — `<Icon icon={FiX} />` wraps react-icons with one internal type cast.
 
@@ -324,6 +353,7 @@ test/                         # Unit & component tests
 |------|---------|----------------|
 | **1** | Node abstraction | `NodeDefinition` → `createNodeComponent` → `BaseNode` |
 | **1** | 5 custom nodes | Condition, HTTP Request, Merge, Note, JSON Parse |
+| **1** | Custom field type | `number` field on HTTP Request (timeout) |
 | **2** | Styling | `styles/theme.css` + component CSS, VectorShift-inspired UI |
 | **3** | Text auto-resize | `GrowingTextAreaField` + `useGrowingTextNodeSize` |
 | **3** | `{{variable}}` handles | `parseTextVariables` + `getDynamicHandles` |
