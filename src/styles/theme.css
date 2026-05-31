@@ -537,6 +537,7 @@ select option {
 .vs-edge-path--linked .react-flow__edge-path {
   stroke: var(--vs-edge-linked-color);
   stroke-dasharray: 6 4;
+  animation: vs-edge-flow 0.45s linear infinite;
 }
 
 .vs-edge-path--pulse .react-flow__edge-path {
@@ -568,10 +569,10 @@ select option {
   stroke: var(--vs-edge-linked-color);
   stroke-width: 2;
   stroke-dasharray: 6 4;
-  animation: vs-connection-flow 0.45s linear infinite;
+  animation: vs-edge-flow 0.45s linear infinite;
 }
 
-@keyframes vs-connection-flow {
+@keyframes vs-edge-flow {
   to {
     stroke-dashoffset: -10;
   }
@@ -580,6 +581,7 @@ select option {
 @media (prefers-reduced-motion: reduce) {
   .react-flow__handle.vs-handle--pulse,
   .vs-edge-path--pulse .react-flow__edge-path,
+  .vs-edge-path--linked .react-flow__edge-path,
   .vs-connection-line path {
     animation: none !important;
   }
