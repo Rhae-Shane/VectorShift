@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import {
   FiMinimize2,
-  FiSettings,
   FiXCircle,
   FiCopy,
 } from 'react-icons/fi';
@@ -57,14 +56,6 @@ export const NodeHeader = ({ title, icon, chrome }: NodeHeaderProps) => {
           {...bindHoverTip('duplicate')}
         >
           <Icon icon={FiCopy} size={16} />
-        </PressableButton>
-        <PressableButton
-          className="vs-node__icon-btn"
-          aria-label="Settings"
-          title="Settings"
-          onMouseDown={(e) => e.stopPropagation()}
-        >
-          <Icon icon={FiSettings} size={NODE_HEADER_ICON_SIZE} />
         </PressableButton>
         <PressableButton
           className={`vs-node__icon-btn ${confirmDelete ? 'vs-node__icon-btn--danger' : ''}`}

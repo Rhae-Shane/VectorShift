@@ -91,6 +91,30 @@
   gap: 6px;
 }
 
+/* Hover hint for disabled navbar actions (disabled buttons ignore pointer events). */
+.vs-hover-hint {
+  display: inline-flex;
+  position: relative;
+}
+
+.vs-hover-hint[data-hint]:hover::after {
+  content: attr(data-hint);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.35rem 0.55rem;
+  border-radius: 8px;
+  background: var(--vs-tooltip-bg);
+  color: var(--vs-tooltip-text);
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+}
+
 .vs-navbar__btn {
   display: inline-flex;
   align-items: center;

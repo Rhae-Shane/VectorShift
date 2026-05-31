@@ -42,6 +42,14 @@ describe('SubmitButton', () => {
     });
   });
 
+  it('is disabled when the canvas has no nodes', () => {
+    useStore.setState({ nodes: [], edges: [], nodeIDs: {} });
+
+    render(<SubmitButton />);
+
+    expect(screen.getByRole('button', { name: /Submit/i })).toBeDisabled();
+  });
+
   it('shows loading state while submitting', async () => {
     let resolveParse: (value: {
       num_nodes: number;

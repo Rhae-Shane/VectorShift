@@ -4,6 +4,7 @@ import { FiLoader } from 'react-icons/fi';
 import { useStore } from './store';
 import { ResultModal } from './components/ResultModal';
 import { PressableButton } from './components/PressableButton';
+import { DisabledHoverHint } from './components/DisabledHoverHint';
 import type { PipelineParseResponse } from './types/api';
 import { parsePipeline } from './services/pipelineService';
 import { fadeUpTransition, reducedMotionTransition } from './utils/motion';
@@ -11,6 +12,7 @@ import { Icon } from './components/Icon';
 import { useOnlineStatus } from './hooks/useOnlineStatus';
 import { classifySubmitError } from './utils/submitError';
 import { showBackendStatus } from './utils/backendStatusEvents';
+import { EMPTY_CANVAS_HINT } from './constants/canvas';
 
 export interface SubmitButtonProps {
   className?: string;
@@ -24,12 +26,16 @@ export const SubmitButton = ({
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PipelineParseResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const hasNodes = useStore((s) => s.nodes.length > 0);
   const reduceMotion = useReducedMotion();
   const transition = reduceMotion ? reducedMotionTransition : fadeUpTransition;
   const isOnline = useOnlineStatus();
+  const isDisabled = loading || !hasNodes;
 
   const handleSubmit = async () => {
     const { nodes, edges } = useStore.getState();
+    if (nodes.length === 0) return;
+
     setLoading(true);
     setResult(null);
     setError(null);
@@ -55,11 +61,13 @@ export const SubmitButton = ({
 
   return (
     <>
-      <PressableButton
-        className={className}
-        onClick={handleSubmit}
-        disabled={loading}
-      >
+      <DisabledHoverHint showHint={!hasNodes} hint={EMPTY_CANVAS_HINT}>
+        <PressableButton
+          className={className}
+          onClick={handleSubmit}
+          disabled={isDisabled}
+          aria-label={!hasNodes ? 'Submit (add nodes first)' : undefined}
+        >
         <AnimatePresence mode="wait" initial={false}>
           {loading ? (
             <motion.span
@@ -95,7 +103,8 @@ export const SubmitButton = ({
             </motion.span>
           )}
         </AnimatePresence>
-      </PressableButton>
+        </PressableButton>
+      </DisabledHoverHint>
 
       <ResultModal result={result} error={error} onClose={handleClose} />
     </>
