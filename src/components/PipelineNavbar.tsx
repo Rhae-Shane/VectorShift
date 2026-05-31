@@ -173,16 +173,16 @@ export const PipelineNavbar = () => {
         </div>
       </header>
 
-      {importOpen ? (
-        <PipelineImportModal
-          onClose={() => setImportOpen(false)}
-          onImport={handleImport}
-        />
-      ) : null}
+      <PipelineImportModal
+        open={importOpen}
+        onClose={() => setImportOpen(false)}
+        onImport={handleImport}
+      />
 
-      {shareOpen ? (
-        <PipelineShareModal onClose={() => setShareOpen(false)} />
-      ) : null}
+      <PipelineShareModal
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+      />
     </>
   );
 };

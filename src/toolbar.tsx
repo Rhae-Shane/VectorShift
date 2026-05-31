@@ -1,4 +1,5 @@
 import { useMemo, useState, useCallback } from 'react';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { FiSearch } from 'react-icons/fi';
 import { Icon } from './components/Icon';
 import { DraggableNode } from './draggableNode';
@@ -106,6 +107,8 @@ export const PipelineToolbar = ({ dockPosition = 'top' }: PipelineToolbarProps) 
   const [activeTab, setActiveTab] = useState<TabId>('Start');
   const [search, setSearch] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
+  const [paletteListRef] = useAutoAnimate<HTMLDivElement>({ duration: 180 });
+  const [paletteGridRef] = useAutoAnimate<HTMLDivElement>({ duration: 180 });
 
   const isVertical = isVerticalToolbarDock(dockPosition);
 
@@ -193,7 +196,7 @@ export const PipelineToolbar = ({ dockPosition = 'top' }: PipelineToolbarProps) 
               </summary>
 
               <div className="vs-palette__section-body">
-                <div className="vs-palette__grid">
+                <div ref={paletteGridRef} className="vs-palette__grid">
                   {entries.map((entry, index) => (
                     <div key={entry.type} className="vs-palette__grid-item">
                       {category.id === 'start' &&
@@ -215,7 +218,7 @@ export const PipelineToolbar = ({ dockPosition = 'top' }: PipelineToolbarProps) 
         </div>
       ) : (
         <div className="vs-palette__nodes-scroll">
-          <div className="vs-palette__nodes">
+          <div ref={paletteListRef} className="vs-palette__nodes">
             {filteredNodes.map((entry, index) => (
               <div key={entry.type} className="vs-palette__node-slot">
                 {shouldShowSeparatorBefore(entry, index, filteredNodes) && (
