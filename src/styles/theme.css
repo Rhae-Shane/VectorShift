@@ -44,9 +44,10 @@
   --vs-node-error-bg: #fef2f2;
   --vs-node-error-border: #b91c1c;
   --vs-handle-fill: #ffffff;
-  --vs-handle-indigo: #4f46e5;
-  --vs-handle-size: 16px;
-  --vs-handle-offset: 8px;
+  --vs-handle-indigo: #818cf8;
+  --vs-handle-size: 14px;
+  --vs-handle-offset: 7px;
+  --vs-handle-border-width: 2px;
   --vs-text: #111827;
   --vs-text-muted: #6b7280;
   --vs-radius: 8px;
@@ -212,7 +213,8 @@
   --vs-bg-hover: #252f42;
   --vs-node-header-bg: #1c2433;
   --vs-handle-ring: #1c2433;
-  --vs-handle-fill: #1c2433;
+  --vs-handle-fill: #ffffff;
+  --vs-handle-indigo: #a5b4fc;
 
   --vs-indigo-50: rgba(99, 102, 241, 0.07);
   --vs-indigo-100: rgba(99, 102, 241, 0.14);
@@ -253,7 +255,6 @@
   --vs-node-error-text: #fca5a5;
   --vs-node-error-bg: rgba(127, 29, 29, 0.32);
   --vs-node-error-border: rgba(248, 113, 113, 0.45);
-  --vs-handle-indigo: #818cf8;
 
   --vs-field-label: #e2e8f0;
   --vs-input-border: #64748b;
@@ -331,10 +332,14 @@ select option {
   width: var(--vs-handle-size) !important;
   height: var(--vs-handle-size) !important;
   background-color: var(--vs-handle-fill) !important;
-  border: 2px solid var(--vs-handle-indigo) !important;
+  border: var(--vs-handle-border-width) solid var(--vs-handle-indigo) !important;
+  border-radius: 50% !important;
   box-shadow: none !important;
   z-index: 10;
-  transition: box-shadow 0.15s ease, border-color 0.15s ease !important;
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease !important;
 }
 
 /* Preserve React Flow centering transforms — do not replace with scale(). */
@@ -355,28 +360,37 @@ select option {
 }
 
 .react-flow__handle:hover {
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25) !important;
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.22) !important;
 }
 
 .react-flow__handle.connecting,
 .react-flow__handle.valid,
 .react-flow__handle.connectingfrom,
 .react-flow__handle.connectingto {
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.35) !important;
+  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.28) !important;
 }
 
+/* White center + colored ring (reference design) */
 .react-flow__handle.vs-handle--sky {
-  background-color: var(--vs-handle-sky) !important;
+  background-color: var(--vs-handle-fill) !important;
+  border-color: var(--vs-handle-sky) !important;
 }
+
 .react-flow__handle.vs-handle--amber {
-  background-color: var(--vs-handle-amber) !important;
+  background-color: var(--vs-handle-fill) !important;
+  border-color: var(--vs-handle-amber) !important;
 }
+
 .react-flow__handle.vs-handle--rose {
-  background-color: var(--vs-handle-rose) !important;
+  background-color: var(--vs-handle-fill) !important;
+  border-color: var(--vs-handle-rose) !important;
 }
+
 .react-flow__handle.vs-handle--teal {
-  background-color: var(--vs-handle-teal) !important;
+  background-color: var(--vs-handle-fill) !important;
+  border-color: var(--vs-handle-teal) !important;
 }
+
 .react-flow__handle.vs-handle--gray {
   background-color: var(--vs-handle-fill) !important;
   border-color: var(--vs-handle-gray) !important;
