@@ -57,7 +57,7 @@
   position: relative;
   display: flex;
   flex-shrink: 0;
-  background: #f9fafb;
+  background: var(--vs-bg-hover);
   border-color: var(--vs-border);
   z-index: 5;
 }
@@ -106,9 +106,9 @@
   height: 30px;
   padding: 0;
   margin: 0;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--vs-border-dark);
   border-radius: 5px;
-  background: #ffffff;
+  background: var(--vs-bg-surface);
   transition:
     background 0.15s ease,
     border-color 0.15s ease,
@@ -132,7 +132,7 @@
   width: 100%;
   padding: 4px 6px;
   border-bottom: 1px solid var(--vs-border);
-  background: #f9fafb;
+  background: var(--vs-bg-hover);
 }
 
 /* Top / bottom: float controls in corner (original compact layout) */
@@ -159,7 +159,7 @@
 }
 
 .vs-dock-toolbar__position {
-  color: #6b7280;
+  color: var(--vs-icon-muted);
   cursor: pointer;
 }
 
@@ -170,21 +170,21 @@
 }
 
 .vs-dock-toolbar__position:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
-  color: #374151;
+  background: var(--vs-bg-hover);
+  border-color: var(--vs-border-dark);
+  color: var(--vs-tab-text);
 }
 
 .vs-dock-toolbar__position--active {
-  background: #eef2ff;
-  border-color: #6366f1;
-  color: #4f46e5;
+  background: var(--vs-accent-bg);
+  border-color: var(--vs-border-focus);
+  color: var(--vs-accent-text);
 }
 
 .vs-dock-toolbar__position--active:hover {
-  background: #e0e7ff;
-  border-color: #4f46e5;
-  color: #4338ca;
+  background: var(--vs-accent-bg-hover);
+  border-color: var(--vs-accent-text);
+  color: var(--vs-accent-text-strong);
 }
 
 .vs-dock-toolbar__content {
@@ -196,16 +196,16 @@
 
 .vs-dock-toolbar__close {
   margin-left: 2px;
-  border-color: #dc2626;
-  background: #ef4444;
-  color: #ffffff;
+  border-color: var(--vs-close-border);
+  background: var(--vs-close-bg);
+  color: var(--vs-on-accent);
   cursor: pointer;
 }
 
 .vs-dock-toolbar__close:hover {
-  background: #dc2626;
-  border-color: #b91c1c;
-  color: #ffffff;
+  background: var(--vs-close-bg-hover);
+  border-color: var(--vs-close-border-hover);
+  color: var(--vs-on-accent);
 }
 
 .vs-dock-toolbar__close svg {
@@ -217,14 +217,14 @@
 .vs-dock-toolbar__restore {
   position: absolute;
   z-index: 6;
-  color: #6b7280;
+  color: var(--vs-icon-muted);
   cursor: pointer;
 }
 
 .vs-dock-toolbar__restore:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
-  color: #374151;
+  background: var(--vs-bg-hover);
+  border-color: var(--vs-border-dark);
+  color: var(--vs-tab-text);
 }
 
 .vs-dock-toolbar__restore svg {
@@ -301,16 +301,16 @@
     'bottom bottom bottom';
   padding: 8px;
   gap: 8px;
-  background: rgba(15, 23, 42, 0.08);
+  background: var(--vs-dock-overlay);
 }
 
 .vs-dock-zone {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px dashed #c7d2fe;
+  border: 2px dashed var(--vs-dock-zone-border);
   border-radius: var(--vs-radius);
-  background: rgba(255, 255, 255, 0.55);
+  background: var(--vs-dock-zone-bg);
   transition:
     background 0.12s ease,
     border-color 0.12s ease,
@@ -334,21 +334,21 @@
 }
 
 .vs-dock-zone--active {
-  border-color: #6366f1;
+  border-color: var(--vs-dock-zone-border-active);
   border-style: solid;
-  background: rgba(238, 242, 255, 0.92);
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+  background: var(--vs-dock-zone-active-bg);
+  box-shadow: 0 0 0 2px var(--vs-focus-shadow);
 }
 
 .vs-dock-zone--current:not(.vs-dock-zone--active) {
-  border-color: #a5b4fc;
-  background: rgba(255, 255, 255, 0.75);
+  border-color: var(--vs-dock-zone-border-current);
+  background: var(--vs-dock-zone-current-bg);
 }
 
 .vs-dock-zone__label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #6366f1;
+  color: var(--vs-tab-active);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   pointer-events: none;

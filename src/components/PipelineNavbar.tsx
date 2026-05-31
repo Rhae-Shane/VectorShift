@@ -2,10 +2,13 @@ import { useEffect, useCallback, useState } from 'react';
 import {
   FiCornerUpLeft,
   FiCornerUpRight,
+  FiMoon,
   FiMoreHorizontal,
   FiPlay,
+  FiSun,
 } from 'react-icons/fi';
 import { Icon } from './Icon';
+import { useTheme } from '../hooks/useTheme';
 import { SubmitButton } from '../submit';
 import {
   useStore,
@@ -24,6 +27,7 @@ export const PipelineNavbar = () => {
   const undo = useStore((s) => s.undo);
   const redo = useStore((s) => s.redo);
   const importPipeline = useStore((s) => s.importPipeline);
+  const { isDark, toggleTheme } = useTheme();
   const [importOpen, setImportOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
 
@@ -114,6 +118,15 @@ export const PipelineNavbar = () => {
               onClick={handleRedo}
             >
               <Icon icon={FiCornerUpRight} width={16} height={16} />
+            </button>
+            <button
+              type="button"
+              className="vs-navbar__icon-btn"
+              onClick={toggleTheme}
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={isDark ? 'Light mode' : 'Dark mode'}
+            >
+              <Icon icon={isDark ? FiSun : FiMoon} width={16} height={16} />
             </button>
           </div>
 

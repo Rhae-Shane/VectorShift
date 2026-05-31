@@ -59,10 +59,10 @@
   width: 30px;
   height: 30px;
   padding: 0;
-  border: 1px solid #dc2626;
+  border: 1px solid var(--vs-close-border);
   border-radius: 5px;
-  background: #ef4444;
-  color: #ffffff;
+  background: var(--vs-close-bg);
+  color: var(--vs-on-accent);
   cursor: pointer;
   transition:
     background 0.15s ease,
@@ -70,9 +70,9 @@
 }
 
 .vs-preview__close:hover {
-  background: #dc2626;
-  border-color: #b91c1c;
-  color: #ffffff;
+  background: var(--vs-close-bg-hover);
+  border-color: var(--vs-close-border-hover);
+  color: var(--vs-on-accent);
 }
 
 .vs-preview__close svg {

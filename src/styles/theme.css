@@ -60,6 +60,168 @@
   --vs-toolbar-shadow-purple: 0 2px 8px rgba(91, 33, 182, 0.38);
   --vs-toolbar-shadow-purple-hover: 0 4px 12px rgba(79, 70, 229, 0.45);
 
+  /* Semantic surfaces (shared by components) */
+  --vs-bg-hover: #f9fafb;
+  --vs-bg-input: #ffffff;
+  --vs-bg-surface: #ffffff;
+  --vs-node-header-bg: #ffffff;
+  --vs-handle-ring: #ffffff;
+  --vs-edge-color: #9ca3af;
+  --vs-overlay: rgba(0, 0, 0, 0.4);
+  --vs-modal-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  --vs-success-bg: #dcfce7;
+  --vs-success-text: #166534;
+  --vs-warning-bg: #fef3c7;
+  --vs-warning-text: #92400e;
+  --vs-run-bg: #dcfce7;
+  --vs-run-text: #166534;
+  --vs-run-border: #22c55e;
+  --vs-danger-bg: #fef2f2;
+  --vs-danger-bg-hover: #fee2e2;
+  --vs-danger-border: #fca5a5;
+  --vs-tooltip-bg: #1e293b;
+  --vs-tooltip-text: #ffffff;
+  --vs-accent-bg: #eef2ff;
+  --vs-accent-bg-hover: #e0e7ff;
+  --vs-control-active-bg: #1f2937;
+  --vs-control-active-text: #ffffff;
+  --vs-node-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 2px 8px rgba(0, 0, 0, 0.015);
+  --vs-node-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.015);
+  --vs-logo-filter: none;
+  --vs-field-hover-bg: #e2e8f0;
+  --vs-field-label: #475569;
+  --vs-input-border: #cbd5e1;
+  --vs-input-placeholder: #9ca3af;
+  --vs-toggle-track: #cbd5e1;
+  --vs-toggle-thumb: #ffffff;
+  --vs-scrollbar: #cbd5e1;
+
+  /* Toolbar / palette / controls */
+  --vs-tab-text: #374151;
+  --vs-tab-hover: #6366f1;
+  --vs-tab-active: #6366f1;
+  --vs-icon-muted: #6b7280;
+  --vs-border-focus: #6366f1;
+  --vs-focus-shadow: rgba(99, 102, 241, 0.25);
+  --vs-draggable-hover-bg: rgba(238, 242, 255, 0.5);
+  --vs-draggable-hover-border: #6366f1;
+  --vs-draggable-hover-icon: #4f46e5;
+  --vs-draggable-hover-label: #4338ca;
+  --vs-draggable-active-bg: rgba(224, 231, 255, 0.5);
+  --vs-accent-border: #c7d2fe;
+  --vs-accent-text: #4f46e5;
+  --vs-accent-text-strong: #4338ca;
+  --vs-control-divider: #f3f4f6;
+  --vs-control-border: #e5e7eb;
+  --vs-minimap-node-fill: #818cf8;
+  --vs-minimap-node-stroke: #4338ca;
+  --vs-minimap-mask: rgba(15, 23, 42, 0.14);
+  --vs-close-bg: #ef4444;
+  --vs-close-bg-hover: #dc2626;
+  --vs-close-border: #dc2626;
+  --vs-close-border-hover: #b91c1c;
+  --vs-on-accent: #ffffff;
+  --vs-dock-overlay: rgba(15, 23, 42, 0.08);
+  --vs-dock-zone-bg: rgba(255, 255, 255, 0.55);
+  --vs-dock-zone-active-bg: rgba(238, 242, 255, 0.92);
+  --vs-dock-zone-current-bg: rgba(255, 255, 255, 0.75);
+  --vs-dock-zone-border: #c7d2fe;
+  --vs-dock-zone-border-active: #6366f1;
+  --vs-dock-zone-border-current: #a5b4fc;
+  --vs-danger-text: #dc2626;
+  --vs-danger-text-hover: #b91c1c;
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --vs-purple: #a78bfa;
+  --vs-purple-hover: #8b5cf6;
+  --vs-purple-light: rgba(167, 139, 250, 0.25);
+  --vs-green: #4ade80;
+  --vs-green-hover: #22c55e;
+  --vs-border: #475569;
+  --vs-border-dark: #64748b;
+  --vs-bg: #1e293b;
+  --vs-bg-subtle: #0f172a;
+  --vs-bg-canvas: #0b1220;
+  --vs-canvas-dot: #64748b;
+  --vs-text: #f1f5f9;
+  --vs-text-muted: #cbd5e1;
+  --vs-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --vs-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  --vs-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --vs-bg-fill-quaternary: #1e293b;
+  --vs-border-primary: #475569;
+  --vs-bg-secondary: #1a2332;
+  --vs-border-secondary: #475569;
+  --vs-bg-hover: #334155;
+  --vs-bg-input: #334155;
+  --vs-bg-surface: #273549;
+  --vs-node-header-bg: #273549;
+  --vs-handle-ring: #273549;
+  --vs-edge-color: #94a3b8;
+  --vs-overlay: rgba(0, 0, 0, 0.65);
+  --vs-modal-shadow: 0 20px 40px rgba(0, 0, 0, 0.55);
+  --vs-success-bg: #14532d;
+  --vs-success-text: #86efac;
+  --vs-warning-bg: #78350f;
+  --vs-warning-text: #fcd34d;
+  --vs-run-bg: #14532d;
+  --vs-run-text: #86efac;
+  --vs-run-border: #22c55e;
+  --vs-danger-bg: #450a0a;
+  --vs-danger-bg-hover: #7f1d1d;
+  --vs-danger-border: #f87171;
+  --vs-tooltip-bg: #0f172a;
+  --vs-tooltip-text: #f1f5f9;
+  --vs-accent-bg: #312e81;
+  --vs-accent-bg-hover: #3730a3;
+  --vs-control-active-bg: #e2e8f0;
+  --vs-control-active-text: #0f172a;
+  --vs-node-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25);
+  --vs-node-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --vs-logo-filter: brightness(1.15);
+  --vs-field-hover-bg: #334155;
+  --vs-field-label: #e2e8f0;
+  --vs-input-border: #64748b;
+  --vs-input-placeholder: #94a3b8;
+  --vs-toggle-track: #64748b;
+  --vs-toggle-thumb: #f1f5f9;
+  --vs-scrollbar: #64748b;
+  --vs-tab-text: #cbd5e1;
+  --vs-tab-hover: #a5b4fc;
+  --vs-tab-active: #818cf8;
+  --vs-icon-muted: #94a3b8;
+  --vs-border-focus: #818cf8;
+  --vs-focus-shadow: rgba(129, 140, 248, 0.35);
+  --vs-draggable-hover-bg: rgba(49, 46, 129, 0.45);
+  --vs-draggable-hover-border: #818cf8;
+  --vs-draggable-hover-icon: #a5b4fc;
+  --vs-draggable-hover-label: #c7d2fe;
+  --vs-draggable-active-bg: rgba(49, 46, 129, 0.6);
+  --vs-accent-border: #4338ca;
+  --vs-accent-text: #a5b4fc;
+  --vs-accent-text-strong: #c7d2fe;
+  --vs-control-divider: #334155;
+  --vs-control-border: #475569;
+  --vs-minimap-node-fill: #818cf8;
+  --vs-minimap-node-stroke: #a5b4fc;
+  --vs-minimap-mask: rgba(0, 0, 0, 0.45);
+  --vs-close-bg: #ef4444;
+  --vs-close-bg-hover: #dc2626;
+  --vs-close-border: #dc2626;
+  --vs-close-border-hover: #b91c1c;
+  --vs-on-accent: #ffffff;
+  --vs-dock-overlay: rgba(0, 0, 0, 0.35);
+  --vs-dock-zone-bg: rgba(30, 41, 59, 0.75);
+  --vs-dock-zone-active-bg: rgba(49, 46, 129, 0.65);
+  --vs-dock-zone-current-bg: rgba(30, 41, 59, 0.55);
+  --vs-dock-zone-border: #4338ca;
+  --vs-dock-zone-border-active: #818cf8;
+  --vs-dock-zone-border-current: #6366f1;
+  --vs-danger-text: #fca5a5;
+  --vs-danger-text-hover: #f87171;
+  color-scheme: dark;
 }
 
 *,
@@ -76,11 +238,27 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+input,
+select,
+textarea {
+  color: var(--vs-text);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--vs-input-placeholder);
+}
+
+select option {
+  background: var(--vs-bg-input);
+  color: var(--vs-text);
+}
+
 .react-flow__handle {
   width: 14px !important;
   height: 14px !important;
   background-color: var(--vs-handle-gray) !important;
-  border: 2px solid #ffffff !important;
+  border: 2px solid var(--vs-handle-ring) !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
   z-index: 10;
   transition: box-shadow 0.1s ease !important;
@@ -136,13 +314,13 @@ body {
 
 
 .react-flow__edge-path {
-  stroke: #9ca3af;
+  stroke: var(--vs-edge-color);
   stroke-width: 2;
   transition: stroke 0.15s ease, stroke-width 0.15s ease;
 }
 
 .vs-connection-line path {
-  stroke: #9ca3af;
+  stroke: var(--vs-edge-color);
   stroke-width: 2;
   stroke-dasharray: 6 4;
   animation: vs-connection-flow 0.45s linear infinite;
@@ -155,7 +333,7 @@ body {
 }
 
 .react-flow__edge.vs-edge--pending-delete .react-flow__edge-path {
-  stroke: #ef4444;
+  stroke: var(--vs-error);
   stroke-width: 3;
 }
 
@@ -171,10 +349,10 @@ body {
   width: 22px;
   height: 22px;
   padding: 0;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--vs-border-dark);
   border-radius: 50%;
-  background: #fff;
-  color: #6b7280;
+  background: var(--vs-bg-surface);
+  color: var(--vs-text-muted);
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
   z-index: 10;
@@ -185,17 +363,17 @@ body {
 }
 
 .vs-edge-delete:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
-  color: #374151;
+  background: var(--vs-bg-hover);
+  border-color: var(--vs-border-dark);
+  color: var(--vs-text);
   transform: scale(1.08);
 }
 
 .vs-edge-delete--pending,
 .vs-edge-delete--pending:hover {
-  border-color: #fca5a5;
-  background: #fef2f2;
-  color: #ef4444;
+  border-color: var(--vs-danger-border);
+  background: var(--vs-danger-bg);
+  color: var(--vs-error);
 }
 
 .react-flow__controls-button {

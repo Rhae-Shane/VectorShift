@@ -1,6 +1,6 @@
 /* VectorShift pipeline header palette */
 .vs-palette {
-  background: #f9fafb;
+  background: var(--vs-bg-hover);
   border-bottom: 1px solid var(--vs-border);
   padding: 4px 8px 6px;
   flex-shrink: 0;
@@ -31,7 +31,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--vs-border-dark);
   border-radius: 6px;
   background: transparent;
   transition:
@@ -41,13 +41,13 @@
 
 .vs-palette__search-field--focused,
 .vs-palette__search-field:focus-within {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.25);
+  border-color: var(--vs-border-focus);
+  box-shadow: 0 0 0 1px var(--vs-focus-shadow);
 }
 
 .vs-palette__search-field--focused .vs-palette__search-icon,
 .vs-palette__search-field:focus-within .vs-palette__search-icon {
-  color: #6366f1;
+  color: var(--vs-tab-active);
 }
 
 .vs-palette__search-icon {
@@ -55,7 +55,7 @@
   width: 18px;
   height: 18px;
   margin: 0 12px;
-  color: #6b7280;
+  color: var(--vs-icon-muted);
   transition: color 0.15s ease;
 }
 
@@ -75,7 +75,7 @@
 }
 
 .vs-palette__search::placeholder {
-  color: #9ca3af;
+  color: var(--vs-input-placeholder);
 }
 
 .vs-palette__search-field--focused .vs-palette__search,
@@ -106,7 +106,7 @@
   font-size: 0.8125rem;
   font-family: inherit;
   font-weight: 500;
-  color: #374151;
+  color: var(--vs-tab-text);
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
@@ -116,12 +116,12 @@
 }
 
 .vs-palette__tab:hover {
-  color: #6366f1;
+  color: var(--vs-tab-hover);
 }
 
 .vs-palette__tab--active {
-  color: #6366f1;
-  border-bottom-color: #6366f1;
+  color: var(--vs-tab-active);
+  border-bottom-color: var(--vs-tab-active);
 }
 
 /* Horizontal node strip */
@@ -151,7 +151,7 @@
   width: 1px;
   min-width: 1px;
   height: 80px;
-  background: #d1d5db;
+  background: var(--vs-border-dark);
   margin: 8px 4px;
   align-self: center;
   flex-shrink: 0;
@@ -166,7 +166,7 @@
   padding: 0;
   box-sizing: border-box;
   border-radius: 8px;
-  background: #fff;
+  background: var(--vs-bg-surface);
   border: 1px solid var(--vs-border);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   color: var(--vs-text);
@@ -194,8 +194,8 @@
 
 .vs-draggable-node:hover,
 .vs-draggable-node:focus-visible {
-  border-color: #6366f1;
-  background: rgba(238, 242, 255, 0.5);
+  border-color: var(--vs-draggable-hover-border);
+  background: var(--vs-draggable-hover-bg);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
   transform: translateY(-2px);
   outline: none;
@@ -203,21 +203,21 @@
 
 .vs-draggable-node:hover .vs-draggable-node__icon-wrap,
 .vs-draggable-node:focus-visible .vs-draggable-node__icon-wrap {
-  color: #4f46e5;
+  color: var(--vs-draggable-hover-icon);
 }
 
 .vs-draggable-node:hover .vs-draggable-node__label,
 .vs-draggable-node:focus-visible .vs-draggable-node__label {
-  color: #4338ca;
+  color: var(--vs-draggable-hover-label);
 }
 
 .vs-draggable-node:active,
 .vs-draggable-node[data-dragging='true'] {
   cursor: grabbing;
-  border-color: #6366f1;
+  border-color: var(--vs-draggable-hover-border);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   transform: translateY(0);
-  background: rgba(224, 231, 255, 0.5);
+  background: var(--vs-draggable-active-bg);
 }
 
 .vs-draggable-node[data-dragging='true'] {
@@ -269,6 +269,7 @@
   overflow-wrap: anywhere;
   white-space: normal;
   transition: color 0.2s ease;
+  color: var(--vs-text);
 }
 
 @media (max-width: 768px) {
@@ -381,7 +382,7 @@
 .vs-palette__section {
   border: 1px solid var(--vs-border);
   border-radius: 10px;
-  background: #fff;
+  background: var(--vs-bg-surface);
   overflow: hidden;
 }
 
@@ -394,7 +395,7 @@
   padding: 10px 10px;
   cursor: pointer;
   user-select: none;
-  background: #f9fafb;
+  background: var(--vs-bg-hover);
   border-bottom: 1px solid transparent;
 }
 
@@ -409,15 +410,15 @@
 .vs-palette__section-title {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #111827;
+  color: var(--vs-text);
 }
 
 .vs-palette__section-count {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #6b7280;
-  background: #eef2ff;
-  border: 1px solid #c7d2fe;
+  color: var(--vs-icon-muted);
+  background: var(--vs-accent-bg);
+  border: 1px solid var(--vs-accent-border);
   border-radius: 999px;
   padding: 2px 8px;
 }

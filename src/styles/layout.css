@@ -79,7 +79,7 @@
 .vs-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--vs-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -90,7 +90,7 @@
 .vs-modal {
   background: var(--vs-bg);
   border-radius: var(--vs-radius);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--vs-modal-shadow);
   max-width: 420px;
   width: 100%;
 }
@@ -166,13 +166,13 @@
 }
 
 .vs-modal__badge--success {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--vs-success-bg);
+  color: var(--vs-success-text);
 }
 
 .vs-modal__badge--warning {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--vs-warning-bg);
+  color: var(--vs-warning-text);
 }
 
 .vs-modal__footer {
@@ -200,7 +200,7 @@
   padding: 0.75rem;
   border: 1px solid var(--vs-border-dark);
   border-radius: var(--vs-radius-sm);
-  background: #fff;
+  background: var(--vs-bg-input);
   color: var(--vs-text);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.75rem;
@@ -216,7 +216,7 @@
 
 .vs-import-modal__textarea--readonly {
   cursor: text;
-  background: #f9fafb;
+  background: var(--vs-bg-hover);
 }
 
 .vs-share-modal__steps {
