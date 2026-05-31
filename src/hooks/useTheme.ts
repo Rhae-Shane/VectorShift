@@ -15,11 +15,18 @@ import {
   type Theme,
 } from '../utils/theme';
 
+const readCanvasDotSize = (): number => {
+  const raw = readThemeToken('--vs-canvas-dot-size', '1.5');
+  const parsed = parseFloat(raw);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1.5;
+};
+
 interface ThemeContextValue {
   theme: Theme;
   isDark: boolean;
   toggleTheme: () => void;
   canvasDot: string;
+  canvasDotSize: number;
   edgeStroke: string;
 }
 
@@ -28,15 +35,17 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 const useThemeState = (): ThemeContextValue => {
   const [theme, setTheme] = useState<Theme>(() => getStoredTheme());
   const [canvasDot, setCanvasDot] = useState(() =>
-    readThemeToken('--vs-canvas-dot', '#b8bec7')
+    readThemeToken('--vs-canvas-dot', '#94a3b8')
   );
+  const [canvasDotSize, setCanvasDotSize] = useState(readCanvasDotSize);
   const [edgeStroke, setEdgeStroke] = useState(() =>
     readThemeToken('--vs-edge-color', '#9ca3af')
   );
 
   useEffect(() => {
     applyTheme(theme);
-    setCanvasDot(readThemeToken('--vs-canvas-dot', '#b8bec7'));
+    setCanvasDot(readThemeToken('--vs-canvas-dot', '#94a3b8'));
+    setCanvasDotSize(readCanvasDotSize());
     setEdgeStroke(readThemeToken('--vs-edge-color', '#9ca3af'));
   }, [theme]);
 
@@ -49,6 +58,7 @@ const useThemeState = (): ThemeContextValue => {
     isDark: theme === 'dark',
     toggleTheme,
     canvasDot,
+    canvasDotSize,
     edgeStroke,
   };
 };

@@ -69,7 +69,7 @@ export const PipelineUI = () => {
     selectAllNodes,
   } = useStore(selector, shallow);
 
-  const { canvasDot } = useTheme();
+  const { canvasDot, canvasDotSize } = useTheme();
 
   const isCanvasEmpty = nodes.length === 0;
   const effectivePanMode = !isCanvasEmpty && (panMode || !isInteractive);
@@ -382,7 +382,7 @@ export const PipelineUI = () => {
         <Background
           color={canvasDot}
           gap={gridSize}
-          size={1}
+          size={canvasDotSize}
           variant={BackgroundVariant.Dots}
         />
 

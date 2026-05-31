@@ -49,7 +49,7 @@ export const PipelinePreview = () => {
   );
 
   const isEmpty = nodes.length === 0;
-  const { canvasDot } = useTheme();
+  const { canvasDot, canvasDotSize } = useTheme();
   const reduceMotion = useReducedMotion();
   const previewTransition = reduceMotion ? reducedMotionTransition : fadeUpTransition;
 
@@ -170,7 +170,7 @@ export const PipelinePreview = () => {
           <Background
             color={canvasDot}
             gap={gridSize}
-            size={1}
+            size={canvasDotSize}
             variant={BackgroundVariant.Dots}
           />
         </ReactFlow>

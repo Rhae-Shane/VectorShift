@@ -89,6 +89,10 @@
   height: 100%;
 }
 
+.vs-canvas .react-flow__background {
+  opacity: 1;
+}
+
 .vs-footer {
   padding: 0.375rem 1rem;
   font-size: 0.75rem;
