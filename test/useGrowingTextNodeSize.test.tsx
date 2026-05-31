@@ -1,4 +1,4 @@
-import { createRef } from 'react';
+import { createRef, type MutableRefObject } from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useGrowingTextNodeSize } from '../src/hooks/useGrowingTextNodeSize';
 import {
@@ -11,9 +11,6 @@ import {
 } from '../src/constants/nodeLayout';
 
 const setupRefs = (scrollWidth: number, scrollHeight: number) => {
-  const textareaRef = createRef<HTMLTextAreaElement>();
-  const measureRef = createRef<HTMLSpanElement>();
-
   const textarea = document.createElement('textarea');
   const measure = document.createElement('span');
 
@@ -26,8 +23,8 @@ const setupRefs = (scrollWidth: number, scrollHeight: number) => {
     get: () => scrollHeight,
   });
 
-  textareaRef.current = textarea;
-  measureRef.current = measure;
+  const textareaRef = { current: textarea } as MutableRefObject<HTMLTextAreaElement>;
+  const measureRef = { current: measure } as MutableRefObject<HTMLSpanElement>;
 
   return { textareaRef, measureRef };
 };

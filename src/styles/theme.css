@@ -30,6 +30,9 @@
   --vs-node-ring: 0 0 0 2px #cecffc;
   --vs-node-ring-hover: 0 0 0 4px #cecffc;
   --vs-node-ring-selected: 0 0 0 3px rgba(79, 70, 229, 0.35);
+  --vs-node-ring-selected-pulse:
+    0 0 0 3px rgba(79, 70, 229, 0.55),
+    0 0 14px rgba(99, 102, 241, 0.22);
   --vs-node-ring-error: 0 0 0 2px #ed6f6f;
   --vs-node-name-pill: #dedff5;
   --vs-name-pill-text: #312e81;
@@ -249,6 +252,9 @@
   --vs-node-ring-selected:
     0 0 0 2px #818cf8,
     0 8px 28px rgba(99, 102, 241, 0.22);
+  --vs-node-ring-selected-pulse:
+    0 0 0 3px rgba(129, 140, 248, 0.75),
+    0 0 18px rgba(99, 102, 241, 0.35);
   --vs-node-ring-error:
     0 0 0 2px rgba(248, 113, 113, 0.65),
     0 6px 20px rgba(239, 68, 68, 0.15);

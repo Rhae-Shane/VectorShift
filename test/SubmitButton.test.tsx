@@ -3,6 +3,7 @@ import { SubmitButton } from '../src/submit';
 import { useStore } from '../src/store';
 import { parsePipeline } from '../src/services/pipelineService';
 import { BACKEND_STATUS_EVENT } from '../src/utils/backendStatusEvents';
+import { SUBMIT_SUCCESS_MS } from '../src/constants/canvas';
 
 jest.mock('../src/services/pipelineService', () => ({
   parsePipeline: jest.fn(),
@@ -42,6 +43,14 @@ describe('SubmitButton', () => {
     });
   });
 
+  it('is disabled when the canvas has no nodes', () => {
+    useStore.setState({ nodes: [], edges: [], nodeIDs: {} });
+
+    render(<SubmitButton />);
+
+    expect(screen.getByRole('button', { name: /Submit/i })).toBeDisabled();
+  });
+
   it('shows loading state while submitting', async () => {
     let resolveParse: (value: {
       num_nodes: number;
@@ -66,8 +75,39 @@ describe('SubmitButton', () => {
     resolveParse!({ num_nodes: 1, num_edges: 0, is_dag: true });
 
     await waitFor(() => {
-      expect(screen.getByText('Pipeline Analysis')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Done' })).toBeInTheDocument();
     });
+
+    await waitFor(
+      () => {
+        expect(screen.getByText('Pipeline Analysis')).toBeInTheDocument();
+      },
+      { timeout: SUBMIT_SUCCESS_MS + 500 }
+    );
+  });
+
+  it('shows a brief success check before opening the result modal', async () => {
+    mockParsePipeline.mockResolvedValue({
+      num_nodes: 1,
+      num_edges: 0,
+      is_dag: true,
+    });
+
+    render(<SubmitButton />);
+    fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Done' })).toBeInTheDocument();
+    });
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    await waitFor(
+      () => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      },
+      { timeout: SUBMIT_SUCCESS_MS + 500 }
+    );
   });
 
   it('opens ResultModal with analysis on success', async () => {
@@ -80,9 +120,12 @@ describe('SubmitButton', () => {
     render(<SubmitButton />);
     fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
 
-    await waitFor(() => {
-      expect(screen.getByRole('dialog')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      },
+      { timeout: SUBMIT_SUCCESS_MS + 1000 }
+    );
 
     expect(screen.getByText('2')).toBeInTheDocument();
     expect(screen.getByText('1')).toBeInTheDocument();

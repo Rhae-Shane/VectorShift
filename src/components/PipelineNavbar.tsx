@@ -6,6 +6,7 @@ import {
 } from 'react-icons/fi';
 import { Icon } from './Icon';
 import { PressableButton } from './PressableButton';
+import { DisabledHoverHint } from './DisabledHoverHint';
 import { ThemeToggleButton } from './ThemeToggleButton';
 import { SubmitButton } from '../submit';
 import {
@@ -17,6 +18,8 @@ import { openCanvasPreview } from '../utils/canvasEvents';
 import { PipelineImportModal } from './PipelineImportModal';
 import { PipelineShareModal } from './PipelineShareModal';
 import { KeyboardShortcutsPopover } from './KeyboardShortcutsPopover';
+import { NavbarOverflowMenu } from './NavbarOverflowMenu';
+import { EMPTY_CANVAS_HINT } from '../constants/canvas';
 import '../styles/navbar.css';
 
 export const PipelineNavbar = () => {
@@ -126,27 +129,38 @@ export const PipelineNavbar = () => {
             Import
           </PressableButton>
 
-          <PressableButton
-            className="vs-navbar__btn vs-navbar__btn--ghost vs-navbar__btn--desktop"
-            disabled={!hasNodes}
-            onClick={() => setShareOpen(true)}
-          >
-            Share
-          </PressableButton>
+          <DisabledHoverHint showHint={!hasNodes} hint={EMPTY_CANVAS_HINT}>
+            <PressableButton
+              className="vs-navbar__btn vs-navbar__btn--ghost vs-navbar__btn--desktop"
+              disabled={!hasNodes}
+              onClick={() => setShareOpen(true)}
+            >
+              Share
+            </PressableButton>
+          </DisabledHoverHint>
 
-          <PressableButton
-            className="vs-navbar__btn vs-navbar__btn--run vs-navbar__btn--desktop"
-            disabled={!hasNodes}
-            aria-label="Preview pipeline"
-            onClick={openCanvasPreview}
-          >
-            <Icon icon={FiPlay} width={14} height={14} fill="currentColor" />
-            Preview
-          </PressableButton>
+          <DisabledHoverHint showHint={!hasNodes} hint={EMPTY_CANVAS_HINT}>
+            <PressableButton
+              className="vs-navbar__btn vs-navbar__btn--run vs-navbar__btn--desktop"
+              disabled={!hasNodes}
+              aria-label="Preview pipeline"
+              onClick={openCanvasPreview}
+            >
+              <Icon icon={FiPlay} width={14} height={14} fill="currentColor" />
+              Preview
+            </PressableButton>
+          </DisabledHoverHint>
 
           <SubmitButton
             className="vs-navbar__btn vs-navbar__btn--primary"
             label="Submit"
+          />
+
+          <NavbarOverflowMenu
+            hasNodes={hasNodes}
+            onImport={() => setImportOpen(true)}
+            onShare={() => setShareOpen(true)}
+            onPreview={openCanvasPreview}
           />
         </div>
       </header>

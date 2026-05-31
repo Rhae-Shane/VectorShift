@@ -69,6 +69,11 @@ export const ResultModal = ({ result, error, onClose }: ResultModalProps) => {
             </motion.li>
           </motion.ul>
         ) : null}
+        {result && !result.is_dag ? (
+          <p className="vs-modal__hint vs-modal__hint--warning">
+            Remove a connection to break the cycle.
+          </p>
+        ) : null}
       </div>
 
       <div className="vs-modal__footer">

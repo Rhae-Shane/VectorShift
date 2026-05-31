@@ -91,6 +91,30 @@
   gap: 6px;
 }
 
+/* Hover hint for disabled navbar actions (disabled buttons ignore pointer events). */
+.vs-hover-hint {
+  display: inline-flex;
+  position: relative;
+}
+
+.vs-hover-hint[data-hint]:hover::after {
+  content: attr(data-hint);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.35rem 0.55rem;
+  border-radius: 8px;
+  background: var(--vs-tooltip-bg);
+  color: var(--vs-tooltip-text);
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+}
+
 .vs-navbar__btn {
   display: inline-flex;
   align-items: center;
@@ -187,6 +211,56 @@
 
 .vs-navbar__menu-btn {
   display: inline-flex;
+}
+
+.vs-navbar__menu {
+  position: relative;
+  display: inline-flex;
+}
+
+.vs-navbar__menu-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 51;
+  min-width: 148px;
+  padding: 0.35rem;
+  border: 1px solid var(--vs-border-dark);
+  border-radius: var(--vs-radius);
+  background: var(--vs-bg);
+  box-shadow: var(--vs-shadow-md, 0 8px 24px rgba(15, 23, 42, 0.12));
+}
+
+.vs-navbar__menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: inherit;
+  text-align: left;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--vs-text);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.vs-navbar__menu-item:hover:not(:disabled) {
+  background: var(--vs-bg-hover);
+}
+
+.vs-navbar__menu-item:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.vs-navbar__menu-item--run {
+  color: var(--vs-run-text);
 }
 
 @media (min-width: 900px) {

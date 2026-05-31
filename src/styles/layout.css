@@ -57,6 +57,11 @@
   justify-content: center;
 }
 
+.vs-submit-btn--success,
+.vs-navbar__btn--primary.vs-submit-btn--success {
+  background: var(--vs-green-hover);
+}
+
 .vs-btn--secondary {
   background: var(--vs-bg);
   color: var(--vs-text);
@@ -190,6 +195,20 @@
 .vs-modal__badge--warning {
   background: var(--vs-warning-bg);
   color: var(--vs-warning-text);
+}
+
+.vs-modal__hint {
+  margin: 1rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--vs-text-muted);
+}
+
+.vs-modal__hint--warning {
+  color: var(--vs-warning-text);
+  background: var(--vs-warning-bg);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--vs-radius-sm);
 }
 
 .vs-modal__footer {
