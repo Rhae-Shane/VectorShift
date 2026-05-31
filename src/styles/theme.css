@@ -182,72 +182,72 @@
 }
 
 [data-theme='dark'] {
-  /* Railway-inspired dark palette */
-  --vs-purple: #7c5dfa;
-  --vs-purple-hover: #6b4de0;
-  --vs-purple-light: rgba(124, 93, 250, 0.22);
-  --vs-green: #33d69f;
-  --vs-green-hover: #2bc48f;
-  --vs-border: #2d2d3d;
-  --vs-border-dark: #3a3a4d;
-  --vs-bg: #1c1c2b;
-  --vs-bg-subtle: #0b0a15;
-  --vs-bg-canvas: #0b0a15;
-  --vs-canvas-dot: #3a3a4d;
-  --vs-text: #ffffff;
-  --vs-text-muted: #888891;
+  /* Deep violet dark palette */
+  --vs-purple: #7c3aed;
+  --vs-purple-hover: #6d28d9;
+  --vs-purple-light: rgba(124, 58, 237, 0.22);
+  --vs-green: #4ade80;
+  --vs-green-hover: #22c55e;
+  --vs-border: #2a2638;
+  --vs-border-dark: #302c3d;
+  --vs-bg: #050505;
+  --vs-bg-subtle: #0d0b14;
+  --vs-bg-canvas: #0d0b14;
+  --vs-canvas-dot: #302c3d;
+  --vs-text: #f9fafb;
+  --vs-text-muted: #94a3b8;
   --vs-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.45);
   --vs-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
   --vs-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --vs-bg-fill-quaternary: #0b0a15;
-  --vs-border-primary: #2d2d3d;
-  --vs-border-secondary: #2d2d3d;
-  --vs-edge-color: #4a4a5e;
-  --vs-edge-linked-color: #7c5dfa;
-  --vs-edge-linked-glow: rgba(124, 93, 250, 0.38);
+  --vs-bg-fill-quaternary: #0d0b14;
+  --vs-border-primary: #2a2638;
+  --vs-border-secondary: #2a2638;
+  --vs-edge-color: #4b455f;
+  --vs-edge-linked-color: #8b5cf6;
+  --vs-edge-linked-glow: rgba(124, 58, 237, 0.38);
   --vs-overlay: rgba(0, 0, 0, 0.65);
   --vs-modal-shadow: 0 20px 40px rgba(0, 0, 0, 0.55);
-  --vs-success-bg: rgba(51, 214, 159, 0.12);
-  --vs-success-text: #33d69f;
+  --vs-success-bg: #064e3b;
+  --vs-success-text: #4ade80;
   --vs-warning-bg: rgba(251, 191, 36, 0.12);
   --vs-warning-text: #fcd34d;
-  --vs-run-bg: rgba(51, 214, 159, 0.12);
-  --vs-run-text: #33d69f;
-  --vs-run-border: #33d69f;
+  --vs-run-bg: #064e3b;
+  --vs-run-text: #4ade80;
+  --vs-run-border: #4ade80;
   --vs-danger-bg: rgba(239, 68, 68, 0.12);
   --vs-danger-bg-hover: rgba(239, 68, 68, 0.2);
   --vs-danger-border: rgba(248, 113, 113, 0.45);
-  --vs-tooltip-bg: #1c1c2b;
-  --vs-tooltip-text: #ffffff;
-  --vs-accent-bg: rgba(124, 93, 250, 0.12);
-  --vs-accent-bg-hover: rgba(124, 93, 250, 0.2);
-  --vs-control-active-bg: #7c5dfa;
-  --vs-control-active-text: #ffffff;
+  --vs-tooltip-bg: #1c1926;
+  --vs-tooltip-text: #f9fafb;
+  --vs-accent-bg: rgba(124, 58, 237, 0.12);
+  --vs-accent-bg-hover: rgba(124, 58, 237, 0.2);
+  --vs-control-active-bg: #7c3aed;
+  --vs-control-active-text: #f9fafb;
   --vs-logo-filter: brightness(1.15);
-  --vs-field-hover-bg: #252535;
+  --vs-field-hover-bg: #252232;
 
-  --vs-bg-surface: #1c1c2b;
-  --vs-bg-input: #14141f;
-  --vs-bg-secondary: #161622;
-  --vs-bg-hover: #252535;
-  --vs-node-header-bg: #1c1c2b;
-  --vs-handle-ring: #1c1c2b;
-  --vs-handle-fill: #ffffff;
-  --vs-handle-indigo: #7c5dfa;
+  --vs-bg-surface: #1c1926;
+  --vs-bg-input: #12101a;
+  --vs-bg-secondary: #14121c;
+  --vs-bg-hover: #252232;
+  --vs-node-header-bg: #1c1926;
+  --vs-handle-ring: #1c1926;
+  --vs-handle-fill: #f9fafb;
+  --vs-handle-indigo: #7c3aed;
 
-  --vs-indigo-50: rgba(124, 93, 250, 0.07);
-  --vs-indigo-100: rgba(124, 93, 250, 0.14);
-  --vs-indigo-200: rgba(124, 93, 250, 0.28);
-  --vs-indigo-500: #7c5dfa;
-  --vs-indigo-600: #7c5dfa;
-  --vs-indigo-700: #9d84fc;
+  --vs-indigo-50: rgba(124, 58, 237, 0.07);
+  --vs-indigo-100: rgba(124, 58, 237, 0.14);
+  --vs-indigo-200: rgba(124, 58, 237, 0.28);
+  --vs-indigo-500: #7c3aed;
+  --vs-indigo-600: #7c3aed;
+  --vs-indigo-700: #8b5cf6;
   --vs-indigo-800: #c4b5fd;
   --vs-indigo-900: #ddd6fe;
-  --vs-slate-700: #888891;
-  --vs-accent-indigo: #7c5dfa;
+  --vs-slate-700: #94a3b8;
+  --vs-accent-indigo: #7c3aed;
 
-  --vs-node-border: #2d2d3d;
-  --vs-node-border-hover: rgba(124, 93, 250, 0.45);
+  --vs-node-border: #2a2638;
+  --vs-node-border-hover: rgba(124, 58, 237, 0.45);
   --vs-node-ring:
     0 1px 2px rgba(0, 0, 0, 0.45),
     0 6px 20px rgba(0, 0, 0, 0.28),
@@ -255,82 +255,82 @@
   --vs-node-ring-hover:
     0 2px 4px rgba(0, 0, 0, 0.45),
     0 10px 28px rgba(0, 0, 0, 0.32),
-    0 0 0 1px rgba(124, 93, 250, 0.3),
+    0 0 0 1px rgba(124, 58, 237, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   --vs-node-ring-selected:
-    0 0 0 2px #7c5dfa,
-    0 8px 28px rgba(124, 93, 250, 0.22);
+    0 0 0 2px #7c3aed,
+    0 8px 28px rgba(124, 58, 237, 0.22);
   --vs-node-ring-selected-pulse:
-    0 0 0 3px rgba(124, 93, 250, 0.75),
-    0 0 18px rgba(124, 93, 250, 0.35);
+    0 0 0 3px rgba(124, 58, 237, 0.75),
+    0 0 18px rgba(124, 58, 237, 0.35);
   --vs-node-ring-error:
     0 0 0 2px rgba(248, 113, 113, 0.65),
     0 6px 20px rgba(239, 68, 68, 0.15);
-  --vs-node-name-pill: rgba(124, 93, 250, 0.12);
+  --vs-node-name-pill: rgba(124, 58, 237, 0.12);
   --vs-name-pill-text: #c4b5fd;
-  --vs-node-suggestion-bg: rgba(124, 93, 250, 0.08);
-  --vs-node-suggestion-border: rgba(124, 93, 250, 0.32);
+  --vs-node-suggestion-bg: rgba(124, 58, 237, 0.08);
+  --vs-node-suggestion-border: rgba(124, 58, 237, 0.32);
   --vs-node-suggestion-text: #c4b5fd;
   --vs-node-icon-hover-bg: rgba(255, 255, 255, 0.06);
-  --vs-node-input-hover-bg: #14141f;
-  --vs-node-input-hover-border: rgba(124, 93, 250, 0.22);
-  --vs-node-input-focus-ring: rgba(124, 93, 250, 0.22);
+  --vs-node-input-hover-bg: #12101a;
+  --vs-node-input-hover-border: rgba(124, 58, 237, 0.22);
+  --vs-node-input-focus-ring: rgba(124, 58, 237, 0.22);
   --vs-node-error-text: #fca5a5;
   --vs-node-error-bg: rgba(127, 29, 29, 0.32);
   --vs-node-error-border: rgba(248, 113, 113, 0.45);
 
-  --vs-field-label: #888891;
-  --vs-input-border: #2d2d3d;
-  --vs-input-placeholder: #888891;
-  --vs-toggle-track: #3a3a4d;
-  --vs-toggle-thumb: #ffffff;
-  --vs-scrollbar: #3a3a4d;
-  --vs-tab-text: #888891;
-  --vs-tab-hover: #9d84fc;
-  --vs-tab-active: #7c5dfa;
-  --vs-icon-muted: #888891;
-  --vs-border-focus: #7c5dfa;
-  --vs-focus-shadow: rgba(124, 93, 250, 0.35);
-  --vs-draggable-hover-bg: rgba(124, 93, 250, 0.12);
-  --vs-draggable-hover-border: #7c5dfa;
-  --vs-draggable-hover-icon: #9d84fc;
+  --vs-field-label: #94a3b8;
+  --vs-input-border: #2a2638;
+  --vs-input-placeholder: #94a3b8;
+  --vs-toggle-track: #302c3d;
+  --vs-toggle-thumb: #f9fafb;
+  --vs-scrollbar: #302c3d;
+  --vs-tab-text: #94a3b8;
+  --vs-tab-hover: #a78bfa;
+  --vs-tab-active: #7c3aed;
+  --vs-icon-muted: #94a3b8;
+  --vs-border-focus: #7c3aed;
+  --vs-focus-shadow: rgba(124, 58, 237, 0.35);
+  --vs-draggable-hover-bg: rgba(124, 58, 237, 0.12);
+  --vs-draggable-hover-border: #7c3aed;
+  --vs-draggable-hover-icon: #a78bfa;
   --vs-draggable-hover-label: #c4b5fd;
-  --vs-draggable-active-bg: rgba(124, 93, 250, 0.2);
-  --vs-accent-border: rgba(124, 93, 250, 0.35);
-  --vs-accent-text: #9d84fc;
+  --vs-draggable-active-bg: rgba(124, 58, 237, 0.2);
+  --vs-accent-border: rgba(124, 58, 237, 0.35);
+  --vs-accent-text: #a78bfa;
   --vs-accent-text-strong: #c4b5fd;
-  --vs-control-divider: #2d2d3d;
-  --vs-control-border: #2d2d3d;
-  --vs-minimap-node-fill: #9d84fc;
-  --vs-minimap-node-stroke: #7c5dfa;
+  --vs-control-divider: #2a2638;
+  --vs-control-border: #2a2638;
+  --vs-minimap-node-fill: #a78bfa;
+  --vs-minimap-node-stroke: #7c3aed;
   --vs-minimap-mask: rgba(0, 0, 0, 0.5);
-  --vs-minimap-mask-stroke: #7c5dfa;
+  --vs-minimap-mask-stroke: #7c3aed;
   --vs-close-bg: #ef4444;
   --vs-close-bg-hover: #dc2626;
   --vs-close-border: #dc2626;
   --vs-close-border-hover: #b91c1c;
-  --vs-on-accent: #ffffff;
+  --vs-on-accent: #f9fafb;
   --vs-dock-overlay: rgba(0, 0, 0, 0.35);
-  --vs-dock-zone-bg: rgba(28, 28, 43, 0.75);
-  --vs-dock-zone-active-bg: rgba(124, 93, 250, 0.18);
-  --vs-dock-zone-current-bg: rgba(28, 28, 43, 0.55);
-  --vs-dock-zone-border: rgba(124, 93, 250, 0.35);
-  --vs-dock-zone-border-active: #7c5dfa;
-  --vs-dock-zone-border-current: #9d84fc;
+  --vs-dock-zone-bg: rgba(28, 25, 38, 0.75);
+  --vs-dock-zone-active-bg: rgba(124, 58, 237, 0.18);
+  --vs-dock-zone-current-bg: rgba(28, 25, 38, 0.55);
+  --vs-dock-zone-border: rgba(124, 58, 237, 0.35);
+  --vs-dock-zone-border-active: #7c3aed;
+  --vs-dock-zone-border-current: #8b5cf6;
   --vs-danger-text: #fca5a5;
   --vs-danger-text-hover: #f87171;
-  --vs-accent-glow-soft: rgba(124, 93, 250, 0.12);
-  --vs-accent-glow: rgba(124, 93, 250, 0.22);
-  --vs-accent-glow-medium: rgba(124, 93, 250, 0.28);
-  --vs-accent-glow-connect: rgba(124, 93, 250, 0.32);
-  --vs-accent-glow-strong: rgba(124, 93, 250, 0.35);
-  --vs-accent-glow-hover: rgba(124, 93, 250, 0.2);
-  --vs-toolbar-gradient: linear-gradient(145deg, #9333ea 0%, #7c5dfa 52%, #6b4de0 100%);
-  --vs-toolbar-gradient-hover: linear-gradient(145deg, #7c5dfa 0%, #6b4de0 52%, #5a3fd4 100%);
-  --vs-toolbar-gradient-active: linear-gradient(145deg, #6b4de0 0%, #5a3fd4 52%, #4c35b8 100%);
-  --vs-toolbar-border-purple: #5a3fd4;
-  --vs-toolbar-shadow-purple: 0 2px 8px rgba(124, 93, 250, 0.38);
-  --vs-toolbar-shadow-purple-hover: 0 4px 12px rgba(124, 93, 250, 0.45);
+  --vs-accent-glow-soft: rgba(124, 58, 237, 0.12);
+  --vs-accent-glow: rgba(124, 58, 237, 0.22);
+  --vs-accent-glow-medium: rgba(124, 58, 237, 0.28);
+  --vs-accent-glow-connect: rgba(124, 58, 237, 0.32);
+  --vs-accent-glow-strong: rgba(124, 58, 237, 0.35);
+  --vs-accent-glow-hover: rgba(124, 58, 237, 0.2);
+  --vs-toolbar-gradient: linear-gradient(145deg, #9333ea 0%, #7c3aed 52%, #6d28d9 100%);
+  --vs-toolbar-gradient-hover: linear-gradient(145deg, #7c3aed 0%, #6d28d9 52%, #5b21b6 100%);
+  --vs-toolbar-gradient-active: linear-gradient(145deg, #6d28d9 0%, #5b21b6 52%, #4c1d95 100%);
+  --vs-toolbar-border-purple: #5b21b6;
+  --vs-toolbar-shadow-purple: 0 2px 8px rgba(124, 58, 237, 0.38);
+  --vs-toolbar-shadow-purple-hover: 0 4px 12px rgba(124, 58, 237, 0.45);
   color-scheme: dark;
 }
 
