@@ -57,7 +57,7 @@
   position: relative;
   display: flex;
   flex-shrink: 0;
-  background: var(--vs-bg-hover);
+  background: var(--vs-dock-toolbar-bg);
   border-color: var(--vs-border);
   z-index: 5;
 }
@@ -132,7 +132,7 @@
   width: 100%;
   padding: 4px 6px;
   border-bottom: 1px solid var(--vs-border);
-  background: var(--vs-bg-hover);
+  background: var(--vs-dock-toolbar-bg);
 }
 
 /* Top / bottom: float controls in corner (original compact layout) */
@@ -222,7 +222,7 @@
 }
 
 .vs-dock-toolbar__restore:hover {
-  background: var(--vs-bg-hover);
+  background: var(--vs-dock-toolbar-bg);
   border-color: var(--vs-border-dark);
   color: var(--vs-tab-text);
 }
@@ -267,6 +267,10 @@
 .vs-main--toolbar-hidden.vs-main--dock-left .vs-main__canvas-wrap > .vs-canvas,
 .vs-main--toolbar-hidden.vs-main--dock-right .vs-main__canvas-wrap > .vs-canvas {
   border-radius: var(--vs-app-radius);
+}
+
+.vs-dock-toolbar .vs-palette {
+  background: var(--vs-dock-toolbar-bg);
 }
 
 .vs-dock-toolbar__content > .vs-palette {

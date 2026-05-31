@@ -8,7 +8,8 @@
   --vs-border-dark: #d1d5db;
   --vs-bg: #ffffff;
   --vs-bg-subtle: #f9fafb;
-  --vs-bg-canvas: #fafafa;
+  --vs-bg-canvas: #fefefe;
+  --vs-dock-toolbar-bg: #eef0f4;
   --vs-canvas-dot: #b8bec7;
 
   /* Compact node sizing — ~7–8 nodes fit at 100% zoom on typical screens */
@@ -192,8 +193,9 @@
   --vs-border-dark: #302c3d;
   --vs-bg: #050505;
   --vs-bg-subtle: #0d0b14;
-  --vs-bg-canvas: #0d0b14;
-  --vs-canvas-dot: #302c3d;
+  --vs-bg-canvas: #14121c;
+  --vs-dock-toolbar-bg: #09080d;
+  --vs-canvas-dot: #353040;
   --vs-text: #f9fafb;
   --vs-text-muted: #94a3b8;
   --vs-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.45);
