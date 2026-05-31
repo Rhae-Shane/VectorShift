@@ -1,6 +1,9 @@
 import { useCallback, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { AnimatedModal } from './AnimatedModal';
+import { PressableButton } from './PressableButton';
 import { parsePipelineImport } from '../utils/pipelineImportExport';
+import { fadeUpTransition, reducedMotionTransition, slideUpVariants } from '../utils/motion';
 
 export interface PipelineImportModalProps {
   open: boolean;
@@ -15,6 +18,8 @@ export const PipelineImportModal = ({
 }: PipelineImportModalProps) => {
   const [value, setValue] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const reduceMotion = useReducedMotion();
+  const transition = reduceMotion ? reducedMotionTransition : fadeUpTransition;
 
   const handleImport = useCallback(() => {
     const parsed = parsePipelineImport(value);
@@ -43,14 +48,13 @@ export const PipelineImportModal = ({
         <h2 id="import-modal-title" className="vs-modal__title">
           Import workflow
         </h2>
-        <button
-          type="button"
+        <PressableButton
           className="vs-modal__close"
           onClick={onClose}
           aria-label="Close"
         >
           ×
-        </button>
+        </PressableButton>
       </div>
 
       <div className="vs-modal__body">
@@ -69,25 +73,37 @@ export const PipelineImportModal = ({
           rows={12}
           autoFocus
         />
-        {error ? <p className="vs-modal__error-text">{error}</p> : null}
+        <AnimatePresence>
+          {error ? (
+            <motion.p
+              key="import-error"
+              className="vs-modal__error-text"
+              variants={slideUpVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={transition}
+            >
+              {error}
+            </motion.p>
+          ) : null}
+        </AnimatePresence>
       </div>
 
       <div className="vs-modal__footer">
-        <button
-          type="button"
+        <PressableButton
           className="vs-btn vs-btn--secondary"
           onClick={onClose}
         >
           Cancel
-        </button>
-        <button
-          type="button"
+        </PressableButton>
+        <PressableButton
           className="vs-btn vs-btn--submit"
           onClick={handleImport}
           disabled={!value.trim()}
         >
           Import
-        </button>
+        </PressableButton>
       </div>
     </AnimatedModal>
   );

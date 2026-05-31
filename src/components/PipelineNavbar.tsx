@@ -2,13 +2,12 @@ import { useEffect, useCallback, useState } from 'react';
 import {
   FiCornerUpLeft,
   FiCornerUpRight,
-  FiMoon,
   FiMoreHorizontal,
   FiPlay,
-  FiSun,
 } from 'react-icons/fi';
 import { Icon } from './Icon';
-import { useTheme } from '../hooks/useTheme';
+import { PressableButton } from './PressableButton';
+import { ThemeToggleButton } from './ThemeToggleButton';
 import { SubmitButton } from '../submit';
 import {
   useStore,
@@ -27,7 +26,6 @@ export const PipelineNavbar = () => {
   const undo = useStore((s) => s.undo);
   const redo = useStore((s) => s.redo);
   const importPipeline = useStore((s) => s.importPipeline);
-  const { isDark, toggleTheme } = useTheme();
   const [importOpen, setImportOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
 
@@ -101,54 +99,41 @@ export const PipelineNavbar = () => {
 
         <div className="vs-navbar__right">
           <div className="vs-navbar__right-group">
-            <button
-              type="button"
+            <PressableButton
               className="vs-navbar__icon-btn"
               aria-label="Undo"
               disabled={!canUndo}
               onClick={handleUndo}
             >
               <Icon icon={FiCornerUpLeft} width={16} height={16} />
-            </button>
-            <button
-              type="button"
+            </PressableButton>
+            <PressableButton
               className="vs-navbar__icon-btn"
               aria-label="Redo"
               disabled={!canRedo}
               onClick={handleRedo}
             >
               <Icon icon={FiCornerUpRight} width={16} height={16} />
-            </button>
-            <button
-              type="button"
-              className="vs-navbar__icon-btn"
-              onClick={toggleTheme}
-              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-              title={isDark ? 'Light mode' : 'Dark mode'}
-            >
-              <Icon icon={isDark ? FiSun : FiMoon} width={16} height={16} />
-            </button>
+            </PressableButton>
+            <ThemeToggleButton />
           </div>
 
-          <button
-            type="button"
+          <PressableButton
             className="vs-navbar__btn vs-navbar__btn--ghost vs-navbar__btn--desktop"
             onClick={() => setImportOpen(true)}
           >
             Import
-          </button>
+          </PressableButton>
 
-          <button
-            type="button"
+          <PressableButton
             className="vs-navbar__btn vs-navbar__btn--ghost vs-navbar__btn--desktop"
             disabled={!hasNodes}
             onClick={() => setShareOpen(true)}
           >
             Share
-          </button>
+          </PressableButton>
 
-          <button
-            type="button"
+          <PressableButton
             className="vs-navbar__btn vs-navbar__btn--run vs-navbar__btn--desktop"
             disabled={!hasNodes}
             aria-label="Preview pipeline"
@@ -156,20 +141,19 @@ export const PipelineNavbar = () => {
           >
             <Icon icon={FiPlay} width={14} height={14} fill="currentColor" />
             Preview
-          </button>
+          </PressableButton>
 
           <SubmitButton
             className="vs-navbar__btn vs-navbar__btn--primary"
             label="Submit"
           />
 
-          <button
-            type="button"
+          <PressableButton
             className="vs-navbar__icon-btn vs-navbar__menu-btn"
             aria-label="More actions"
           >
             <Icon icon={FiMoreHorizontal} width={16} height={16} />
-          </button>
+          </PressableButton>
         </div>
       </header>
 

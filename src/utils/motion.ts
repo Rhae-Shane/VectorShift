@@ -38,3 +38,27 @@ export const nodeShellVariants: Variants = {
 };
 
 export const reducedMotionTransition: Transition = { duration: 0 };
+
+export const pressTransition: Transition = {
+  duration: 0.12,
+  ease: motionEase,
+};
+
+export const staggerContainerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.06, delayChildren: 0.05 },
+  },
+};
+
+export const staggerItemVariants: Variants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0, transition: fadeUpTransition },
+};
+
+export const collapseVariants: Variants = {
+  hidden: { height: 0, opacity: 0 },
+  visible: { height: 'auto', opacity: 1 },
+  exit: { height: 0, opacity: 0 },
+};

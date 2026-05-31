@@ -6,6 +6,7 @@ import {
   FiCopy,
 } from 'react-icons/fi';
 import { Icon } from '../components/Icon';
+import { PressableButton } from '../components/PressableButton';
 import type { UseNodeChromeResult } from '../hooks/useNodeChrome';
 
 export interface NodeHeaderProps {
@@ -39,17 +40,15 @@ export const NodeHeader = ({ title, icon, chrome }: NodeHeaderProps) => {
         <span className="vs-node__title">{title}</span>
       </div>
       <div className="vs-node__header-right">
-        <button
-          type="button"
+        <PressableButton
           className="vs-node__icon-btn"
           onClick={onToggleCollapseClick}
           aria-label={collapsed ? 'Expand node' : 'Minimize node'}
           {...bindHoverTip('collapse')}
         >
           <Icon icon={FiMinimize2} size={18} />
-        </button>
-        <button
-          type="button"
+        </PressableButton>
+        <PressableButton
           className="vs-node__icon-btn"
           onClick={onDuplicateClick}
           aria-label="Duplicate node"
@@ -57,25 +56,23 @@ export const NodeHeader = ({ title, icon, chrome }: NodeHeaderProps) => {
           {...bindHoverTip('duplicate')}
         >
           <Icon icon={FiCopy} size={16} />
-        </button>
-        <button
-          type="button"
+        </PressableButton>
+        <PressableButton
           className="vs-node__icon-btn"
           aria-label="Settings"
           title="Settings"
           onMouseDown={(e) => e.stopPropagation()}
         >
           <Icon icon={FiSettings} size={18} />
-        </button>
-        <button
-          type="button"
+        </PressableButton>
+        <PressableButton
           className={`vs-node__icon-btn ${confirmDelete ? 'vs-node__icon-btn--danger' : ''}`}
           onClick={onDeleteClick}
           aria-label={confirmDelete ? 'Confirm delete node' : 'Delete node'}
           {...bindHoverTip('delete')}
         >
           <Icon icon={FiXCircle} size={22} />
-        </button>
+        </PressableButton>
       </div>
     </div>
   );

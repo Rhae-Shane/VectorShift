@@ -40,6 +40,23 @@
   background: var(--vs-green-hover);
 }
 
+.vs-btn--copied {
+  background: var(--vs-green-hover);
+}
+
+.vs-submit-btn__content,
+.vs-copy-btn__content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.vs-submit-btn__spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .vs-btn--secondary {
   background: var(--vs-bg);
   color: var(--vs-text);

@@ -2,6 +2,7 @@ import { memo, type ReactNode } from 'react';
 import { MiniMap, Panel } from 'reactflow';
 import { FiLock, FiMinus, FiPlus, FiUnlock } from 'react-icons/fi';
 import { Icon } from './Icon';
+import { PressableButton } from './PressableButton';
 import { FitViewIcon } from './icons/FitViewIcon';
 import { HandIcon } from './icons/HandIcon';
 import { MinimizeNodesIcon } from './icons/MinimizeNodesIcon';
@@ -40,8 +41,7 @@ const ControlButton = ({
   className = '',
   children,
 }: ControlButtonProps) => (
-  <button
-    type="button"
+  <PressableButton
     className={`vs-rf-control-btn ${className}`.trim()}
     onClick={onClick}
     disabled={disabled}
@@ -51,7 +51,7 @@ const ControlButton = ({
     data-active={active ? 'true' : 'false'}
   >
     {children}
-  </button>
+  </PressableButton>
 );
 
 export const CanvasControls = memo(function CanvasControls({

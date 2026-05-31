@@ -507,7 +507,6 @@ select option {
   background: var(--vs-bg-hover);
   border-color: var(--vs-border-dark);
   color: var(--vs-text);
-  transform: scale(1.08);
 }
 
 .vs-edge-delete--pending,

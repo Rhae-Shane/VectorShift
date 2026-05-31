@@ -1,7 +1,12 @@
 import { useCallback, useMemo, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { FiCheck } from 'react-icons/fi';
 import { AnimatedModal } from './AnimatedModal';
+import { PressableButton } from './PressableButton';
+import { Icon } from './Icon';
 import { useStore } from '../store';
 import { serializePipelineExport } from '../utils/pipelineImportExport';
+import { fadeUpTransition, reducedMotionTransition } from '../utils/motion';
 
 export interface PipelineShareModalProps {
   open: boolean;
@@ -13,6 +18,8 @@ export const PipelineShareModal = ({ open, onClose }: PipelineShareModalProps) =
   const edges = useStore((s) => s.edges);
   const nodeIDs = useStore((s) => s.nodeIDs);
   const [copied, setCopied] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const transition = reduceMotion ? reducedMotionTransition : fadeUpTransition;
 
   const exportJson = useMemo(
     () => serializePipelineExport({ nodes, edges, nodeIDs }),
@@ -40,14 +47,13 @@ export const PipelineShareModal = ({ open, onClose }: PipelineShareModalProps) =
         <h2 id="share-modal-title" className="vs-modal__title">
           Share workflow
         </h2>
-        <button
-          type="button"
+        <PressableButton
           className="vs-modal__close"
           onClick={onClose}
           aria-label="Close"
         >
           ×
-        </button>
+        </PressableButton>
       </div>
 
       <div className="vs-modal__body">
@@ -87,20 +93,42 @@ export const PipelineShareModal = ({ open, onClose }: PipelineShareModalProps) =
       </div>
 
       <div className="vs-modal__footer">
-        <button
-          type="button"
+        <PressableButton
           className="vs-btn vs-btn--secondary"
           onClick={onClose}
         >
           Close
-        </button>
-        <button
-          type="button"
-          className="vs-btn vs-btn--submit"
+        </PressableButton>
+        <PressableButton
+          className={`vs-btn vs-btn--submit${copied ? ' vs-btn--copied' : ''}`}
           onClick={handleCopy}
         >
-          {copied ? 'Copied!' : 'Copy JSON'}
-        </button>
+          <AnimatePresence mode="wait" initial={false}>
+            {copied ? (
+              <motion.span
+                key="copied"
+                className="vs-copy-btn__content"
+                initial={reduceMotion ? false : { opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={reduceMotion ? undefined : { opacity: 0, scale: 0.9 }}
+                transition={transition}
+              >
+                <Icon icon={FiCheck} width={14} height={14} aria-hidden />
+                Copied!
+              </motion.span>
+            ) : (
+              <motion.span
+                key="copy"
+                initial={reduceMotion ? false : { opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={reduceMotion ? undefined : { opacity: 0, scale: 0.9 }}
+                transition={transition}
+              >
+                Copy JSON
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </PressableButton>
       </div>
     </AnimatedModal>
   );

@@ -1,4 +1,5 @@
 import { memo, type MouseEvent } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import {
   BaseEdge,
   EdgeLabelRenderer,
@@ -10,6 +11,7 @@ import { Icon } from '../components/Icon';
 import { useStore } from '../store';
 import { useTheme } from '../hooks/useTheme';
 import { shallow } from 'zustand/shallow';
+import { pressTransition } from '../utils/motion';
 
 import {
   EDGE_CURVATURE,
@@ -38,6 +40,7 @@ export const DeletableEdge = memo(function DeletableEdge({
   const { pendingDeleteEdgeId, handleEdgeClick } = useStore(selector, shallow);
   const { edgeStroke } = useTheme();
   const isPendingDelete = pendingDeleteEdgeId === id;
+  const reduceMotion = useReducedMotion();
 
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -74,15 +77,27 @@ export const DeletableEdge = memo(function DeletableEdge({
             transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
           }}
         >
-          <button
+          <motion.button
             type="button"
             className={`vs-edge-delete${isPendingDelete ? ' vs-edge-delete--pending' : ''}`}
             onClick={onDeleteClick}
             title={isPendingDelete ? 'Confirm delete connection' : 'Delete connection'}
             aria-label={isPendingDelete ? 'Confirm delete connection' : 'Delete connection'}
+            whileHover={reduceMotion ? undefined : { scale: 1.08 }}
+            whileTap={reduceMotion ? undefined : { scale: 0.95 }}
+            animate={
+              reduceMotion || !isPendingDelete
+                ? { scale: 1 }
+                : { scale: [1, 1.12, 1] }
+            }
+            transition={
+              isPendingDelete && !reduceMotion
+                ? { duration: 0.35, ease: 'easeOut' }
+                : pressTransition
+            }
           >
             <Icon icon={FiX} width={12} height={12} aria-hidden />
-          </button>
+          </motion.button>
         </div>
       </EdgeLabelRenderer>
     </>

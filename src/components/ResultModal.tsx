@@ -1,5 +1,13 @@
+import { motion, useReducedMotion } from 'framer-motion';
 import { AnimatedModal } from './AnimatedModal';
+import { PressableButton } from './PressableButton';
 import type { PipelineParseResponse } from '../types/api';
+import {
+  fadeUpTransition,
+  reducedMotionTransition,
+  staggerContainerVariants,
+  staggerItemVariants,
+} from '../utils/motion';
 
 export interface ResultModalProps {
   result: PipelineParseResponse | null;
@@ -9,6 +17,8 @@ export interface ResultModalProps {
 
 export const ResultModal = ({ result, error, onClose }: ResultModalProps) => {
   const open = Boolean(result || error);
+  const reduceMotion = useReducedMotion();
+  const transition = reduceMotion ? reducedMotionTransition : fadeUpTransition;
 
   return (
     <AnimatedModal open={open} onClose={onClose} labelledBy="result-modal-title">
@@ -16,30 +26,34 @@ export const ResultModal = ({ result, error, onClose }: ResultModalProps) => {
         <h2 id="result-modal-title" className="vs-modal__title">
           {error ? 'Pipeline Error' : 'Pipeline Analysis'}
         </h2>
-        <button
-          type="button"
+        <PressableButton
           className="vs-modal__close"
           onClick={onClose}
           aria-label="Close"
         >
           ×
-        </button>
+        </PressableButton>
       </div>
 
       <div className="vs-modal__body">
         {error ? (
           <p className="vs-modal__error-text">{error}</p>
         ) : result ? (
-          <ul className="vs-modal__stats">
-            <li>
+          <motion.ul
+            className="vs-modal__stats"
+            variants={staggerContainerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.li variants={staggerItemVariants} transition={transition}>
               <span className="vs-modal__stat-label">Nodes</span>
               <span className="vs-modal__stat-value">{result.num_nodes}</span>
-            </li>
-            <li>
+            </motion.li>
+            <motion.li variants={staggerItemVariants} transition={transition}>
               <span className="vs-modal__stat-label">Edges</span>
               <span className="vs-modal__stat-value">{result.num_edges}</span>
-            </li>
-            <li>
+            </motion.li>
+            <motion.li variants={staggerItemVariants} transition={transition}>
               <span className="vs-modal__stat-label">DAG Status</span>
               <span
                 className={`vs-modal__badge ${
@@ -52,19 +66,18 @@ export const ResultModal = ({ result, error, onClose }: ResultModalProps) => {
                   ? 'Valid DAG — pipeline is acyclic'
                   : 'Contains a cycle — not a valid DAG'}
               </span>
-            </li>
-          </ul>
+            </motion.li>
+          </motion.ul>
         ) : null}
       </div>
 
       <div className="vs-modal__footer">
-        <button
-          type="button"
+        <PressableButton
           className="vs-btn vs-btn--secondary"
           onClick={onClose}
         >
           Close
-        </button>
+        </PressableButton>
       </div>
     </AnimatedModal>
   );
