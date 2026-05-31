@@ -22,6 +22,7 @@ import {
   type CanvasAddNodeDetail,
 } from './utils/canvasEvents';
 import { useTrackpadPinchZoom } from './hooks/useTrackpadPinchZoom';
+import { useTheme } from './hooks/useTheme';
 import { loadViewport, saveViewport, VIEWPORT_MIN_ZOOM, VIEWPORT_MAX_ZOOM, DEFAULT_VIEWPORT } from './utils/pipelinePersistence';
 import { fitPipelineView, isValidViewport } from './utils/fitPipelineView';
 
@@ -63,6 +64,8 @@ export const PipelineUI = () => {
     pushHistory,
     selectAllNodes,
   } = useStore(selector, shallow);
+
+  const { canvasDot, edgeStroke } = useTheme();
 
   const isCanvasEmpty = nodes.length === 0;
   const effectivePanMode = !isCanvasEmpty && (panMode || !isInteractive);
@@ -337,7 +340,7 @@ export const PipelineUI = () => {
         connectionLineType={ConnectionLineType.Bezier}
         connectionLineComponent={ConnectionLine}
         connectionLineStyle={{
-          stroke: '#9ca3af',
+          stroke: edgeStroke,
           strokeWidth: 2,
         }}
         defaultViewport={INITIAL_VIEWPORT}
@@ -360,7 +363,7 @@ export const PipelineUI = () => {
         onMoveEnd={onMoveEnd}
       >
         <Background
-          color="#b8bec7"
+          color={canvasDot}
           gap={gridSize}
           size={1}
           variant={BackgroundVariant.Dots}

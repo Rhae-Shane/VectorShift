@@ -141,6 +141,16 @@ const httpRequestDef: NodeDefinition = {
       placeholder: 'https://api.example.com',
     },
     { kind: 'toggle', name: 'useAuth', label: 'Use Auth', defaultValue: false },
+    {
+      kind: 'number',
+      name: 'timeoutMs',
+      label: 'Timeout',
+      defaultValue: 30000,
+      min: 1000,
+      max: 120000,
+      step: 1000,
+      unit: 'ms',
+    },
   ],
   handles: [
     { type: 'target', position: 'left', idSuffix: 'body', color: 'teal' },

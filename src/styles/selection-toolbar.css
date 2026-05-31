@@ -6,7 +6,7 @@
   padding: 6px 10px;
   border: 1px solid var(--vs-border-dark);
   border-radius: var(--vs-radius);
-  background: #ffffff;
+  background: var(--vs-bg-surface);
   box-shadow: var(--vs-shadow-xs);
   pointer-events: all;
 }
@@ -27,7 +27,7 @@
   padding: 0 10px;
   border: 1px solid var(--vs-border-dark);
   border-radius: var(--vs-radius-sm);
-  background: #ffffff;
+  background: var(--vs-bg-surface);
   color: var(--vs-text);
   font-size: 0.75rem;
   font-weight: 500;
@@ -45,19 +45,19 @@
 }
 
 .vs-selection-toolbar__btn:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
+  background: var(--vs-bg-hover);
+  border-color: var(--vs-border-dark);
 }
 
 .vs-selection-toolbar__btn--danger {
-  border-color: #fca5a5;
-  color: #dc2626;
+  border-color: var(--vs-danger-border);
+  color: var(--vs-danger-text);
 }
 
 .vs-selection-toolbar__btn--danger:hover {
-  background: #fef2f2;
-  border-color: #f87171;
-  color: #b91c1c;
+  background: var(--vs-danger-bg);
+  border-color: var(--vs-danger-border);
+  color: var(--vs-danger-text-hover);
 }
 
 .vs-selection-toolbar__btn--ghost {

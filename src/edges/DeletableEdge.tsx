@@ -8,11 +8,11 @@ import {
 import { FiX } from 'react-icons/fi';
 import { Icon } from '../components/Icon';
 import { useStore } from '../store';
+import { useTheme } from '../hooks/useTheme';
 import { shallow } from 'zustand/shallow';
 
 import {
   EDGE_CURVATURE,
-  EDGE_STROKE,
   EDGE_STROKE_WIDTH,
 } from './edgePathConfig';
 
@@ -36,6 +36,7 @@ export const DeletableEdge = memo(function DeletableEdge({
   style,
 }: EdgeProps) {
   const { pendingDeleteEdgeId, handleEdgeClick } = useStore(selector, shallow);
+  const { edgeStroke } = useTheme();
   const isPendingDelete = pendingDeleteEdgeId === id;
 
   const [edgePath, labelX, labelY] = getBezierPath({
@@ -62,7 +63,7 @@ export const DeletableEdge = memo(function DeletableEdge({
         interactionWidth={24}
         style={{
           ...style,
-          stroke: isPendingDelete ? '#ef4444' : style?.stroke ?? EDGE_STROKE,
+          stroke: isPendingDelete ? 'var(--vs-error)' : style?.stroke ?? edgeStroke,
           strokeWidth: isPendingDelete ? 3 : EDGE_STROKE_WIDTH,
         }}
       />

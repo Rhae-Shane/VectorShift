@@ -21,9 +21,9 @@
   border-radius: 8px;
   cursor: pointer;
   pointer-events: auto;
-  background: #fff;
-  color: #374151;
-  border: 1px solid #d1d5db;
+  background: var(--vs-bg-surface);
+  color: var(--vs-text);
+  border: 1px solid var(--vs-border-dark);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   transition:
     background 0.15s ease,
@@ -33,8 +33,8 @@
 }
 
 .vs-canvas-empty__btn:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
+  background: var(--vs-bg-hover);
+  border-color: var(--vs-border-dark);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
@@ -42,7 +42,7 @@
   width: 16px;
   height: 16px;
   flex-shrink: 0;
-  color: #4b5563;
+  color: var(--vs-text-muted);
 }
 
 @media (max-width: 480px) {

@@ -47,7 +47,7 @@
   height: 14px;
   font-size: var(--vs-ctrl-label-size);
   font-weight: 600;
-  color: #374151;
+  color: var(--vs-tab-text);
   line-height: 1;
   user-select: none;
 }
@@ -57,8 +57,8 @@
   flex-direction: column;
   overflow: hidden;
   border-radius: var(--vs-ctrl-radius);
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: var(--vs-bg-surface);
+  border: 1px solid var(--vs-control-border);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
 }
 
@@ -77,8 +77,8 @@
   align-self: flex-end;
   overflow: hidden;
   border-radius: var(--vs-ctrl-radius);
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: var(--vs-bg-surface);
+  border: 1px solid var(--vs-control-border);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
 }
 
@@ -91,14 +91,14 @@
   min-width: var(--vs-ctrl-btn);
   padding: 0;
   border: none;
-  background: #fff;
-  color: #374151;
+  background: var(--vs-bg-surface);
+  color: var(--vs-tab-text);
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 }
 
 .vs-canvas-controls__zoom-pill .vs-rf-control-btn {
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--vs-control-divider);
 }
 
 .vs-canvas-controls__zoom-pill .vs-rf-control-btn:last-child {
@@ -106,7 +106,7 @@
 }
 
 .vs-canvas-controls__toolbar .vs-rf-control-btn {
-  border-right: 1px solid #f3f4f6;
+  border-right: 1px solid var(--vs-control-divider);
 }
 
 .vs-canvas-controls__toolbar .vs-rf-control-btn:last-child {
@@ -114,13 +114,13 @@
 }
 
 .vs-rf-control-btn:hover:not(:disabled) {
-  background: #f9fafb;
-  color: #111827;
+  background: var(--vs-bg-hover);
+  color: var(--vs-text);
 }
 
 .vs-rf-control-btn[data-active='true'] {
-  background: #1f2937;
-  color: #fff;
+  background: var(--vs-control-active-bg);
+  color: var(--vs-control-active-text);
 }
 
 .vs-rf-control-btn:disabled {
@@ -140,8 +140,8 @@
   height: var(--vs-ctrl-mm-h) !important;
   margin: 0 !important;
   border-radius: var(--vs-ctrl-radius) !important;
-  border: 1px solid #c7d2fe !important;
-  background: #ffffff !important;
+  border: 1px solid var(--vs-accent-border) !important;
+  background: var(--vs-bg-surface) !important;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.12) !important;
   overflow: hidden;
 }
@@ -154,14 +154,14 @@
 
 /* Stronger node shapes inside minimap */
 .vs-minimap .react-flow__minimap-node {
-  fill: #818cf8 !important;
-  stroke: #4338ca !important;
+  fill: var(--vs-minimap-node-fill) !important;
+  stroke: var(--vs-minimap-node-stroke) !important;
   stroke-width: 2px !important;
 }
 
 /* Dimmed area outside current viewport */
 .vs-minimap .react-flow__minimap-mask {
-  fill: rgba(15, 23, 42, 0.14) !important;
+  fill: var(--vs-minimap-mask) !important;
 }
 
 @media (max-width: 768px) {

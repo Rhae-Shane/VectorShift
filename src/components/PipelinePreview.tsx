@@ -15,6 +15,7 @@ import {
   closeCanvasPreview,
 } from '../utils/canvasEvents';
 import { useTrackpadPinchZoom } from '../hooks/useTrackpadPinchZoom';
+import { useTheme } from '../hooks/useTheme';
 import { fitPipelineView } from '../utils/fitPipelineView';
 import { VIEWPORT_MAX_ZOOM, VIEWPORT_MIN_ZOOM } from '../utils/pipelinePersistence';
 import 'reactflow/dist/style.css';
@@ -42,6 +43,7 @@ export const PipelinePreview = () => {
   );
 
   const isEmpty = nodes.length === 0;
+  const { canvasDot } = useTheme();
 
   useTrackpadPinchZoom(
     wrapperRef,
@@ -141,7 +143,7 @@ export const PipelinePreview = () => {
           zoomActivationKeyCode={['Control', 'Meta']}
         >
           <Background
-            color="#b8bec7"
+            color={canvasDot}
             gap={gridSize}
             size={1}
             variant={BackgroundVariant.Dots}

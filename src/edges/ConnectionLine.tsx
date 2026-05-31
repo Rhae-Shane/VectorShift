@@ -1,10 +1,6 @@
 import { memo } from 'react';
 import { getBezierPath, type ConnectionLineComponentProps } from 'reactflow';
-import {
-  EDGE_CURVATURE,
-  EDGE_STROKE,
-  EDGE_STROKE_WIDTH,
-} from './edgePathConfig';
+import { EDGE_CURVATURE, EDGE_STROKE_WIDTH } from './edgePathConfig';
 
 export const ConnectionLine = memo(function ConnectionLine({
   fromX,
@@ -26,12 +22,7 @@ export const ConnectionLine = memo(function ConnectionLine({
 
   return (
     <g className="vs-connection-line">
-      <path
-        fill="none"
-        stroke={EDGE_STROKE}
-        strokeWidth={EDGE_STROKE_WIDTH}
-        d={path}
-      />
+      <path fill="none" strokeWidth={EDGE_STROKE_WIDTH} d={path} />
     </g>
   );
 });
