@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { NodeToolbar, Position } from 'reactflow';
 import type { HandleConfig, NodeAccent } from '../types/nodes';
 import '../styles/nodes.css';
@@ -9,6 +10,13 @@ import { NodeNamePill } from './NodeNamePill';
 import { NodeSuggestion } from './NodeSuggestion';
 import { NodeHandle } from './NodeHandle';
 import type { PipelineNodeData } from '../types/nodes';
+import {
+  fadeUpTransition,
+  nodeShellVariants,
+  reducedMotionTransition,
+  slideUpVariants,
+  collapseVariants,
+} from '../utils/motion';
 
 const POSITION_MAP: Record<string, Position> = {
   left: Position.Left,
@@ -61,6 +69,8 @@ export const BaseNode = ({
     focusFallbackHeight,
     onCollapsedChange,
   });
+  const reduceMotion = useReducedMotion();
+  const shellTransition = reduceMotion ? reducedMotionTransition : fadeUpTransition;
 
   const shellClass = [
     'vs-node',
@@ -99,7 +109,13 @@ export const BaseNode = ({
         />
       ))}
 
-      <div className="vs-node__shell">
+      <motion.div
+        className="vs-node__shell"
+        variants={nodeShellVariants}
+        initial="hidden"
+        animate="visible"
+        transition={shellTransition}
+      >
         <div className="vs-node__header-band">
           <NodeHeader title={title} icon={icon} chrome={chrome} />
           {description ? (
@@ -107,40 +123,61 @@ export const BaseNode = ({
           ) : null}
         </div>
 
-        {!chrome.collapsed && (
-          <>
-            <div className="vs-node__body">
-              {nameField && nodeData ? (
-                <NodeNamePill
-                  nodeId={id}
-                  data={nodeData}
-                  fieldName={nameField}
-                />
-              ) : null}
-              {suggestion ? <NodeSuggestion message={suggestion} /> : null}
-              {children}
-            </div>
-            {error ? (
-              <div className="vs-node__error-banner" role="alert">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  aria-hidden="true"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" x2="12" y1="8" y2="12" />
-                  <line x1="12" x2="12.01" y1="16" y2="16" />
-                </svg>
-                <span>{error}</span>
+        <AnimatePresence initial={false}>
+          {!chrome.collapsed ? (
+            <motion.div
+              key="node-expandable"
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={collapseVariants}
+              transition={shellTransition}
+              style={{ overflow: 'hidden' }}
+            >
+              <div className="vs-node__body">
+                {nameField && nodeData ? (
+                  <NodeNamePill
+                    nodeId={id}
+                    data={nodeData}
+                    fieldName={nameField}
+                  />
+                ) : null}
+                {suggestion ? <NodeSuggestion message={suggestion} /> : null}
+                {children}
               </div>
-            ) : null}
-          </>
-        )}
-      </div>
+              {error ? (
+                <AnimatePresence>
+                  <motion.div
+                    key="node-error"
+                    className="vs-node__error-banner"
+                    role="alert"
+                    variants={slideUpVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    transition={shellTransition}
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      aria-hidden="true"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" x2="12" y1="8" y2="12" />
+                      <line x1="12" x2="12.01" y1="16" y2="16" />
+                    </svg>
+                    <span>{error}</span>
+                  </motion.div>
+                </AnimatePresence>
+              ) : null}
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 };

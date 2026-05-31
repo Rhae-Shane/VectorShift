@@ -1,23 +1,30 @@
-import { useCallback, useMemo, useState, type MouseEvent } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { FiCheck } from 'react-icons/fi';
+import { AnimatedModal } from './AnimatedModal';
+import { PressableButton } from './PressableButton';
+import { Icon } from './Icon';
 import { useStore } from '../store';
 import { serializePipelineExport } from '../utils/pipelineImportExport';
+import { fadeUpTransition, reducedMotionTransition } from '../utils/motion';
 
 export interface PipelineShareModalProps {
+  open: boolean;
   onClose: () => void;
 }
 
-export const PipelineShareModal = ({ onClose }: PipelineShareModalProps) => {
+export const PipelineShareModal = ({ open, onClose }: PipelineShareModalProps) => {
   const nodes = useStore((s) => s.nodes);
   const edges = useStore((s) => s.edges);
   const nodeIDs = useStore((s) => s.nodeIDs);
   const [copied, setCopied] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const transition = reduceMotion ? reducedMotionTransition : fadeUpTransition;
 
   const exportJson = useMemo(
     () => serializePipelineExport({ nodes, edges, nodeIDs }),
     [nodes, edges, nodeIDs]
   );
-
-  const stopPropagation = (e: MouseEvent) => e.stopPropagation();
 
   const handleCopy = useCallback(async () => {
     try {
@@ -30,87 +37,99 @@ export const PipelineShareModal = ({ onClose }: PipelineShareModalProps) => {
   }, [exportJson]);
 
   return (
-    <div
-      className="vs-modal-overlay"
-      onClick={onClose}
-      role="presentation"
+    <AnimatedModal
+      open={open}
+      onClose={onClose}
+      panelClassName="vs-modal vs-modal--import"
+      labelledBy="share-modal-title"
     >
-      <div
-        className="vs-modal vs-modal--import"
-        role="dialog"
-        aria-labelledby="share-modal-title"
-        aria-modal="true"
-        onClick={stopPropagation}
-      >
-        <div className="vs-modal__header">
-          <h2 id="share-modal-title" className="vs-modal__title">
-            Share workflow
-          </h2>
-          <button
-            type="button"
-            className="vs-modal__close"
-            onClick={onClose}
-            aria-label="Close"
-          >
-            ×
-          </button>
-        </div>
-
-        <div className="vs-modal__body">
-          <div className="vs-share-modal__steps">
-            <p className="vs-import-modal__hint">
-              Share your workflow by copying the JSON below and sending it to
-              someone else. They can paste it into <strong>Import</strong> to
-              restore the full canvas.
-            </p>
-            <ol className="vs-share-modal__list">
-              <li>
-                Click <strong>Copy JSON</strong> below (or select the text
-                manually).
-              </li>
-              <li>
-                Send the JSON via chat, email, or any text channel.
-              </li>
-              <li>
-                On another session, open <strong>Import</strong>, paste the
-                JSON, and click <strong>Import</strong>.
-              </li>
-            </ol>
-          </div>
-
-          <p className="vs-share-modal__meta">
-            {nodes.length} node{nodes.length === 1 ? '' : 's'},{' '}
-            {edges.length} edge{edges.length === 1 ? '' : 's'} — includes node
-            positions, field values, and connections.
-          </p>
-
-          <textarea
-            className="vs-import-modal__textarea vs-import-modal__textarea--readonly"
-            value={exportJson}
-            readOnly
-            spellCheck={false}
-            rows={10}
-            aria-label="Workflow export JSON"
-          />
-        </div>
-
-        <div className="vs-modal__footer">
-          <button
-            type="button"
-            className="vs-btn vs-btn--secondary"
-            onClick={onClose}
-          >
-            Close
-          </button>
-          <button
-            type="button"
-            className="vs-btn vs-btn--submit"
-            onClick={handleCopy}
-          >
-            {copied ? 'Copied!' : 'Copy JSON'}
-          </button>
-        </div>
+      <div className="vs-modal__header">
+        <h2 id="share-modal-title" className="vs-modal__title">
+          Share workflow
+        </h2>
+        <PressableButton
+          className="vs-modal__close"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          ×
+        </PressableButton>
       </div>
-    </div>
+
+      <div className="vs-modal__body">
+        <div className="vs-share-modal__steps">
+          <p className="vs-import-modal__hint">
+            Share your workflow by copying the JSON below and sending it to
+            someone else. They can paste it into <strong>Import</strong> to
+            restore the full canvas.
+          </p>
+          <ol className="vs-share-modal__list">
+            <li>
+              Click <strong>Copy JSON</strong> below (or select the text
+              manually).
+            </li>
+            <li>Send the JSON via chat, email, or any text channel.</li>
+            <li>
+              On another session, open <strong>Import</strong>, paste the JSON,
+              and click <strong>Import</strong>.
+            </li>
+          </ol>
+        </div>
+
+        <p className="vs-share-modal__meta">
+          {nodes.length} node{nodes.length === 1 ? '' : 's'}, {edges.length}{' '}
+          edge{edges.length === 1 ? '' : 's'} — includes node positions, field
+          values, and connections.
+        </p>
+
+        <textarea
+          className="vs-import-modal__textarea vs-import-modal__textarea--readonly"
+          value={exportJson}
+          readOnly
+          spellCheck={false}
+          rows={10}
+          aria-label="Workflow export JSON"
+        />
+      </div>
+
+      <div className="vs-modal__footer">
+        <PressableButton
+          className="vs-btn vs-btn--secondary"
+          onClick={onClose}
+        >
+          Close
+        </PressableButton>
+        <PressableButton
+          className={`vs-btn vs-btn--submit${copied ? ' vs-btn--copied' : ''}`}
+          onClick={handleCopy}
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            {copied ? (
+              <motion.span
+                key="copied"
+                className="vs-copy-btn__content"
+                initial={reduceMotion ? false : { opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={reduceMotion ? undefined : { opacity: 0, scale: 0.9 }}
+                transition={transition}
+              >
+                <Icon icon={FiCheck} width={14} height={14} aria-hidden />
+                Copied!
+              </motion.span>
+            ) : (
+              <motion.span
+                key="copy"
+                initial={reduceMotion ? false : { opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={reduceMotion ? undefined : { opacity: 0, scale: 0.9 }}
+                transition={transition}
+              >
+                Copy JSON
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </PressableButton>
+      </div>
+    </AnimatedModal>
   );
 };

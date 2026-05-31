@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import ReactFlow, {
   Background,
   BackgroundVariant,
@@ -18,6 +19,11 @@ import { useTrackpadPinchZoom } from '../hooks/useTrackpadPinchZoom';
 import { useTheme } from '../hooks/useTheme';
 import { fitPipelineView } from '../utils/fitPipelineView';
 import { VIEWPORT_MAX_ZOOM, VIEWPORT_MIN_ZOOM } from '../utils/pipelinePersistence';
+import {
+  fadeUpTransition,
+  modalPanelVariants,
+  reducedMotionTransition,
+} from '../utils/motion';
 import 'reactflow/dist/style.css';
 import '../styles/pipeline-preview.css';
 
@@ -44,6 +50,8 @@ export const PipelinePreview = () => {
 
   const isEmpty = nodes.length === 0;
   const { canvasDot } = useTheme();
+  const reduceMotion = useReducedMotion();
+  const previewTransition = reduceMotion ? reducedMotionTransition : fadeUpTransition;
 
   useTrackpadPinchZoom(
     wrapperRef,
@@ -99,26 +107,43 @@ export const PipelinePreview = () => {
     }
   }, [open, instance, isEmpty, nodes, edges]);
 
-  if (!open) return null;
-
   return (
-    <div className="vs-preview" role="dialog" aria-modal="true" aria-label="Preview">
-      <div className="vs-app vs-preview__shell">
-        <div className="vs-preview__header">
-          <span className="vs-preview__title">Preview</span>
-          <button
-            type="button"
-            className="vs-preview__close"
-            onClick={handleClose}
-            aria-label="Exit preview"
-            title="Exit preview (Esc)"
+    <AnimatePresence>
+      {open ? (
+        <motion.div
+          key="pipeline-preview"
+          className="vs-preview"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Preview"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={previewTransition}
+        >
+          <motion.div
+            className="vs-app vs-preview__shell"
+            variants={modalPanelVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={previewTransition}
           >
-            <Icon icon={FiX} aria-hidden />
-          </button>
-        </div>
+            <div className="vs-preview__header">
+              <span className="vs-preview__title">Preview</span>
+              <button
+                type="button"
+                className="vs-preview__close"
+                onClick={handleClose}
+                aria-label="Exit preview"
+                title="Exit preview (Esc)"
+              >
+                <Icon icon={FiX} aria-hidden />
+              </button>
+            </div>
 
-        <div ref={wrapperRef} className="vs-preview__canvas vs-canvas">
-          <ReactFlow
+            <div ref={wrapperRef} className="vs-preview__canvas vs-canvas">
+              <ReactFlow
           nodes={nodes}
           edges={previewEdges}
           nodeTypes={nodeTypes}
@@ -149,8 +174,10 @@ export const PipelinePreview = () => {
             variant={BackgroundVariant.Dots}
           />
         </ReactFlow>
-        </div>
-      </div>
-    </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
   );
 };

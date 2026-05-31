@@ -21,6 +21,8 @@ import { buildTextVariableHandles } from '../utils/textVariables';
 import {
   NODE_INPUT_WIDTH,
   NODE_OUTPUT_WIDTH,
+  NODE_DEFAULT_WIDTH,
+  NODE_HEADER_ICON_SIZE,
   TEXT_NODE_MIN_HEIGHT,
 } from '../constants/nodeLayout';
 
@@ -34,7 +36,7 @@ const inputDef: NodeDefinition = {
   nameField: 'inputName',
   header: {
     title: 'Input',
-    icon: <Icon icon={FiLogIn} size={22} />,
+    icon: <Icon icon={FiLogIn} size={NODE_HEADER_ICON_SIZE} />,
     accent: 'indigo',
   },
   fields: [
@@ -60,7 +62,7 @@ const outputDef: NodeDefinition = {
   nameField: 'outputName',
   header: {
     title: 'Output',
-    icon: <Icon icon={FiLogOut} size={22} />,
+    icon: <Icon icon={FiLogOut} size={NODE_HEADER_ICON_SIZE} />,
     accent: 'indigo',
   },
   fields: [
@@ -105,7 +107,7 @@ const llmDef: NodeDefinition = {
   type: 'llm',
   label: 'LLM',
   category: 'ai',
-  header: { title: 'LLM', icon: <Icon icon={FiCpu} size={22} />, accent: 'purple' },
+  header: { title: 'LLM', icon: <Icon icon={FiCpu} size={NODE_HEADER_ICON_SIZE} />, accent: 'purple' },
   description: 'Large language model node for prompt processing.',
   handles: [
     {
@@ -130,7 +132,7 @@ const conditionDef: NodeDefinition = {
   type: 'condition',
   label: 'Condition',
   category: 'logic',
-  header: { title: 'Condition', icon: <Icon icon={FiGitBranch} size={22} />, accent: 'orange' },
+  header: { title: 'Condition', icon: <Icon icon={FiGitBranch} size={NODE_HEADER_ICON_SIZE} />, accent: 'orange' },
   description: 'Branch your workflow based on a condition.',
   fields: [
     {
@@ -172,9 +174,9 @@ const httpRequestDef: NodeDefinition = {
   type: 'httpRequest',
   label: 'HTTP Request',
   category: 'integrations',
-  header: { title: 'HTTP Request', icon: <Icon icon={FiGlobe} size={22} />, accent: 'teal' },
+  header: { title: 'HTTP Request', icon: <Icon icon={FiGlobe} size={NODE_HEADER_ICON_SIZE} />, accent: 'teal' },
   description: 'Send an HTTP request to an external API.',
-  minWidth: 320,
+  minWidth: NODE_DEFAULT_WIDTH,
   fields: [
     {
       kind: 'select',
@@ -211,7 +213,7 @@ const mergeDef: NodeDefinition = {
   type: 'merge',
   label: 'Merge',
   category: 'data',
-  header: { title: 'Merge', icon: <Icon icon={FiPlusCircle} size={22} />, accent: 'indigo' },
+  header: { title: 'Merge', icon: <Icon icon={FiPlusCircle} size={NODE_HEADER_ICON_SIZE} />, accent: 'indigo' },
   description: 'Combines multiple inputs into one output.',
   handles: [
     { type: 'target', position: 'left', idSuffix: 'a', style: { top: '25%' }, color: 'sky' },
@@ -225,7 +227,7 @@ const noteDef: NodeDefinition = {
   type: 'note',
   label: 'Note',
   category: 'start',
-  header: { title: 'Note', icon: <Icon icon={FiEdit3} size={22} />, accent: 'gray' },
+  header: { title: 'Note', icon: <Icon icon={FiEdit3} size={NODE_HEADER_ICON_SIZE} />, accent: 'gray' },
   description: 'Add comments or documentation to your workflow.',
   fields: [
     {
@@ -243,7 +245,7 @@ const jsonParseDef: NodeDefinition = {
   type: 'jsonParse',
   label: 'JSON Parse',
   category: 'data',
-  header: { title: 'JSON Parse', icon: <Icon icon={FiCode} size={22} />, accent: 'teal' },
+  header: { title: 'JSON Parse', icon: <Icon icon={FiCode} size={NODE_HEADER_ICON_SIZE} />, accent: 'teal' },
   description: 'Parse a JSON string into structured data.',
   fields: [
     {
@@ -274,7 +276,7 @@ const textDef: NodeDefinition = {
   type: 'text',
   label: 'Text',
   category: 'start',
-  header: { title: 'Text', icon: <Icon icon={FiType} size={22} />, accent: 'purple' },
+  header: { title: 'Text', icon: <Icon icon={FiType} size={NODE_HEADER_ICON_SIZE} />, accent: 'purple' },
   description: 'Static or templated text with variable handles.',
   className: 'vs-node--text',
   focusFallbackHeight: TEXT_NODE_MIN_HEIGHT,

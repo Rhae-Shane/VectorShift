@@ -6,6 +6,7 @@ import {
 } from 'react';
 import { FiPlus, FiX } from 'react-icons/fi';
 import { Icon } from './Icon';
+import { PressableButton } from './PressableButton';
 import { DOCK_POSITION_ICONS } from './DockPositionIcons';
 import {
   TOOLBAR_DOCK_POSITIONS,
@@ -99,9 +100,8 @@ export const ToolbarDockLayout = ({ renderToolbar, canvas }: ToolbarDockLayoutPr
         {TOOLBAR_DOCK_POSITIONS.map((zone) => {
           const ZoneIcon = DOCK_POSITION_ICONS[zone];
           return (
-            <button
+            <PressableButton
               key={zone}
-              type="button"
               className={`vs-dock-toolbar__position vs-dock-toolbar__chrome-btn${
                 position === zone ? ' vs-dock-toolbar__position--active' : ''
               }`}
@@ -111,18 +111,17 @@ export const ToolbarDockLayout = ({ renderToolbar, canvas }: ToolbarDockLayoutPr
               aria-pressed={position === zone}
             >
               <ZoneIcon aria-hidden />
-            </button>
+            </PressableButton>
           );
         })}
-        <button
-          type="button"
+        <PressableButton
           className="vs-dock-toolbar__close vs-dock-toolbar__chrome-btn"
           onClick={hideToolbar}
           title="Hide node palette"
           aria-label="Hide node palette"
         >
           <Icon icon={FiX} aria-hidden />
-        </button>
+        </PressableButton>
       </div>
     </aside>
   );
@@ -142,15 +141,14 @@ export const ToolbarDockLayout = ({ renderToolbar, canvas }: ToolbarDockLayoutPr
       {isToolbarVisible && !toolbarFirst && dockToolbar}
 
       {!isToolbarVisible && (
-        <button
-          type="button"
+        <PressableButton
           className={`vs-dock-toolbar__restore vs-dock-toolbar__chrome-btn vs-dock-toolbar__restore--${position}`}
           onClick={showToolbar}
           title="Show node palette"
           aria-label="Show node palette"
         >
           <Icon icon={FiPlus} aria-hidden />
-        </button>
+        </PressableButton>
       )}
     </main>
   );
