@@ -447,3 +447,11 @@
 .react-flow__handle-right.vs-handle {
   right: calc(var(--vs-handle-offset) * -1) !important;
 }
+
+.react-flow__handle-left.vs-handle--connected {
+  left: calc(var(--vs-handle-connected-offset) * -1) !important;
+}
+
+.react-flow__handle-right.vs-handle--connected {
+  right: calc(var(--vs-handle-connected-offset) * -1) !important;
+}

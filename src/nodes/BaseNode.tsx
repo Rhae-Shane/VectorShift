@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { Handle, NodeToolbar, Position } from 'reactflow';
+import { NodeToolbar, Position } from 'reactflow';
 import type { HandleConfig, NodeAccent } from '../types/nodes';
 import '../styles/nodes.css';
 import { NODE_DEFAULT_WIDTH } from '../constants/nodeLayout';
@@ -7,6 +7,7 @@ import { useNodeChrome } from '../hooks/useNodeChrome';
 import { NodeHeader } from './NodeHeader';
 import { NodeNamePill } from './NodeNamePill';
 import { NodeSuggestion } from './NodeSuggestion';
+import { NodeHandle } from './NodeHandle';
 import type { PipelineNodeData } from '../types/nodes';
 
 const POSITION_MAP: Record<string, Position> = {
@@ -87,13 +88,14 @@ export const BaseNode = ({
       </NodeToolbar>
 
       {handles.map((handle) => (
-        <Handle
+        <NodeHandle
           key={handle.idSuffix}
+          nodeId={id}
           type={handle.type}
           position={POSITION_MAP[handle.position] ?? Position.Right}
-          id={`${id}-${handle.idSuffix}`}
+          handleId={`${id}-${handle.idSuffix}`}
+          color={handle.color ?? 'indigo'}
           style={handle.style}
-          className={`vs-handle vs-handle--${handle.color ?? 'indigo'}`}
         />
       ))}
 
