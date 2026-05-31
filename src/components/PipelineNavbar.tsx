@@ -20,9 +20,11 @@ import { PipelineShareModal } from './PipelineShareModal';
 import { KeyboardShortcutsPopover } from './KeyboardShortcutsPopover';
 import { NavbarOverflowMenu } from './NavbarOverflowMenu';
 import { EMPTY_CANVAS_HINT } from '../constants/canvas';
+import { useTheme } from '../hooks/useTheme';
 import '../styles/navbar.css';
 
 export const PipelineNavbar = () => {
+  const { isDark } = useTheme();
   const canUndo = useStore(selectCanUndo);
   const canRedo = useStore(selectCanRedo);
   const hasNodes = useStore((s) => s.nodes.length > 0);
@@ -87,7 +89,7 @@ export const PipelineNavbar = () => {
         <div className="vs-navbar__left">
           <a className="vs-navbar__brand" href="/" aria-label="VectorFlow home">
             <img
-              src={`${process.env.PUBLIC_URL}/logo.png`}
+              src={`${process.env.PUBLIC_URL}/${isDark ? 'logo-dark.svg' : 'logo-light.svg'}`}
               alt=""
               className="vs-navbar__logo"
             />

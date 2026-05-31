@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react';
 
-/** Lucide-style hand icon for pan mode (matches VectorShift). */
+/** Lucide-style hand icon for pan mode . */
 export const HandIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

@@ -223,7 +223,7 @@
   --vs-accent-bg-hover: rgba(124, 58, 237, 0.2);
   --vs-control-active-bg: #7c3aed;
   --vs-control-active-text: #f9fafb;
-  --vs-logo-filter: brightness(1.15);
+  --vs-logo-filter: none;
   --vs-field-hover-bg: #252232;
 
   --vs-bg-surface: #1c1926;

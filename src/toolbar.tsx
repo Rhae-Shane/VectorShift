@@ -14,7 +14,7 @@ type CategoryId = 'start' | 'integrations' | 'logic' | 'data' | 'ai' | 'chat';
 
 type TabId =
   | 'Start'
-  | 'VectorShift'
+  | 'All'
   | 'Knowledge'
   | 'AI'
   | 'Integrations'
@@ -24,7 +24,7 @@ type TabId =
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'Start', label: 'Start' },
-  { id: 'VectorShift', label: 'VectorShift' },
+  { id: 'All', label: 'All' },
   { id: 'Knowledge', label: 'Knowledge' },
   { id: 'AI', label: 'AI' },
   { id: 'Integrations', label: 'Integrations' },
@@ -37,7 +37,7 @@ const filterByTab = (tab: TabId, entry: NodeRegistryEntry): boolean => {
   switch (tab) {
     case 'Start':
       return entry.category === 'start';
-    case 'VectorShift':
+    case 'All':
       return true;
     case 'Knowledge':
       return entry.category === 'data' || entry.type === 'jsonParse';

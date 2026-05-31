@@ -401,7 +401,7 @@ test/                         # Unit & component tests
 | **1** | Node abstraction | `NodeDefinition` → `createNodeComponent` → `BaseNode` |
 | **1** | 5 custom nodes | Condition, HTTP Request, Merge, Note, JSON Parse |
 | **1** | Custom field type | `number` field on HTTP Request (timeout) |
-| **2** | Styling | `styles/theme.css` + component CSS, VectorShift-inspired UI |
+| **2** | Styling | `styles/theme.css` + component CSS |
 | **3** | Text auto-resize | `GrowingTextAreaField` + `useGrowingTextNodeSize` |
 | **3** | `{{variable}}` handles | `parseTextVariables` + `getDynamicHandles` |
 | **4** | Backend integration | `pipelineService` → `/pipelines/parse` → `ResultModal` |

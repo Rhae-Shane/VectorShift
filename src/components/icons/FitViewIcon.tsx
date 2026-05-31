@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react';
 
-/** Lucide "maximize" — four corners, fit view (VectorShift zoom pill). */
+
 export const FitViewIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 136 92" role="img" aria-label="VectorFlow">
+  <defs>
+    <linearGradient id="vf-dark" x1="10" y1="46" x2="126" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="48%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#2dd4bf"/>
+    </linearGradient>
+  </defs>
+  <path
+    fill="url(#vf-dark)"
+    d="M48 10h11L70 64l11-54h11L77 78H63L48 10z"
+  />
+  <path
+    fill="none"
+    stroke="url(#vf-dark)"
+    stroke-width="3.25"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    d="M23 38.5V54.5c0 2.5 2 4.5 4.5 4.5h41.5c2.5 0 4.5 2 4.5 4.5v10c0 2.5 2 4.5 4.5 4.5h41.5c2.5 0 4.5-2 4.5-4.5V54.5c0-2.5-2-4.5-4.5-4.5H77.5c-2.5 0-4.5-2-4.5-4.5V38.5"
+  />
+  <rect x="13" y="33.5" width="10" height="10" rx="2.5" fill="url(#vf-dark)"/>
+  <rect x="13" y="53.5" width="10" height="10" rx="2.5" fill="url(#vf-dark)"/>
+  <rect x="65" y="74.5" width="10" height="10" rx="2.5" fill="url(#vf-dark)"/>
+  <rect x="113" y="53.5" width="10" height="10" rx="2.5" fill="url(#vf-dark)"/>
+  <rect x="113" y="33.5" width="10" height="10" rx="2.5" fill="url(#vf-dark)"/>
+</svg>

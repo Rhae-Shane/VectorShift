@@ -1,4 +1,4 @@
-/* VectorShift pipeline header palette */
+
 .vs-palette {
   background: var(--vs-bg-hover);
   border-bottom: 1px solid var(--vs-border);
@@ -157,7 +157,6 @@
   flex-shrink: 0;
 }
 
-/* 81×81 node cards — matches VectorShift inner layout */
 .vs-draggable-node {
   cursor: grab;
   width: 81px;
