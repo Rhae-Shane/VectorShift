@@ -9,7 +9,6 @@ import {
 import { FiX } from 'react-icons/fi';
 import { Icon } from '../components/Icon';
 import { useStore } from '../store';
-import { useTheme } from '../hooks/useTheme';
 import { shallow } from 'zustand/shallow';
 import { pressTransition } from '../utils/motion';
 
@@ -20,9 +19,11 @@ import {
 
 const selector = (state: {
   pendingDeleteEdgeId: string | null;
+  pulsingEdgeId: string | null;
   handleEdgeClick: (edgeId: string) => void;
 }) => ({
   pendingDeleteEdgeId: state.pendingDeleteEdgeId,
+  pulsingEdgeId: state.pulsingEdgeId,
   handleEdgeClick: state.handleEdgeClick,
 });
 
@@ -37,9 +38,12 @@ export const DeletableEdge = memo(function DeletableEdge({
   markerEnd,
   style,
 }: EdgeProps) {
-  const { pendingDeleteEdgeId, handleEdgeClick } = useStore(selector, shallow);
-  const { edgeStroke } = useTheme();
+  const { pendingDeleteEdgeId, pulsingEdgeId, handleEdgeClick } = useStore(
+    selector,
+    shallow
+  );
   const isPendingDelete = pendingDeleteEdgeId === id;
+  const isPulsing = pulsingEdgeId === id;
   const reduceMotion = useReducedMotion();
 
   const [edgePath, labelX, labelY] = getBezierPath({
@@ -57,19 +61,29 @@ export const DeletableEdge = memo(function DeletableEdge({
     handleEdgeClick(id);
   };
 
+  const edgeClassName = [
+    'vs-edge-path',
+    isPulsing ? 'vs-edge-path--pulse' : '',
+    isPendingDelete ? 'vs-edge-path--pending' : 'vs-edge-path--linked',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <>
-      <BaseEdge
-        id={id}
-        path={edgePath}
-        markerEnd={markerEnd}
-        interactionWidth={24}
-        style={{
-          ...style,
-          stroke: isPendingDelete ? 'var(--vs-error)' : style?.stroke ?? edgeStroke,
-          strokeWidth: isPendingDelete ? 3 : EDGE_STROKE_WIDTH,
-        }}
-      />
+      <g className={edgeClassName}>
+        <BaseEdge
+          id={id}
+          path={edgePath}
+          markerEnd={markerEnd}
+          interactionWidth={24}
+          style={{
+            ...style,
+            stroke: isPendingDelete ? 'var(--vs-error)' : undefined,
+            strokeWidth: isPendingDelete ? 3 : EDGE_STROKE_WIDTH,
+          }}
+        />
+      </g>
       <EdgeLabelRenderer>
         <div
           className="vs-edge-delete-wrap"

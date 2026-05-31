@@ -108,4 +108,45 @@ describe('useStore', () => {
       expect(useStore.getState().future).toHaveLength(0);
     });
   });
+
+  describe('connection feedback', () => {
+    it('registers a pulse on both handles when a connection is made', () => {
+      useStore.setState({
+        nodes: [
+          {
+            id: 'a',
+            type: 'customInput',
+            position: { x: 0, y: 0 },
+            data: { id: 'a', nodeType: 'customInput' },
+          },
+          {
+            id: 'b',
+            type: 'customOutput',
+            position: { x: 200, y: 0 },
+            data: { id: 'b', nodeType: 'customOutput' },
+          },
+        ],
+      });
+
+      useStore.getState().onConnect({
+        source: 'a',
+        target: 'b',
+        sourceHandle: 'a-value',
+        targetHandle: 'b-value',
+      });
+
+      const { pulsingHandleKeys, pulsingEdgeId, edges } = useStore.getState();
+      expect(edges).toHaveLength(1);
+      expect(pulsingEdgeId).toBe(edges[0].id);
+      expect(pulsingHandleKeys).toEqual(['a-value', 'b-value']);
+      expect(edges[0].animated).toBe(false);
+    });
+
+    it('tracks connecting state while dragging', () => {
+      useStore.getState().setConnecting(true);
+      expect(useStore.getState().isConnecting).toBe(true);
+      useStore.getState().setConnecting(false);
+      expect(useStore.getState().isConnecting).toBe(false);
+    });
+  });
 });

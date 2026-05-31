@@ -3,7 +3,10 @@ import { Handle, Position } from 'reactflow';
 import { useStore, type StoreState } from '../store';
 import { shallow } from 'zustand/shallow';
 
-const selector = (state: StoreState) => state.edges;
+const edgesSelector = (state: StoreState) => state.edges;
+const pulseSelector = (state: StoreState) => ({
+  pulsingHandleKeys: state.pulsingHandleKeys,
+});
 
 export interface NodeHandleProps {
   nodeId: string;
@@ -35,14 +38,19 @@ export const NodeHandle = ({
   color,
   style,
 }: NodeHandleProps) => {
-  const edges = useStore(selector, shallow);
+  const edges = useStore(edgesSelector, shallow);
+  const { pulsingHandleKeys } = useStore(pulseSelector, shallow);
   const connected = isHandleConnected(nodeId, handleId, type, edges);
+  const isPulsing = pulsingHandleKeys.includes(handleId);
 
   const className = [
     'vs-handle',
     `vs-handle--${color}`,
     connected ? 'vs-handle--connected' : 'vs-handle--idle',
-  ].join(' ');
+    isPulsing ? 'vs-handle--pulse' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <Handle

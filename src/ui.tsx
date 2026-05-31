@@ -40,6 +40,8 @@ const selector = (state: StoreState) => ({
   onNodesChange: state.onNodesChange,
   onEdgesChange: state.onEdgesChange,
   onConnect: state.onConnect,
+  setConnecting: state.setConnecting,
+  isConnecting: state.isConnecting,
   clearPendingEdgeDelete: state.clearPendingEdgeDelete,
   pushHistory: state.pushHistory,
   selectAllNodes: state.selectAllNodes,
@@ -60,12 +62,14 @@ export const PipelineUI = () => {
     onNodesChange,
     onEdgesChange,
     onConnect,
+    setConnecting,
+    isConnecting,
     clearPendingEdgeDelete,
     pushHistory,
     selectAllNodes,
   } = useStore(selector, shallow);
 
-  const { canvasDot, edgeStroke } = useTheme();
+  const { canvasDot } = useTheme();
 
   const isCanvasEmpty = nodes.length === 0;
   const effectivePanMode = !isCanvasEmpty && (panMode || !isInteractive);
@@ -87,6 +91,14 @@ export const PipelineUI = () => {
       new CustomEvent('vs:toggleAllNodes', { detail: { collapsed } })
     );
   }, []);
+
+  const onConnectStart = useCallback(() => {
+    setConnecting(true);
+  }, [setConnecting]);
+
+  const onConnectEnd = useCallback(() => {
+    setConnecting(false);
+  }, [setConnecting]);
 
   const addNodeAtViewport = useCallback(
     (type: string) => {
@@ -315,13 +327,18 @@ export const PipelineUI = () => {
   }, [setAllNodesCollapsed]);
 
   return (
-    <div ref={reactFlowWrapper} className="vs-canvas">
+    <div
+      ref={reactFlowWrapper}
+      className={`vs-canvas${isConnecting ? ' vs-canvas--connecting' : ''}`}
+    >
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onConnectStart={onConnectStart}
+        onConnectEnd={onConnectEnd}
         onDrop={onDrop}
         onDragOver={onDragOver}
         onNodeDragStart={onNodeDragStart}
@@ -340,7 +357,7 @@ export const PipelineUI = () => {
         connectionLineType={ConnectionLineType.Bezier}
         connectionLineComponent={ConnectionLine}
         connectionLineStyle={{
-          stroke: edgeStroke,
+          stroke: 'var(--vs-edge-linked-color)',
           strokeWidth: 2,
         }}
         defaultViewport={INITIAL_VIEWPORT}
