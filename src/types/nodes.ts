@@ -24,18 +24,21 @@ export interface HandleConfig {
   position: HandlePosition;
   idSuffix: string;
   style?: CSSProperties;
-  color?: 'sky' | 'amber' | 'rose' | 'teal' | 'gray';
+  color?: 'sky' | 'amber' | 'rose' | 'teal' | 'gray' | 'indigo';
+}
+
+export interface BaseFieldConfig {
+  name: string;
+  label: string;
+  required?: boolean;
+  badge?: string;
+  showHelp?: boolean;
 }
 
 export interface NodeHeaderConfig {
   title: string;
   icon?: ReactNode;
   accent?: NodeAccent;
-}
-
-export interface BaseFieldConfig {
-  name: string;
-  label: string;
 }
 
 export interface TextFieldConfig extends BaseFieldConfig {
@@ -55,6 +58,7 @@ export interface TextAreaFieldConfig extends BaseFieldConfig {
   placeholder?: string;
   defaultValue?: string;
   rows?: number;
+  highlightInvalid?: boolean;
 }
 
 export interface ToggleFieldConfig extends BaseFieldConfig {
@@ -91,6 +95,12 @@ export interface NodeDefinition {
   label: string;
   category: NodeCategory;
   header: NodeHeaderConfig;
+  /** Shown under the header band (e.g. Input / Output subtitle). */
+  description?: string;
+  /** Tip banner above fields (e.g. naming suggestion on Input). */
+  suggestion?: string;
+  /** Field key rendered as the lavender name pill (e.g. inputName). */
+  nameField?: string;
   fields?: FieldConfig[];
   handles?: HandleConfig[];
   staticContent?: string;

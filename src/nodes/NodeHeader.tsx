@@ -1,5 +1,10 @@
 import type { ReactNode } from 'react';
-import { FiChevronDown, FiChevronUp, FiCopy, FiX } from 'react-icons/fi';
+import {
+  FiMinimize2,
+  FiSettings,
+  FiXCircle,
+  FiCopy,
+} from 'react-icons/fi';
 import { Icon } from '../components/Icon';
 import type { UseNodeChromeResult } from '../hooks/useNodeChrome';
 
@@ -30,27 +35,37 @@ export const NodeHeader = ({ title, icon, chrome }: NodeHeaderProps) => {
   return (
     <div className="vs-node__header">
       <div className="vs-node__header-left">
-        {icon && <span className="vs-node__icon">{icon}</span>}
+        {icon ? <span className="vs-node__icon">{icon}</span> : null}
         <span className="vs-node__title">{title}</span>
       </div>
       <div className="vs-node__header-right">
         <button
           type="button"
           className="vs-node__icon-btn"
-          onClick={onDuplicateClick}
-          aria-label="Duplicate node"
-          {...bindHoverTip('duplicate')}
+          onClick={onToggleCollapseClick}
+          aria-label={collapsed ? 'Expand node' : 'Minimize node'}
+          {...bindHoverTip('collapse')}
         >
-          <Icon icon={FiCopy} size={14} />
+          <Icon icon={FiMinimize2} size={18} />
         </button>
         <button
           type="button"
           className="vs-node__icon-btn"
-          onClick={onToggleCollapseClick}
-          aria-label={collapsed ? 'Expand node' : 'Collapse node'}
-          {...bindHoverTip('collapse')}
+          onClick={onDuplicateClick}
+          aria-label="Duplicate node"
+          title="Duplicate"
+          {...bindHoverTip('duplicate')}
         >
-          <Icon icon={collapsed ? FiChevronDown : FiChevronUp} size={14} />
+          <Icon icon={FiCopy} size={16} />
+        </button>
+        <button
+          type="button"
+          className="vs-node__icon-btn"
+          aria-label="Settings"
+          title="Settings"
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <Icon icon={FiSettings} size={18} />
         </button>
         <button
           type="button"
@@ -59,7 +74,7 @@ export const NodeHeader = ({ title, icon, chrome }: NodeHeaderProps) => {
           aria-label={confirmDelete ? 'Confirm delete node' : 'Delete node'}
           {...bindHoverTip('delete')}
         >
-          <Icon icon={FiX} size={14} />
+          <Icon icon={FiXCircle} size={22} />
         </button>
       </div>
     </div>

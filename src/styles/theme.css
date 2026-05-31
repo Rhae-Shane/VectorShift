@@ -12,10 +12,39 @@
   --vs-canvas-dot: #b8bec7;
 
   /* Compact node sizing — ~7–8 nodes fit at 100% zoom on typical screens */
-  --vs-node-width: 240px;
-  --vs-node-max-width: 300px;
-  --vs-node-font-size: 0.75rem;
-  --vs-node-radius: 10px;
+  --vs-node-width: 320px;
+  --vs-node-max-width: 400px;
+  --vs-node-font-size: 0.8125rem;
+  --vs-node-radius: 6px;
+  --vs-indigo-50: #eef2ff;
+  --vs-indigo-100: #e0e7ff;
+  --vs-indigo-200: #c7d2fe;
+  --vs-indigo-500: #6366f1;
+  --vs-indigo-600: #4f46e5;
+  --vs-indigo-700: #4338ca;
+  --vs-indigo-800: #3730a3;
+  --vs-indigo-900: #312e81;
+  --vs-slate-700: #334155;
+  --vs-node-border: #c7d2fe;
+  --vs-node-border-hover: #a9abf7;
+  --vs-node-ring: 0 0 0 2px #cecffc;
+  --vs-node-ring-hover: 0 0 0 4px #cecffc;
+  --vs-node-ring-selected: 0 0 0 3px rgba(79, 70, 229, 0.35);
+  --vs-node-ring-error: 0 0 0 2px #ed6f6f;
+  --vs-node-name-pill: #dedff5;
+  --vs-name-pill-text: #312e81;
+  --vs-node-suggestion-bg: var(--vs-indigo-50);
+  --vs-node-suggestion-border: var(--vs-indigo-700);
+  --vs-node-suggestion-text: var(--vs-indigo-800);
+  --vs-node-icon-hover-bg: rgba(255, 255, 255, 0.7);
+  --vs-node-input-hover-bg: #fafaff;
+  --vs-node-input-hover-border: #e0e7ff;
+  --vs-node-input-focus-ring: var(--vs-indigo-100);
+  --vs-node-error-text: #b91c1c;
+  --vs-node-error-bg: #fef2f2;
+  --vs-node-error-border: #b91c1c;
+  --vs-handle-fill: #ffffff;
+  --vs-handle-indigo: #4f46e5;
   --vs-text: #111827;
   --vs-text-muted: #6b7280;
   --vs-radius: 8px;
@@ -152,13 +181,6 @@
   --vs-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
   --vs-bg-fill-quaternary: #1e293b;
   --vs-border-primary: #475569;
-  --vs-bg-secondary: #1a2332;
-  --vs-border-secondary: #475569;
-  --vs-bg-hover: #334155;
-  --vs-bg-input: #334155;
-  --vs-bg-surface: #273549;
-  --vs-node-header-bg: #273549;
-  --vs-handle-ring: #273549;
   --vs-edge-color: #94a3b8;
   --vs-overlay: rgba(0, 0, 0, 0.65);
   --vs-modal-shadow: 0 20px 40px rgba(0, 0, 0, 0.55);
@@ -178,10 +200,59 @@
   --vs-accent-bg-hover: #3730a3;
   --vs-control-active-bg: #e2e8f0;
   --vs-control-active-text: #0f172a;
-  --vs-node-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25);
-  --vs-node-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.3);
   --vs-logo-filter: brightness(1.15);
-  --vs-field-hover-bg: #334155;
+  --vs-field-hover-bg: #252f42;
+
+  /* Dark nodes: neutral elevated surfaces, indigo as accent only */
+  --vs-bg-surface: #1c2433;
+  --vs-bg-input: #131a27;
+  --vs-bg-secondary: #161d2b;
+  --vs-bg-hover: #252f42;
+  --vs-node-header-bg: #1c2433;
+  --vs-handle-ring: #1c2433;
+  --vs-handle-fill: #1c2433;
+
+  --vs-indigo-50: rgba(99, 102, 241, 0.07);
+  --vs-indigo-100: rgba(99, 102, 241, 0.14);
+  --vs-indigo-200: rgba(129, 140, 248, 0.28);
+  --vs-indigo-500: #818cf8;
+  --vs-indigo-600: #6366f1;
+  --vs-indigo-700: #a5b4fc;
+  --vs-indigo-800: #c7d2fe;
+  --vs-indigo-900: #e0e7ff;
+  --vs-slate-700: #e2e8f0;
+
+  --vs-node-border: rgba(148, 163, 184, 0.2);
+  --vs-node-border-hover: rgba(129, 140, 248, 0.45);
+  --vs-node-ring:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 6px 20px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --vs-node-ring-hover:
+    0 2px 4px rgba(0, 0, 0, 0.45),
+    0 10px 28px rgba(0, 0, 0, 0.32),
+    0 0 0 1px rgba(129, 140, 248, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --vs-node-ring-selected:
+    0 0 0 2px #818cf8,
+    0 8px 28px rgba(99, 102, 241, 0.22);
+  --vs-node-ring-error:
+    0 0 0 2px rgba(248, 113, 113, 0.65),
+    0 6px 20px rgba(239, 68, 68, 0.15);
+  --vs-node-name-pill: rgba(99, 102, 241, 0.12);
+  --vs-name-pill-text: #c7d2fe;
+  --vs-node-suggestion-bg: rgba(56, 189, 248, 0.08);
+  --vs-node-suggestion-border: rgba(56, 189, 248, 0.32);
+  --vs-node-suggestion-text: #bae6fd;
+  --vs-node-icon-hover-bg: rgba(255, 255, 255, 0.06);
+  --vs-node-input-hover-bg: #1a2232;
+  --vs-node-input-hover-border: rgba(129, 140, 248, 0.22);
+  --vs-node-input-focus-ring: rgba(99, 102, 241, 0.22);
+  --vs-node-error-text: #fca5a5;
+  --vs-node-error-bg: rgba(127, 29, 29, 0.32);
+  --vs-node-error-border: rgba(248, 113, 113, 0.45);
+  --vs-handle-indigo: #818cf8;
+
   --vs-field-label: #e2e8f0;
   --vs-input-border: #64748b;
   --vs-input-placeholder: #94a3b8;
@@ -255,13 +326,13 @@ select option {
 }
 
 .react-flow__handle {
-  width: 14px !important;
-  height: 14px !important;
-  background-color: var(--vs-handle-gray) !important;
-  border: 2px solid var(--vs-handle-ring) !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  width: 12px !important;
+  height: 12px !important;
+  background-color: var(--vs-handle-fill) !important;
+  border: 2px solid var(--vs-handle-indigo) !important;
+  box-shadow: none !important;
   z-index: 10;
-  transition: box-shadow 0.1s ease !important;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease !important;
 }
 
 /* Preserve React Flow centering transforms — do not replace with scale(). */
@@ -282,18 +353,14 @@ select option {
 }
 
 .react-flow__handle:hover {
-  box-shadow:
-    0 0 0 3px rgba(56, 189, 248, 0.28),
-    0 1px 2px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25) !important;
 }
 
 .react-flow__handle.connecting,
 .react-flow__handle.valid,
 .react-flow__handle.connectingfrom,
 .react-flow__handle.connectingto {
-  box-shadow:
-    0 0 0 3px rgba(56, 189, 248, 0.35),
-    0 1px 2px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.35) !important;
 }
 
 .react-flow__handle.vs-handle--sky {
@@ -309,7 +376,13 @@ select option {
   background-color: var(--vs-handle-teal) !important;
 }
 .react-flow__handle.vs-handle--gray {
-  background-color: var(--vs-handle-gray) !important;
+  background-color: var(--vs-handle-fill) !important;
+  border-color: var(--vs-handle-gray) !important;
+}
+
+.react-flow__handle.vs-handle--indigo {
+  background-color: var(--vs-handle-fill) !important;
+  border-color: var(--vs-handle-indigo) !important;
 }
 
 

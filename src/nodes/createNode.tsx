@@ -27,13 +27,22 @@ const renderField = (
   field: FieldConfig,
   nodeId: string,
   data: PipelineNodeData,
+  nodeError: string | null,
   growingTextRefs?: {
     textareaRef: RefObject<HTMLTextAreaElement>;
     measureRef: RefObject<HTMLSpanElement>;
     onTextChange?: (text: string) => void;
   }
 ) => {
-  const base = { nodeId, data, name: field.name, label: field.label };
+  const base = {
+    nodeId,
+    data,
+    name: field.name,
+    label: field.label,
+    required: field.required,
+    badge: field.badge,
+    showHelp: field.showHelp,
+  };
 
   switch (field.kind) {
     case 'text':
@@ -62,6 +71,8 @@ const renderField = (
           placeholder={field.placeholder}
           defaultValue={field.defaultValue}
           rows={field.rows}
+          highlightInvalid={field.highlightInvalid}
+          invalid={Boolean(nodeError && field.highlightInvalid)}
         />
       );
     case 'toggle':
@@ -111,6 +122,9 @@ export const createNodeComponent = (
   const NodeComponent = ({ id, data, selected }: NodeProps<PipelineNodeData>) => {
     const {
       header,
+      description,
+      suggestion,
+      nameField,
       fields = [],
       handles = [],
       staticContent,
@@ -181,7 +195,11 @@ export const createNodeComponent = (
         id={id}
         title={header.title}
         icon={header.icon}
-        accent={header.accent ?? 'purple'}
+        accent={header.accent ?? 'indigo'}
+        description={description}
+        suggestion={suggestion}
+        nameField={nameField}
+        nodeData={data}
         handles={mergedHandles}
         minWidth={minWidth}
         className={className}
@@ -197,6 +215,7 @@ export const createNodeComponent = (
             field,
             id,
             data,
+            error,
             growingTextField
               ? {
                   textareaRef,
