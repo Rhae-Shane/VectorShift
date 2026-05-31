@@ -1,37 +1,18 @@
-import { useState, useEffect, type RefObject } from 'react';
-import { useStore } from '../store';
+import type { RefObject } from 'react';
+import { FiChevronDown } from 'react-icons/fi';
+import { Icon } from '../components/Icon';
+import { FieldLabelRow } from './FieldLabelRow';
+import { useSyncedField } from './useSyncedField';
 import type { PipelineNodeData } from '../types/nodes';
-
-const useSyncedField = <T,>(
-  nodeId: string,
-  fieldName: string,
-  defaultValue: T,
-  data: PipelineNodeData
-): [T, (value: T) => void] => {
-  const updateNodeField = useStore((s) => s.updateNodeField);
-  const dataValue = data[fieldName] as T | undefined;
-  const [value, setValue] = useState<T>(dataValue ?? defaultValue);
-
-  useEffect(() => {
-    if (dataValue !== undefined && dataValue !== value) {
-      setValue(dataValue);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataValue]);
-
-  const onChange = (newValue: T) => {
-    setValue(newValue);
-    updateNodeField(nodeId, fieldName, newValue);
-  };
-
-  return [value, onChange];
-};
 
 interface FieldBaseProps {
   nodeId: string;
   data: PipelineNodeData;
   name: string;
   label: string;
+  required?: boolean;
+  badge?: string;
+  showHelp?: boolean;
 }
 
 export interface TextFieldProps extends FieldBaseProps {
@@ -46,23 +27,27 @@ export const TextField = ({
   label,
   placeholder,
   defaultValue = '',
+  required,
+  badge,
+  showHelp,
 }: TextFieldProps) => {
-  const [value, setValue] = useSyncedField(
-    nodeId,
-    name,
-    defaultValue,
-    data
-  );
+  const [value, setValue] = useSyncedField(nodeId, name, defaultValue, data);
 
   return (
     <div className="vs-field">
-      <label className="vs-field__label">{label}</label>
+      <FieldLabelRow
+        label={label}
+        required={required}
+        badge={badge}
+        showHelp={showHelp}
+      />
       <input
-        className="vs-field__input"
+        className="vs-field__input nodrag"
         type="text"
         value={String(value)}
         placeholder={placeholder}
         onChange={(e) => setValue(e.target.value)}
+        onMouseDown={(e) => e.stopPropagation()}
       />
     </div>
   );
@@ -80,6 +65,9 @@ export const SelectField = ({
   label,
   options,
   defaultValue,
+  required,
+  badge = 'Dropdown',
+  showHelp,
 }: SelectFieldProps) => {
   const [value, setValue] = useSyncedField(
     nodeId,
@@ -90,18 +78,32 @@ export const SelectField = ({
 
   return (
     <div className="vs-field">
-      <label className="vs-field__label">{label}</label>
-      <select
-        className="vs-field__select"
-        value={String(value)}
-        onChange={(e) => setValue(e.target.value)}
-      >
-        {options.map((opt) => (
-          <option key={opt} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
+      <FieldLabelRow
+        label={label}
+        required={required}
+        badge={badge}
+        showHelp={showHelp}
+      />
+      <div className="vs-field__select-wrap">
+        <select
+          className="vs-field__select nodrag"
+          value={String(value)}
+          onChange={(e) => setValue(e.target.value)}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          {options.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+        <Icon
+          icon={FiChevronDown}
+          size={18}
+          className="vs-field__select-chevron"
+          aria-hidden
+        />
+      </div>
     </div>
   );
 };
@@ -110,6 +112,8 @@ export interface TextAreaFieldProps extends FieldBaseProps {
   placeholder?: string;
   defaultValue?: string;
   rows?: number;
+  highlightInvalid?: boolean;
+  invalid?: boolean;
 }
 
 export const TextAreaField = ({
@@ -120,23 +124,30 @@ export const TextAreaField = ({
   placeholder,
   defaultValue = '',
   rows = 3,
+  required,
+  badge,
+  showHelp,
+  highlightInvalid,
+  invalid,
 }: TextAreaFieldProps) => {
-  const [value, setValue] = useSyncedField(
-    nodeId,
-    name,
-    defaultValue,
-    data
-  );
+  const [value, setValue] = useSyncedField(nodeId, name, defaultValue, data);
+  const showInvalid = Boolean(invalid || (highlightInvalid && required && !String(value).trim()));
 
   return (
     <div className="vs-field">
-      <label className="vs-field__label">{label}</label>
+      <FieldLabelRow
+        label={label}
+        required={required}
+        badge={badge}
+        showHelp={showHelp}
+      />
       <textarea
-        className="vs-field__textarea"
+        className={`vs-field__textarea nodrag ${showInvalid ? 'vs-field__textarea--invalid' : ''}`}
         value={String(value)}
         rows={rows}
         placeholder={placeholder}
         onChange={(e) => setValue(e.target.value)}
+        onMouseDown={(e) => e.stopPropagation()}
       />
     </div>
   );
@@ -144,6 +155,8 @@ export const TextAreaField = ({
 
 export interface ToggleFieldProps extends FieldBaseProps {
   defaultValue?: boolean;
+  onLabel?: string;
+  offLabel?: string;
 }
 
 export const ToggleField = ({
@@ -152,25 +165,28 @@ export const ToggleField = ({
   name,
   label,
   defaultValue = false,
+  onLabel = 'Yes',
+  offLabel = 'No',
 }: ToggleFieldProps) => {
-  const [value, setValue] = useSyncedField(
-    nodeId,
-    name,
-    defaultValue,
-    data
-  );
+  const [value, setValue] = useSyncedField(nodeId, name, defaultValue, data);
 
   return (
     <div className="vs-field vs-field--row">
-      <label className="vs-field__label">{label}</label>
-      <button
-        type="button"
-        className={`vs-toggle ${value ? 'vs-toggle--on' : ''}`}
-        onClick={() => setValue(!value)}
-        aria-pressed={Boolean(value)}
-      >
-        <span className="vs-toggle__thumb" />
-      </button>
+      <span className="vs-field__label">{label}</span>
+      <div className="vs-field__toggle-group">
+        <span className="vs-field__toggle-label">
+          {value ? onLabel : offLabel}
+        </span>
+        <button
+          type="button"
+          className={`vs-toggle ${value ? 'vs-toggle--on' : ''}`}
+          onClick={() => setValue(!value)}
+          aria-pressed={Boolean(value)}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <span className="vs-toggle__thumb" />
+        </button>
+      </div>
     </div>
   );
 };
@@ -187,7 +203,6 @@ export interface NumberFieldProps extends FieldBaseProps {
   unit?: string;
 }
 
-/** Custom field type example — numeric input synced to node.data via useSyncedField. */
 export const NumberField = ({
   nodeId,
   data,
@@ -198,24 +213,35 @@ export const NumberField = ({
   max,
   step = 1,
   unit,
+  required,
+  badge,
+  showHelp,
 }: NumberFieldProps) => {
   const [value, setValue] = useSyncedField(nodeId, name, defaultValue, data);
 
   return (
     <div className="vs-field">
-      <label className="vs-field__label">
-        {label}
-        {unit ? ` (${unit})` : ''}
-      </label>
+      <FieldLabelRow
+        label={label}
+        required={required}
+        badge={badge}
+        showHelp={showHelp}
+      />
       <input
-        className="vs-field__input"
+        className="vs-field__input nodrag"
         type="number"
         value={Number(value)}
         min={min}
         max={max}
         step={step}
         onChange={(e) => setValue(Number(e.target.value))}
+        onMouseDown={(e) => e.stopPropagation()}
       />
+      {unit ? (
+        <span className="vs-field__unit" aria-hidden="true">
+          {unit}
+        </span>
+      ) : null}
     </div>
   );
 };
@@ -238,13 +264,11 @@ export const GrowingTextAreaField = ({
   textareaRef,
   measureRef,
   onTextChange,
+  required,
+  badge,
+  showHelp,
 }: GrowingTextAreaFieldProps) => {
-  const [value, setValue] = useSyncedField(
-    nodeId,
-    name,
-    defaultValue,
-    data
-  );
+  const [value, setValue] = useSyncedField(nodeId, name, defaultValue, data);
 
   const handleChange = (next: string) => {
     setValue(next);
@@ -254,10 +278,15 @@ export const GrowingTextAreaField = ({
   return (
     <>
       <div className="vs-field">
-        <label className="vs-field__label">{label}</label>
+        <FieldLabelRow
+          label={label}
+          required={required}
+          badge={badge}
+          showHelp={showHelp}
+        />
         <textarea
           ref={textareaRef}
-          className="vs-field__textarea vs-field__textarea--grow"
+          className="vs-field__textarea vs-field__textarea--grow nodrag"
           value={String(value)}
           placeholder={placeholder}
           rows={1}

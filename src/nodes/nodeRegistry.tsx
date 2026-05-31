@@ -1,8 +1,8 @@
 import { createNodeComponent } from './createNode';
 import { Icon } from '../components/Icon';
 import {
-  FiArrowDownCircle,
-  FiArrowUpCircle,
+  FiLogIn,
+  FiLogOut,
   FiCpu,
   FiGitBranch,
   FiGlobe,
@@ -18,50 +18,95 @@ import type {
   PipelineNodeComponent,
 } from '../types/nodes';
 import { buildTextVariableHandles } from '../utils/textVariables';
-import { TEXT_NODE_MIN_HEIGHT } from '../constants/nodeLayout';
+import {
+  NODE_INPUT_WIDTH,
+  NODE_OUTPUT_WIDTH,
+  TEXT_NODE_MIN_HEIGHT,
+} from '../constants/nodeLayout';
 
 const inputDef: NodeDefinition = {
   type: 'customInput',
   label: 'Input',
   category: 'start',
-  header: { title: 'Input', icon: <Icon icon={FiArrowDownCircle} />, accent: 'blue' },
+  minWidth: NODE_INPUT_WIDTH,
+  description: 'Pass data of different types into your workflow',
+  suggestion: 'Give the node a distinct name',
+  nameField: 'inputName',
+  header: {
+    title: 'Input',
+    icon: <Icon icon={FiLogIn} size={22} />,
+    accent: 'indigo',
+  },
   fields: [
-    { kind: 'text', name: 'inputName', label: 'Name', defaultValue: '' },
     {
       kind: 'select',
       name: 'inputType',
       label: 'Type',
       options: ['Text', 'File'],
       defaultValue: 'Text',
+      showHelp: true,
+      badge: 'Dropdown',
     },
   ],
-  handles: [{ type: 'source', position: 'right', idSuffix: 'value', color: 'sky' }],
+  handles: [{ type: 'source', position: 'right', idSuffix: 'value', color: 'indigo' }],
 };
 
 const outputDef: NodeDefinition = {
   type: 'customOutput',
   label: 'Output',
   category: 'start',
-  header: { title: 'Output', icon: <Icon icon={FiArrowUpCircle} />, accent: 'green' },
+  minWidth: NODE_OUTPUT_WIDTH,
+  description: 'Output data of different types from your workflow.',
+  nameField: 'outputName',
+  header: {
+    title: 'Output',
+    icon: <Icon icon={FiLogOut} size={22} />,
+    accent: 'indigo',
+  },
   fields: [
-    { kind: 'text', name: 'outputName', label: 'Name', defaultValue: '' },
     {
       kind: 'select',
       name: 'outputType',
       label: 'Type',
       options: ['Text', 'Image'],
       defaultValue: 'Text',
+      showHelp: true,
+      badge: 'Dropdown',
+    },
+    {
+      kind: 'textarea',
+      name: 'outputValue',
+      label: 'Output',
+      placeholder: 'Type "{{" to utilize variables',
+      defaultValue: '',
+      rows: 3,
+      required: true,
+      highlightInvalid: true,
+      badge: 'Text',
+    },
+    {
+      kind: 'toggle',
+      name: 'formatOutput',
+      label: 'Format output',
+      defaultValue: true,
     },
   ],
-  handles: [{ type: 'target', position: 'left', idSuffix: 'value', color: 'sky' }],
+  handles: [{ type: 'target', position: 'left', idSuffix: 'value', color: 'indigo' }],
+  getError: (data) => {
+    const value = data?.outputValue;
+    if (typeof value !== 'string' || !value.trim()) {
+      return 'Output field is required';
+    }
+    return null;
+  },
 };
 
 const llmDef: NodeDefinition = {
   type: 'llm',
   label: 'LLM',
   category: 'ai',
-  header: { title: 'LLM', icon: <Icon icon={FiCpu} />, accent: 'purple' },
-  staticContent: 'Large language model node for prompt processing.',
+  header: { title: 'LLM', icon: <Icon icon={FiCpu} size={22} />, accent: 'purple' },
+  description: 'Large language model node for prompt processing.',
   handles: [
     {
       type: 'target',
@@ -85,13 +130,15 @@ const conditionDef: NodeDefinition = {
   type: 'condition',
   label: 'Condition',
   category: 'logic',
-  header: { title: 'Condition', icon: <Icon icon={FiGitBranch} />, accent: 'orange' },
+  header: { title: 'Condition', icon: <Icon icon={FiGitBranch} size={22} />, accent: 'orange' },
+  description: 'Branch your workflow based on a condition.',
   fields: [
     {
       kind: 'text',
       name: 'conditionInput',
       label: 'Input',
       placeholder: "Type '{{' to utilize variables",
+      showHelp: true,
     },
     {
       kind: 'select',
@@ -99,6 +146,7 @@ const conditionDef: NodeDefinition = {
       label: 'Operator',
       options: ['equals', 'contains', 'greater than', 'less than'],
       defaultValue: 'equals',
+      badge: 'Dropdown',
     },
     {
       kind: 'text',
@@ -124,8 +172,9 @@ const httpRequestDef: NodeDefinition = {
   type: 'httpRequest',
   label: 'HTTP Request',
   category: 'integrations',
-  header: { title: 'HTTP Request', icon: <Icon icon={FiGlobe} />, accent: 'teal' },
-  minWidth: 260,
+  header: { title: 'HTTP Request', icon: <Icon icon={FiGlobe} size={22} />, accent: 'teal' },
+  description: 'Send an HTTP request to an external API.',
+  minWidth: 320,
   fields: [
     {
       kind: 'select',
@@ -162,8 +211,8 @@ const mergeDef: NodeDefinition = {
   type: 'merge',
   label: 'Merge',
   category: 'data',
-  header: { title: 'Merge', icon: <Icon icon={FiPlusCircle} />, accent: 'indigo' },
-  staticContent: 'Combines multiple inputs into one output.',
+  header: { title: 'Merge', icon: <Icon icon={FiPlusCircle} size={22} />, accent: 'indigo' },
+  description: 'Combines multiple inputs into one output.',
   handles: [
     { type: 'target', position: 'left', idSuffix: 'a', style: { top: '25%' }, color: 'sky' },
     { type: 'target', position: 'left', idSuffix: 'b', style: { top: '50%' }, color: 'sky' },
@@ -176,7 +225,8 @@ const noteDef: NodeDefinition = {
   type: 'note',
   label: 'Note',
   category: 'start',
-  header: { title: 'Note', icon: <Icon icon={FiEdit3} />, accent: 'gray' },
+  header: { title: 'Note', icon: <Icon icon={FiEdit3} size={22} />, accent: 'gray' },
+  description: 'Add comments or documentation to your workflow.',
   fields: [
     {
       kind: 'textarea',
@@ -193,7 +243,8 @@ const jsonParseDef: NodeDefinition = {
   type: 'jsonParse',
   label: 'JSON Parse',
   category: 'data',
-  header: { title: 'JSON Parse', icon: <Icon icon={FiCode} />, accent: 'teal' },
+  header: { title: 'JSON Parse', icon: <Icon icon={FiCode} size={22} />, accent: 'teal' },
+  description: 'Parse a JSON string into structured data.',
   fields: [
     {
       kind: 'textarea',
@@ -223,7 +274,8 @@ const textDef: NodeDefinition = {
   type: 'text',
   label: 'Text',
   category: 'start',
-  header: { title: 'Text', icon: <Icon icon={FiType} />, accent: 'purple' },
+  header: { title: 'Text', icon: <Icon icon={FiType} size={22} />, accent: 'purple' },
+  description: 'Static or templated text with variable handles.',
   className: 'vs-node--text',
   focusFallbackHeight: TEXT_NODE_MIN_HEIGHT,
   fields: [
@@ -288,6 +340,8 @@ export const getDefaultNodeData = (
       ...base,
       outputName: nodeId.replace('customOutput-', 'output_'),
       outputType: 'Text',
+      outputValue: '',
+      formatOutput: true,
     };
   }
   if (type === 'text') {
