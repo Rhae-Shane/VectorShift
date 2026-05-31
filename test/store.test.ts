@@ -76,6 +76,38 @@ describe('useStore', () => {
     });
   });
 
+  describe('updateNodeField text variable auto-connect', () => {
+    it('connects a text node to an input node when {{name}} matches inputName', () => {
+      useStore.setState({
+        nodes: [
+          makeNode('customInput-1'),
+          {
+            id: 'text-1',
+            type: 'text',
+            position: { x: 100, y: 0 },
+            data: { id: 'text-1', nodeType: 'text', text: '' },
+          },
+        ],
+        edges: [],
+        nodeIDs: { customInput: 1, text: 1 },
+        past: [],
+        future: [],
+      });
+
+      useStore.getState().updateNodeField('customInput-1', 'inputName', 'my_data');
+      useStore.getState().updateNodeField('text-1', 'text', 'Result: {{my_data}}');
+
+      const edges = useStore.getState().edges;
+      expect(edges).toHaveLength(1);
+      expect(edges[0]).toMatchObject({
+        source: 'customInput-1',
+        sourceHandle: 'customInput-1-value',
+        target: 'text-1',
+        targetHandle: 'text-1-my_data',
+      });
+    });
+  });
+
   describe('importPipeline', () => {
     it('replaces the canvas with imported nodes and edges', () => {
       const json = serializePipelineExport(samplePipeline);

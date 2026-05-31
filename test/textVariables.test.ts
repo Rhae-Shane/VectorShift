@@ -22,16 +22,15 @@ describe('parseTextVariables', () => {
     ]);
   });
 
-  it('supports valid JavaScript identifier names', () => {
-    expect(parseTextVariables('{{_x}} {{$y}} {{foo_bar}}')).toEqual([
-      '_x',
-      '$y',
-      'foo_bar',
+  it('supports names with spaces and special characters', () => {
+    expect(parseTextVariables('{{node name}} {{input-name}}')).toEqual([
+      'node name',
+      'input-name',
     ]);
   });
 
-  it('ignores invalid variable names', () => {
-    expect(parseTextVariables('{{123}} {{input-name}} {{}}')).toEqual([]);
+  it('ignores empty variable placeholders', () => {
+    expect(parseTextVariables('{{}} {{   }}')).toEqual([]);
   });
 
   it('returns an empty array when no variables are present', () => {

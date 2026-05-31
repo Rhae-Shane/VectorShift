@@ -23,6 +23,10 @@ import {
   type PersistedPipelineSlice,
 } from './utils/pipelinePersistence';
 import { parsePipelineImport } from './utils/pipelineImportExport';
+import {
+  syncAllTextVariableEdges,
+  syncTextVariableEdges,
+} from './utils/syncTextVariableEdges';
 
 export type PipelineNode = Node<PipelineNodeData>;
 
@@ -308,15 +312,29 @@ export const useStore = create<StoreState>()(
 
       updateNodeField: (nodeId, fieldName, fieldValue) => {
         beginFieldEditSession(get, `${nodeId}:${fieldName}`);
-        set({
-          nodes: get().nodes.map((node) => {
-            if (node.id !== nodeId) return node;
-            return {
-              ...node,
-              data: { ...node.data, [fieldName]: fieldValue },
-            };
-          }),
+
+        const nodes = get().nodes.map((node) => {
+          if (node.id !== nodeId) return node;
+          return {
+            ...node,
+            data: { ...node.data, [fieldName]: fieldValue },
+          };
         });
+
+        let edges = get().edges;
+        const updatedNode = nodes.find((node) => node.id === nodeId);
+
+        if (
+          updatedNode?.type === 'text' &&
+          fieldName === 'text' &&
+          typeof fieldValue === 'string'
+        ) {
+          edges = syncTextVariableEdges(nodes, edges, nodeId, fieldValue);
+        } else if (fieldName === 'inputName' || fieldName === 'outputName') {
+          edges = syncAllTextVariableEdges(nodes, edges);
+        }
+
+        set({ nodes, edges });
       },
 
       clearPipeline: () => {
