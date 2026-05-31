@@ -2,9 +2,18 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { SubmitButton } from '../src/submit';
 import { useStore } from '../src/store';
 import { parsePipeline } from '../src/services/pipelineService';
+import { BACKEND_STATUS_EVENT } from '../src/utils/backendStatusEvents';
 
 jest.mock('../src/services/pipelineService', () => ({
   parsePipeline: jest.fn(),
+  PipelineServiceError: class PipelineServiceError extends Error {
+    status?: number;
+    constructor(message: string, status?: number) {
+      super(message);
+      this.name = 'PipelineServiceError';
+      this.status = status;
+    }
+  },
 }));
 
 const mockParsePipeline = parsePipeline as jest.MockedFunction<typeof parsePipeline>;
@@ -94,5 +103,25 @@ describe('SubmitButton', () => {
     });
 
     expect(screen.getByText('Backend unavailable')).toBeInTheDocument();
+  });
+
+  it('emits a backend status banner event on network failure', async () => {
+    const handler = jest.fn();
+    window.addEventListener(BACKEND_STATUS_EVENT, handler);
+
+    mockParsePipeline.mockRejectedValue(new TypeError('Failed to fetch'));
+
+    render(<SubmitButton />);
+    fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(handler).toHaveBeenCalled();
+    });
+
+    const event = handler.mock.calls[0][0] as CustomEvent;
+    expect(event.detail.title).toMatch(/Unable to connect/i);
+    expect(event.detail.message).toMatch(/uvicorn/i);
+
+    window.removeEventListener(BACKEND_STATUS_EVENT, handler);
   });
 });

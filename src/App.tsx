@@ -1,6 +1,7 @@
 import { PipelineToolbar } from './toolbar';
 import { PipelineUI } from './ui';
 import { PipelineNavbar } from './components/PipelineNavbar';
+import { BackendStatusBanner } from './components/BackendStatusBanner';
 import { ToolbarDockLayout } from './components/ToolbarDockLayout';
 import { PipelinePreview } from './components/PipelinePreview';
 import './styles/theme.css';
@@ -10,6 +11,7 @@ function App() {
   return (
     <div className="vs-app">
       <PipelineNavbar />
+      <BackendStatusBanner />
 
       <ToolbarDockLayout
         renderToolbar={(dockPosition) => (

@@ -152,6 +152,7 @@
   --vs-minimap-node-fill: #818cf8;
   --vs-minimap-node-stroke: #4338ca;
   --vs-minimap-mask: rgba(15, 23, 42, 0.14);
+  --vs-minimap-mask-stroke: #6366f1;
   --vs-close-bg: #ef4444;
   --vs-close-bg-hover: #dc2626;
   --vs-close-border: #dc2626;
@@ -282,9 +283,10 @@
   --vs-accent-text-strong: #c7d2fe;
   --vs-control-divider: #334155;
   --vs-control-border: #475569;
-  --vs-minimap-node-fill: #818cf8;
-  --vs-minimap-node-stroke: #a5b4fc;
-  --vs-minimap-mask: rgba(0, 0, 0, 0.45);
+  --vs-minimap-node-fill: #a5b4fc;
+  --vs-minimap-node-stroke: #818cf8;
+  --vs-minimap-mask: rgba(0, 0, 0, 0.5);
+  --vs-minimap-mask-stroke: #818cf8;
   --vs-close-bg: #ef4444;
   --vs-close-bg-hover: #dc2626;
   --vs-close-border: #dc2626;
