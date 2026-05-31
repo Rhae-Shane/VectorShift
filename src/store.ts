@@ -31,6 +31,9 @@ export interface StoreState {
   edges: Edge[];
   nodeIDs: Record<string, number>;
   pendingDeleteEdgeId: string | null;
+  isConnecting: boolean;
+  pulsingHandleKeys: string[];
+  pulsingEdgeId: string | null;
   past: PersistedPipelineSlice[];
   future: PersistedPipelineSlice[];
   getNodeID: (type: string) => string;
@@ -42,6 +45,8 @@ export interface StoreState {
   onNodesChange: (changes: NodeChange[]) => void;
   onEdgesChange: (changes: EdgeChange[]) => void;
   onConnect: (connection: Connection) => void;
+  setConnecting: (connecting: boolean) => void;
+  registerConnectionPulse: (edge: Edge) => void;
   updateNodeField: (
     nodeId: string,
     fieldName: string,
@@ -67,6 +72,9 @@ const emptyPipeline: PersistedPipelineSlice = {
 let isApplyingHistory = false;
 let fieldEditSessionKey: string | null = null;
 let fieldEditSessionTimer: ReturnType<typeof setTimeout> | null = null;
+let connectionPulseTimer: ReturnType<typeof setTimeout> | null = null;
+
+const CONNECTION_PULSE_MS = 550;
 
 const snapshotFromState = (state: StoreState): PersistedPipelineSlice =>
   clonePipelineSlice({
@@ -102,6 +110,9 @@ export const useStore = create<StoreState>()(
       edges: [],
       nodeIDs: {},
       pendingDeleteEdgeId: null,
+      isConnecting: false,
+      pulsingHandleKeys: [],
+      pulsingEdgeId: null,
       past: [],
       future: [],
 
@@ -251,21 +262,48 @@ export const useStore = create<StoreState>()(
 
       onConnect: (connection) => {
         get().pushHistory();
-        set({
-          edges: addEdge(
-            {
-              ...connection,
-              type: 'smoothstep',
-              animated: true,
-              markerEnd: {
-                type: MarkerType.Arrow,
-                height: 20,
-                width: 20,
-              },
+        const previousEdges = get().edges;
+        const nextEdges = addEdge(
+          {
+            ...connection,
+            type: 'smoothstep',
+            animated: false,
+            markerEnd: {
+              type: MarkerType.Arrow,
+              height: 20,
+              width: 20,
             },
-            get().edges
-          ),
-        });
+          },
+          previousEdges
+        );
+        const addedEdge = nextEdges.find(
+          (edge) => !previousEdges.some((prev) => prev.id === edge.id)
+        );
+        set({ edges: nextEdges });
+        if (addedEdge) {
+          get().registerConnectionPulse(addedEdge);
+        }
+      },
+
+      setConnecting: (connecting) => {
+        set({ isConnecting: connecting });
+      },
+
+      registerConnectionPulse: (edge) => {
+        const keys = [edge.sourceHandle, edge.targetHandle].filter(
+          (key): key is string => Boolean(key)
+        );
+
+        if (connectionPulseTimer) {
+          clearTimeout(connectionPulseTimer);
+        }
+
+        set({ pulsingHandleKeys: keys, pulsingEdgeId: edge.id });
+
+        connectionPulseTimer = setTimeout(() => {
+          set({ pulsingHandleKeys: [], pulsingEdgeId: null });
+          connectionPulseTimer = null;
+        }, CONNECTION_PULSE_MS);
       },
 
       updateNodeField: (nodeId, fieldName, fieldValue) => {

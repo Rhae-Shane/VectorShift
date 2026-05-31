@@ -8,6 +8,9 @@ import type { PipelineParseResponse } from './types/api';
 import { parsePipeline } from './services/pipelineService';
 import { fadeUpTransition, reducedMotionTransition } from './utils/motion';
 import { Icon } from './components/Icon';
+import { useOnlineStatus } from './hooks/useOnlineStatus';
+import { classifySubmitError } from './utils/submitError';
+import { showBackendStatus } from './utils/backendStatusEvents';
 
 export interface SubmitButtonProps {
   className?: string;
@@ -23,6 +26,7 @@ export const SubmitButton = ({
   const [error, setError] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
   const transition = reduceMotion ? reducedMotionTransition : fadeUpTransition;
+  const isOnline = useOnlineStatus();
 
   const handleSubmit = async () => {
     const { nodes, edges } = useStore.getState();
@@ -34,11 +38,11 @@ export const SubmitButton = ({
       const data = await parsePipeline({ nodes, edges });
       setResult(data);
     } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : 'Could not reach the backend. Make sure uvicorn is running on port 8000.';
-      setError(message);
+      const info = classifySubmitError(err, isOnline);
+      if (info.showBanner) {
+        showBackendStatus({ title: info.title, message: info.message });
+      }
+      setError(info.message);
     } finally {
       setLoading(false);
     }

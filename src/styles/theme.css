@@ -103,6 +103,8 @@
   --vs-node-header-bg: #ffffff;
   --vs-handle-ring: #ffffff;
   --vs-edge-color: #9ca3af;
+  --vs-edge-linked-color: #d97706;
+  --vs-edge-linked-glow: rgba(245, 158, 11, 0.35);
   --vs-overlay: rgba(0, 0, 0, 0.4);
   --vs-modal-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   --vs-success-bg: #dcfce7;
@@ -152,6 +154,7 @@
   --vs-minimap-node-fill: #818cf8;
   --vs-minimap-node-stroke: #4338ca;
   --vs-minimap-mask: rgba(15, 23, 42, 0.14);
+  --vs-minimap-mask-stroke: #6366f1;
   --vs-close-bg: #ef4444;
   --vs-close-bg-hover: #dc2626;
   --vs-close-border: #dc2626;
@@ -189,6 +192,8 @@
   --vs-bg-fill-quaternary: #1e293b;
   --vs-border-primary: #475569;
   --vs-edge-color: #94a3b8;
+  --vs-edge-linked-color: #fbbf24;
+  --vs-edge-linked-glow: rgba(251, 191, 36, 0.4);
   --vs-overlay: rgba(0, 0, 0, 0.65);
   --vs-modal-shadow: 0 20px 40px rgba(0, 0, 0, 0.55);
   --vs-success-bg: #14532d;
@@ -282,9 +287,10 @@
   --vs-accent-text-strong: #c7d2fe;
   --vs-control-divider: #334155;
   --vs-control-border: #475569;
-  --vs-minimap-node-fill: #818cf8;
-  --vs-minimap-node-stroke: #a5b4fc;
-  --vs-minimap-mask: rgba(0, 0, 0, 0.45);
+  --vs-minimap-node-fill: #a5b4fc;
+  --vs-minimap-node-stroke: #818cf8;
+  --vs-minimap-mask: rgba(0, 0, 0, 0.5);
+  --vs-minimap-mask-stroke: #818cf8;
   --vs-close-bg: #ef4444;
   --vs-close-bg-hover: #dc2626;
   --vs-close-border: #dc2626;
@@ -366,11 +372,49 @@ select option {
   box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.22) !important;
 }
 
+/* While dragging a connection — subtle glow on idle handles */
+.vs-canvas--connecting .react-flow__handle.vs-handle--idle {
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.12) !important;
+}
+
+.react-flow__handle.connectingfrom.vs-handle--idle,
+.react-flow__handle.connectingfrom.vs-handle--connected {
+  box-shadow:
+    0 0 0 4px rgba(129, 140, 248, 0.32),
+    0 0 14px rgba(129, 140, 248, 0.35) !important;
+}
+
+.react-flow__handle.valid.vs-handle--idle {
+  border-color: var(--vs-edge-linked-color) !important;
+  box-shadow:
+    0 0 0 4px var(--vs-edge-linked-glow),
+    0 0 12px var(--vs-edge-linked-glow) !important;
+}
+
 .react-flow__handle.connecting,
 .react-flow__handle.valid,
 .react-flow__handle.connectingfrom,
 .react-flow__handle.connectingto {
   box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.28) !important;
+}
+
+/* Brief pulse when a connection completes */
+.react-flow__handle.vs-handle--pulse {
+  animation: vs-handle-connect-pulse 0.55s ease-out;
+}
+
+@keyframes vs-handle-connect-pulse {
+  0% {
+    filter: brightness(1);
+    box-shadow: 0 0 0 0 var(--vs-edge-linked-glow);
+  }
+  45% {
+    filter: brightness(1.08);
+    box-shadow: 0 0 0 8px transparent;
+  }
+  100% {
+    filter: brightness(1);
+  }
 }
 
 /* Idle — white center + colored ring */
@@ -460,8 +504,38 @@ select option {
   transition: stroke 0.15s ease, stroke-width 0.15s ease;
 }
 
+.vs-edge-path--linked .react-flow__edge-path {
+  stroke: var(--vs-edge-linked-color);
+  stroke-dasharray: 6 4;
+}
+
+.vs-edge-path--pulse .react-flow__edge-path {
+  animation: vs-edge-connect-pulse 0.55s ease-out;
+}
+
+@keyframes vs-edge-connect-pulse {
+  0% {
+    stroke-width: 2;
+    opacity: 0.55;
+  }
+  45% {
+    stroke-width: 3.5;
+    opacity: 1;
+  }
+  100% {
+    stroke-width: 2;
+    opacity: 1;
+  }
+}
+
+.vs-edge-path--pending .react-flow__edge-path {
+  stroke: var(--vs-error);
+  stroke-width: 3;
+  stroke-dasharray: none;
+}
+
 .vs-connection-line path {
-  stroke: var(--vs-edge-color);
+  stroke: var(--vs-edge-linked-color);
   stroke-width: 2;
   stroke-dasharray: 6 4;
   animation: vs-connection-flow 0.45s linear infinite;
@@ -473,9 +547,12 @@ select option {
   }
 }
 
-.react-flow__edge.vs-edge--pending-delete .react-flow__edge-path {
-  stroke: var(--vs-error);
-  stroke-width: 3;
+@media (prefers-reduced-motion: reduce) {
+  .react-flow__handle.vs-handle--pulse,
+  .vs-edge-path--pulse .react-flow__edge-path,
+  .vs-connection-line path {
+    animation: none !important;
+  }
 }
 
 .vs-edge-delete-wrap {

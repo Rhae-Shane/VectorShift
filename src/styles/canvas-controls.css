@@ -162,6 +162,8 @@
 /* Dimmed area outside current viewport */
 .vs-minimap .react-flow__minimap-mask {
   fill: var(--vs-minimap-mask) !important;
+  stroke: var(--vs-minimap-mask-stroke) !important;
+  stroke-width: 2px !important;
 }
 
 @media (max-width: 768px) {

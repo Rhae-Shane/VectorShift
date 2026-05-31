@@ -1,5 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import type { MouseEvent, ReactNode } from 'react';
+import { useEffect, useRef, type MouseEvent, type ReactNode } from 'react';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import {
   fadeUpTransition,
   modalOverlayVariants,
@@ -24,6 +25,24 @@ export const AnimatedModal = ({
 }: AnimatedModalProps) => {
   const reduceMotion = useReducedMotion();
   const transition = reduceMotion ? reducedMotionTransition : fadeUpTransition;
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useFocusTrap({
+    containerRef: panelRef,
+    active: open,
+    onEscape: onClose,
+  });
+
+  useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
 
   const stopPropagation = (e: MouseEvent) => e.stopPropagation();
 
@@ -42,6 +61,7 @@ export const AnimatedModal = ({
           transition={transition}
         >
           <motion.div
+            ref={panelRef}
             className={panelClassName}
             role="dialog"
             aria-modal="true"

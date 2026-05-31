@@ -2,7 +2,6 @@ import { useEffect, useCallback, useState } from 'react';
 import {
   FiCornerUpLeft,
   FiCornerUpRight,
-  FiMoreHorizontal,
   FiPlay,
 } from 'react-icons/fi';
 import { Icon } from './Icon';
@@ -17,6 +16,7 @@ import {
 import { openCanvasPreview } from '../utils/canvasEvents';
 import { PipelineImportModal } from './PipelineImportModal';
 import { PipelineShareModal } from './PipelineShareModal';
+import { KeyboardShortcutsPopover } from './KeyboardShortcutsPopover';
 import '../styles/navbar.css';
 
 export const PipelineNavbar = () => {
@@ -116,6 +116,7 @@ export const PipelineNavbar = () => {
               <Icon icon={FiCornerUpRight} width={16} height={16} />
             </PressableButton>
             <ThemeToggleButton />
+            <KeyboardShortcutsPopover />
           </div>
 
           <PressableButton
@@ -147,13 +148,6 @@ export const PipelineNavbar = () => {
             className="vs-navbar__btn vs-navbar__btn--primary"
             label="Submit"
           />
-
-          <PressableButton
-            className="vs-navbar__icon-btn vs-navbar__menu-btn"
-            aria-label="More actions"
-          >
-            <Icon icon={FiMoreHorizontal} width={16} height={16} />
-          </PressableButton>
         </div>
       </header>
 
