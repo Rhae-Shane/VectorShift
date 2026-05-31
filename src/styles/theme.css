@@ -172,74 +172,82 @@
   --vs-dock-zone-border-current: #a5b4fc;
   --vs-danger-text: #dc2626;
   --vs-danger-text-hover: #b91c1c;
+  --vs-accent-glow-soft: rgba(99, 102, 241, 0.12);
+  --vs-accent-glow: rgba(99, 102, 241, 0.22);
+  --vs-accent-glow-medium: rgba(99, 102, 241, 0.28);
+  --vs-accent-glow-connect: rgba(99, 102, 241, 0.32);
+  --vs-accent-glow-strong: rgba(99, 102, 241, 0.35);
+  --vs-accent-glow-hover: rgba(99, 102, 241, 0.2);
   color-scheme: light;
 }
 
 [data-theme='dark'] {
-  --vs-purple: #a78bfa;
-  --vs-purple-hover: #8b5cf6;
-  --vs-purple-light: rgba(167, 139, 250, 0.25);
-  --vs-green: #4ade80;
-  --vs-green-hover: #22c55e;
-  --vs-border: #475569;
-  --vs-border-dark: #64748b;
-  --vs-bg: #1e293b;
-  --vs-bg-subtle: #0f172a;
-  --vs-bg-canvas: #0b1220;
-  --vs-canvas-dot: #64748b;
-  --vs-text: #f1f5f9;
-  --vs-text-muted: #cbd5e1;
-  --vs-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --vs-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
-  --vs-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --vs-bg-fill-quaternary: #1e293b;
-  --vs-border-primary: #475569;
-  --vs-edge-color: #94a3b8;
-  --vs-edge-linked-color: #fbbf24;
-  --vs-edge-linked-glow: rgba(251, 191, 36, 0.4);
+  /* Railway-inspired dark palette */
+  --vs-purple: #7c5dfa;
+  --vs-purple-hover: #6b4de0;
+  --vs-purple-light: rgba(124, 93, 250, 0.22);
+  --vs-green: #33d69f;
+  --vs-green-hover: #2bc48f;
+  --vs-border: #2d2d3d;
+  --vs-border-dark: #3a3a4d;
+  --vs-bg: #1c1c2b;
+  --vs-bg-subtle: #0b0a15;
+  --vs-bg-canvas: #0b0a15;
+  --vs-canvas-dot: #3a3a4d;
+  --vs-text: #ffffff;
+  --vs-text-muted: #888891;
+  --vs-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.45);
+  --vs-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+  --vs-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --vs-bg-fill-quaternary: #0b0a15;
+  --vs-border-primary: #2d2d3d;
+  --vs-border-secondary: #2d2d3d;
+  --vs-edge-color: #4a4a5e;
+  --vs-edge-linked-color: #7c5dfa;
+  --vs-edge-linked-glow: rgba(124, 93, 250, 0.38);
   --vs-overlay: rgba(0, 0, 0, 0.65);
   --vs-modal-shadow: 0 20px 40px rgba(0, 0, 0, 0.55);
-  --vs-success-bg: #14532d;
-  --vs-success-text: #86efac;
-  --vs-warning-bg: #78350f;
+  --vs-success-bg: rgba(51, 214, 159, 0.12);
+  --vs-success-text: #33d69f;
+  --vs-warning-bg: rgba(251, 191, 36, 0.12);
   --vs-warning-text: #fcd34d;
-  --vs-run-bg: #14532d;
-  --vs-run-text: #86efac;
-  --vs-run-border: #22c55e;
-  --vs-danger-bg: #450a0a;
-  --vs-danger-bg-hover: #7f1d1d;
-  --vs-danger-border: #f87171;
-  --vs-tooltip-bg: #0f172a;
-  --vs-tooltip-text: #f1f5f9;
-  --vs-accent-bg: #312e81;
-  --vs-accent-bg-hover: #3730a3;
-  --vs-control-active-bg: #e2e8f0;
-  --vs-control-active-text: #0f172a;
+  --vs-run-bg: rgba(51, 214, 159, 0.12);
+  --vs-run-text: #33d69f;
+  --vs-run-border: #33d69f;
+  --vs-danger-bg: rgba(239, 68, 68, 0.12);
+  --vs-danger-bg-hover: rgba(239, 68, 68, 0.2);
+  --vs-danger-border: rgba(248, 113, 113, 0.45);
+  --vs-tooltip-bg: #1c1c2b;
+  --vs-tooltip-text: #ffffff;
+  --vs-accent-bg: rgba(124, 93, 250, 0.12);
+  --vs-accent-bg-hover: rgba(124, 93, 250, 0.2);
+  --vs-control-active-bg: #7c5dfa;
+  --vs-control-active-text: #ffffff;
   --vs-logo-filter: brightness(1.15);
-  --vs-field-hover-bg: #252f42;
+  --vs-field-hover-bg: #252535;
 
-  /* Dark nodes: neutral elevated surfaces, indigo as accent only */
-  --vs-bg-surface: #1c2433;
-  --vs-bg-input: #131a27;
-  --vs-bg-secondary: #161d2b;
-  --vs-bg-hover: #252f42;
-  --vs-node-header-bg: #1c2433;
-  --vs-handle-ring: #1c2433;
+  --vs-bg-surface: #1c1c2b;
+  --vs-bg-input: #14141f;
+  --vs-bg-secondary: #161622;
+  --vs-bg-hover: #252535;
+  --vs-node-header-bg: #1c1c2b;
+  --vs-handle-ring: #1c1c2b;
   --vs-handle-fill: #ffffff;
-  --vs-handle-indigo: #a5b4fc;
+  --vs-handle-indigo: #7c5dfa;
 
-  --vs-indigo-50: rgba(99, 102, 241, 0.07);
-  --vs-indigo-100: rgba(99, 102, 241, 0.14);
-  --vs-indigo-200: rgba(129, 140, 248, 0.28);
-  --vs-indigo-500: #818cf8;
-  --vs-indigo-600: #6366f1;
-  --vs-indigo-700: #a5b4fc;
-  --vs-indigo-800: #c7d2fe;
-  --vs-indigo-900: #e0e7ff;
-  --vs-slate-700: #e2e8f0;
+  --vs-indigo-50: rgba(124, 93, 250, 0.07);
+  --vs-indigo-100: rgba(124, 93, 250, 0.14);
+  --vs-indigo-200: rgba(124, 93, 250, 0.28);
+  --vs-indigo-500: #7c5dfa;
+  --vs-indigo-600: #7c5dfa;
+  --vs-indigo-700: #9d84fc;
+  --vs-indigo-800: #c4b5fd;
+  --vs-indigo-900: #ddd6fe;
+  --vs-slate-700: #888891;
+  --vs-accent-indigo: #7c5dfa;
 
-  --vs-node-border: rgba(148, 163, 184, 0.2);
-  --vs-node-border-hover: rgba(129, 140, 248, 0.45);
+  --vs-node-border: #2d2d3d;
+  --vs-node-border-hover: rgba(124, 93, 250, 0.45);
   --vs-node-ring:
     0 1px 2px rgba(0, 0, 0, 0.45),
     0 6px 20px rgba(0, 0, 0, 0.28),
@@ -247,70 +255,82 @@
   --vs-node-ring-hover:
     0 2px 4px rgba(0, 0, 0, 0.45),
     0 10px 28px rgba(0, 0, 0, 0.32),
-    0 0 0 1px rgba(129, 140, 248, 0.3),
+    0 0 0 1px rgba(124, 93, 250, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   --vs-node-ring-selected:
-    0 0 0 2px #818cf8,
-    0 8px 28px rgba(99, 102, 241, 0.22);
+    0 0 0 2px #7c5dfa,
+    0 8px 28px rgba(124, 93, 250, 0.22);
   --vs-node-ring-selected-pulse:
-    0 0 0 3px rgba(129, 140, 248, 0.75),
-    0 0 18px rgba(99, 102, 241, 0.35);
+    0 0 0 3px rgba(124, 93, 250, 0.75),
+    0 0 18px rgba(124, 93, 250, 0.35);
   --vs-node-ring-error:
     0 0 0 2px rgba(248, 113, 113, 0.65),
     0 6px 20px rgba(239, 68, 68, 0.15);
-  --vs-node-name-pill: rgba(99, 102, 241, 0.12);
-  --vs-name-pill-text: #c7d2fe;
-  --vs-node-suggestion-bg: rgba(56, 189, 248, 0.08);
-  --vs-node-suggestion-border: rgba(56, 189, 248, 0.32);
-  --vs-node-suggestion-text: #bae6fd;
+  --vs-node-name-pill: rgba(124, 93, 250, 0.12);
+  --vs-name-pill-text: #c4b5fd;
+  --vs-node-suggestion-bg: rgba(124, 93, 250, 0.08);
+  --vs-node-suggestion-border: rgba(124, 93, 250, 0.32);
+  --vs-node-suggestion-text: #c4b5fd;
   --vs-node-icon-hover-bg: rgba(255, 255, 255, 0.06);
-  --vs-node-input-hover-bg: #1a2232;
-  --vs-node-input-hover-border: rgba(129, 140, 248, 0.22);
-  --vs-node-input-focus-ring: rgba(99, 102, 241, 0.22);
+  --vs-node-input-hover-bg: #14141f;
+  --vs-node-input-hover-border: rgba(124, 93, 250, 0.22);
+  --vs-node-input-focus-ring: rgba(124, 93, 250, 0.22);
   --vs-node-error-text: #fca5a5;
   --vs-node-error-bg: rgba(127, 29, 29, 0.32);
   --vs-node-error-border: rgba(248, 113, 113, 0.45);
 
-  --vs-field-label: #e2e8f0;
-  --vs-input-border: #64748b;
-  --vs-input-placeholder: #94a3b8;
-  --vs-toggle-track: #64748b;
-  --vs-toggle-thumb: #f1f5f9;
-  --vs-scrollbar: #64748b;
-  --vs-tab-text: #cbd5e1;
-  --vs-tab-hover: #a5b4fc;
-  --vs-tab-active: #818cf8;
-  --vs-icon-muted: #94a3b8;
-  --vs-border-focus: #818cf8;
-  --vs-focus-shadow: rgba(129, 140, 248, 0.35);
-  --vs-draggable-hover-bg: rgba(49, 46, 129, 0.45);
-  --vs-draggable-hover-border: #818cf8;
-  --vs-draggable-hover-icon: #a5b4fc;
-  --vs-draggable-hover-label: #c7d2fe;
-  --vs-draggable-active-bg: rgba(49, 46, 129, 0.6);
-  --vs-accent-border: #4338ca;
-  --vs-accent-text: #a5b4fc;
-  --vs-accent-text-strong: #c7d2fe;
-  --vs-control-divider: #334155;
-  --vs-control-border: #475569;
-  --vs-minimap-node-fill: #a5b4fc;
-  --vs-minimap-node-stroke: #818cf8;
+  --vs-field-label: #888891;
+  --vs-input-border: #2d2d3d;
+  --vs-input-placeholder: #888891;
+  --vs-toggle-track: #3a3a4d;
+  --vs-toggle-thumb: #ffffff;
+  --vs-scrollbar: #3a3a4d;
+  --vs-tab-text: #888891;
+  --vs-tab-hover: #9d84fc;
+  --vs-tab-active: #7c5dfa;
+  --vs-icon-muted: #888891;
+  --vs-border-focus: #7c5dfa;
+  --vs-focus-shadow: rgba(124, 93, 250, 0.35);
+  --vs-draggable-hover-bg: rgba(124, 93, 250, 0.12);
+  --vs-draggable-hover-border: #7c5dfa;
+  --vs-draggable-hover-icon: #9d84fc;
+  --vs-draggable-hover-label: #c4b5fd;
+  --vs-draggable-active-bg: rgba(124, 93, 250, 0.2);
+  --vs-accent-border: rgba(124, 93, 250, 0.35);
+  --vs-accent-text: #9d84fc;
+  --vs-accent-text-strong: #c4b5fd;
+  --vs-control-divider: #2d2d3d;
+  --vs-control-border: #2d2d3d;
+  --vs-minimap-node-fill: #9d84fc;
+  --vs-minimap-node-stroke: #7c5dfa;
   --vs-minimap-mask: rgba(0, 0, 0, 0.5);
-  --vs-minimap-mask-stroke: #818cf8;
+  --vs-minimap-mask-stroke: #7c5dfa;
   --vs-close-bg: #ef4444;
   --vs-close-bg-hover: #dc2626;
   --vs-close-border: #dc2626;
   --vs-close-border-hover: #b91c1c;
   --vs-on-accent: #ffffff;
   --vs-dock-overlay: rgba(0, 0, 0, 0.35);
-  --vs-dock-zone-bg: rgba(30, 41, 59, 0.75);
-  --vs-dock-zone-active-bg: rgba(49, 46, 129, 0.65);
-  --vs-dock-zone-current-bg: rgba(30, 41, 59, 0.55);
-  --vs-dock-zone-border: #4338ca;
-  --vs-dock-zone-border-active: #818cf8;
-  --vs-dock-zone-border-current: #6366f1;
+  --vs-dock-zone-bg: rgba(28, 28, 43, 0.75);
+  --vs-dock-zone-active-bg: rgba(124, 93, 250, 0.18);
+  --vs-dock-zone-current-bg: rgba(28, 28, 43, 0.55);
+  --vs-dock-zone-border: rgba(124, 93, 250, 0.35);
+  --vs-dock-zone-border-active: #7c5dfa;
+  --vs-dock-zone-border-current: #9d84fc;
   --vs-danger-text: #fca5a5;
   --vs-danger-text-hover: #f87171;
+  --vs-accent-glow-soft: rgba(124, 93, 250, 0.12);
+  --vs-accent-glow: rgba(124, 93, 250, 0.22);
+  --vs-accent-glow-medium: rgba(124, 93, 250, 0.28);
+  --vs-accent-glow-connect: rgba(124, 93, 250, 0.32);
+  --vs-accent-glow-strong: rgba(124, 93, 250, 0.35);
+  --vs-accent-glow-hover: rgba(124, 93, 250, 0.2);
+  --vs-toolbar-gradient: linear-gradient(145deg, #9333ea 0%, #7c5dfa 52%, #6b4de0 100%);
+  --vs-toolbar-gradient-hover: linear-gradient(145deg, #7c5dfa 0%, #6b4de0 52%, #5a3fd4 100%);
+  --vs-toolbar-gradient-active: linear-gradient(145deg, #6b4de0 0%, #5a3fd4 52%, #4c35b8 100%);
+  --vs-toolbar-border-purple: #5a3fd4;
+  --vs-toolbar-shadow-purple: 0 2px 8px rgba(124, 93, 250, 0.38);
+  --vs-toolbar-shadow-purple-hover: 0 4px 12px rgba(124, 93, 250, 0.45);
   color-scheme: dark;
 }
 
@@ -375,19 +395,19 @@ select option {
 }
 
 .react-flow__handle.vs-handle--idle:hover {
-  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.22) !important;
+  box-shadow: 0 0 0 3px var(--vs-accent-glow) !important;
 }
 
 /* While dragging a connection — subtle glow on idle handles */
 .vs-canvas--connecting .react-flow__handle.vs-handle--idle {
-  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.12) !important;
+  box-shadow: 0 0 0 3px var(--vs-accent-glow-soft) !important;
 }
 
 .react-flow__handle.connectingfrom.vs-handle--idle,
 .react-flow__handle.connectingfrom.vs-handle--connected {
   box-shadow:
-    0 0 0 4px rgba(129, 140, 248, 0.32),
-    0 0 14px rgba(129, 140, 248, 0.35) !important;
+    0 0 0 4px var(--vs-accent-glow-connect),
+    0 0 14px var(--vs-accent-glow-strong) !important;
 }
 
 .react-flow__handle.valid.vs-handle--idle {
@@ -401,7 +421,7 @@ select option {
 .react-flow__handle.valid,
 .react-flow__handle.connectingfrom,
 .react-flow__handle.connectingto {
-  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.28) !important;
+  box-shadow: 0 0 0 4px var(--vs-accent-glow-medium) !important;
 }
 
 /* Brief pulse when a connection completes */
@@ -483,7 +503,7 @@ select option {
   box-shadow:
     0 0 0 var(--vs-handle-gap-width) var(--vs-handle-fill),
     0 0 0 calc(var(--vs-handle-gap-width) + var(--vs-handle-outer-ring-width)) var(--vs-handle-indigo),
-    0 0 0 6px rgba(129, 140, 248, 0.2) !important;
+    0 0 0 6px var(--vs-accent-glow-hover) !important;
 }
 
 /* Preserve React Flow centering transforms — do not replace with scale(). */
