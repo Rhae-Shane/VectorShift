@@ -2,6 +2,43 @@
 
 React + TypeScript visual pipeline editor built for the VectorShift frontend assessment. Drag nodes onto a canvas, connect handles, and submit the graph to a FastAPI backend for node/edge counts and DAG validation.
 
+## Reviewer quick-start (~60 seconds)
+
+**1. Start the stack**
+
+```bash
+# Terminal 1 — backend (repo root)
+cd backend && pip install -r requirements.txt && uvicorn main:app --reload
+
+# Terminal 2 — frontend
+cd frontend && npm install && npm start
+```
+
+Open [http://localhost:3000](http://localhost:3000). Submit needs the API at [http://127.0.0.1:8000](http://127.0.0.1:8000).
+
+**2. Build a minimal pipeline**
+
+1. From the node palette, drag **Input** → **Text** → **Output** onto the canvas (or use **Add Your First Node** on an empty canvas).
+2. On the **Text** node, note the default `{{input}}` — a **left target handle** appears for each variable.
+3. Connect: **Input → Text** (`input` handle) → **Text output → Output**.
+4. Click **Submit** in the navbar — the modal shows node count, edge count, and **DAG status**.
+
+**3. Features worth a quick look**
+
+| Area | Where | What to try |
+|------|--------|-------------|
+| **Part 3 — dynamic handles** | Text node | Type `Hello {{name}}` — a new left handle appears for `name` |
+| **Undo / redo** | Navbar | `Ctrl+Z` / `Ctrl+Shift+Z` (or toolbar icons) |
+| **Import / export** | Navbar **Import** · **Share** | Round-trip pipeline JSON |
+| **Preview** | Navbar **Preview** | Read-only canvas modal |
+| **Node abstraction** | Any custom node | Same chrome (duplicate, collapse, delete); see [EXTENDING_NODES.md](docs/EXTENDING_NODES.md) |
+
+**Optional:** toggle **dark mode** (navbar) · press **`?`** for keyboard shortcuts · dock the palette to another edge via the toolbar controls.
+
+**Assessment mapping:** Part 1 (node factory + 5 custom nodes) · Part 2 (styling) · Part 3 (text resize + `{{var}}` handles) · Part 4 (Submit → `/pipelines/parse`). Details in [Assessment coverage](#assessment-coverage) below.
+
+---
+
 ## Setup
 
 ### Frontend
