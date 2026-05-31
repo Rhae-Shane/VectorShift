@@ -41,8 +41,18 @@ API runs at [http://127.0.0.1:8000](http://127.0.0.1:8000).
 | `npm run build` | Production build |
 | `npm test` | Jest (watch mode) |
 | `npm run test:ci` | Jest (single run, CI) |
+| `npm run typecheck` | TypeScript check (`tsc --noEmit`) |
 
 Tests live in `/test` with a custom `jest.config.js` because Create React App only discovers tests under `/src` by default.
+
+### Desktop-first layout
+
+The editor is optimized for **desktop** (≥900px): full navbar actions, dockable node palette, and canvas shortcuts. On narrower viewports:
+
+- **Import / Share / Preview** move into the **⋮ overflow menu** in the navbar (Submit stays visible).
+- The node palette remains usable via the dock toolbar; complex graph editing on phones is supported but not the primary target.
+
+If you are reviewing on mobile, use the overflow menu for pipeline actions and landscape orientation for the canvas when possible.
 
 ---
 

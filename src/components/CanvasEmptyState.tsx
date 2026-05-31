@@ -6,6 +6,7 @@ import {
   fadeUpTransition,
   reducedMotionTransition,
 } from '../utils/motion';
+import { EMPTY_CANVAS_MESSAGE } from '../constants/canvas';
 import '../styles/canvas-empty.css';
 
 export interface CanvasEmptyStateProps {
@@ -18,7 +19,9 @@ export const CanvasEmptyState = ({ onAddFirstNode }: CanvasEmptyStateProps) => {
 
   return (
     <div className="vs-canvas-empty" role="region" aria-label="Empty canvas">
-      <motion.button
+      <div className="vs-canvas-empty__content">
+        <p className="vs-canvas-empty__message">{EMPTY_CANVAS_MESSAGE}</p>
+        <motion.button
         type="button"
         className="vs-canvas-empty__btn"
         onClick={onAddFirstNode}
@@ -32,6 +35,7 @@ export const CanvasEmptyState = ({ onAddFirstNode }: CanvasEmptyStateProps) => {
         <Icon icon={FiPlus} className="vs-canvas-empty__icon" aria-hidden />
         Add Your First Node
       </motion.button>
+      </div>
     </div>
   );
 };

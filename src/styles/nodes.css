@@ -36,6 +36,22 @@
   box-shadow: var(--vs-node-ring-selected);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .vs-node--selected .vs-node__shell {
+    animation: vs-node-selected-pulse 2.4s ease-in-out infinite;
+  }
+}
+
+@keyframes vs-node-selected-pulse {
+  0%,
+  100% {
+    box-shadow: var(--vs-node-ring-selected);
+  }
+  50% {
+    box-shadow: var(--vs-node-ring-selected-pulse);
+  }
+}
+
 .vs-node--error .vs-node__shell {
   border-color: var(--vs-error);
   box-shadow: var(--vs-node-ring-error);

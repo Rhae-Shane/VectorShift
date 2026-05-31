@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { FiLoader } from 'react-icons/fi';
+import { FiCheck, FiLoader } from 'react-icons/fi';
 import { useStore } from './store';
 import { ResultModal } from './components/ResultModal';
 import { PressableButton } from './components/PressableButton';
@@ -12,7 +12,7 @@ import { Icon } from './components/Icon';
 import { useOnlineStatus } from './hooks/useOnlineStatus';
 import { classifySubmitError } from './utils/submitError';
 import { showBackendStatus } from './utils/backendStatusEvents';
-import { EMPTY_CANVAS_HINT } from './constants/canvas';
+import { EMPTY_CANVAS_HINT, SUBMIT_SUCCESS_MS } from './constants/canvas';
 
 export interface SubmitButtonProps {
   className?: string;
@@ -24,26 +24,33 @@ export const SubmitButton = ({
   label = 'Submit',
 }: SubmitButtonProps) => {
   const [loading, setLoading] = useState(false);
+  const [successFlash, setSuccessFlash] = useState(false);
   const [result, setResult] = useState<PipelineParseResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const hasNodes = useStore((s) => s.nodes.length > 0);
   const reduceMotion = useReducedMotion();
   const transition = reduceMotion ? reducedMotionTransition : fadeUpTransition;
   const isOnline = useOnlineStatus();
-  const isDisabled = loading || !hasNodes;
+  const isDisabled = loading || successFlash || !hasNodes;
 
   const handleSubmit = async () => {
     const { nodes, edges } = useStore.getState();
     if (nodes.length === 0) return;
 
     setLoading(true);
+    setSuccessFlash(false);
     setResult(null);
     setError(null);
 
     try {
       const data = await parsePipeline({ nodes, edges });
+      setLoading(false);
+      setSuccessFlash(true);
+      await new Promise((resolve) => setTimeout(resolve, SUBMIT_SUCCESS_MS));
+      setSuccessFlash(false);
       setResult(data);
     } catch (err) {
+      setSuccessFlash(false);
       const info = classifySubmitError(err, isOnline);
       if (info.showBanner) {
         showBackendStatus({ title: info.title, message: info.message });
@@ -63,7 +70,12 @@ export const SubmitButton = ({
     <>
       <DisabledHoverHint showHint={!hasNodes} hint={EMPTY_CANVAS_HINT}>
         <PressableButton
-          className={className}
+          className={[
+            className,
+            successFlash ? 'vs-submit-btn--success' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
           onClick={handleSubmit}
           disabled={isDisabled}
           aria-label={!hasNodes ? 'Submit (add nodes first)' : undefined}
@@ -90,6 +102,18 @@ export const SubmitButton = ({
                 <Icon icon={FiLoader} width={14} height={14} aria-hidden />
               </motion.span>
               Analyzing…
+            </motion.span>
+          ) : successFlash ? (
+            <motion.span
+              key="success"
+              className="vs-submit-btn__content"
+              initial={reduceMotion ? false : { opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduceMotion ? undefined : { opacity: 0, y: -4 }}
+              transition={transition}
+            >
+              <Icon icon={FiCheck} width={14} height={14} aria-hidden />
+              Done
             </motion.span>
           ) : (
             <motion.span

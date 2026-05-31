@@ -18,6 +18,7 @@ import { openCanvasPreview } from '../utils/canvasEvents';
 import { PipelineImportModal } from './PipelineImportModal';
 import { PipelineShareModal } from './PipelineShareModal';
 import { KeyboardShortcutsPopover } from './KeyboardShortcutsPopover';
+import { NavbarOverflowMenu } from './NavbarOverflowMenu';
 import { EMPTY_CANVAS_HINT } from '../constants/canvas';
 import '../styles/navbar.css';
 
@@ -153,6 +154,13 @@ export const PipelineNavbar = () => {
           <SubmitButton
             className="vs-navbar__btn vs-navbar__btn--primary"
             label="Submit"
+          />
+
+          <NavbarOverflowMenu
+            hasNodes={hasNodes}
+            onImport={() => setImportOpen(true)}
+            onShare={() => setShareOpen(true)}
+            onPreview={openCanvasPreview}
           />
         </div>
       </header>

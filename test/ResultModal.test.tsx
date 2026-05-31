@@ -41,6 +41,23 @@ describe('ResultModal', () => {
     expect(screen.getByText('Backend unavailable')).toBeInTheDocument();
   });
 
+  it('shows cycle guidance when the pipeline is not a DAG', () => {
+    render(
+      <ResultModal
+        result={{ num_nodes: 2, num_edges: 2, is_dag: false }}
+        error={null}
+        onClose={jest.fn()}
+      />
+    );
+
+    expect(
+      screen.getByText('Contains a cycle — not a valid DAG')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Remove a connection to break the cycle.')
+    ).toBeInTheDocument();
+  });
+
   it('calls onClose when Close is clicked', () => {
     const onClose = jest.fn();
 
