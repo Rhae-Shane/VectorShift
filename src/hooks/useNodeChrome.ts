@@ -123,7 +123,7 @@ export const useNodeChrome = ({
     if (!node?.position) return;
 
     const width = node.width ?? NODE_DEFAULT_WIDTH;
-    const height = node.height ?? focusFallbackHeight ?? 200;
+    const height = node.height ?? focusFallbackHeight ?? 150;
 
     setCenter(node.position.x + width / 2, node.position.y + height / 2, {
       zoom: 0.95,

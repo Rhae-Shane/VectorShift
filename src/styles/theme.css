@@ -12,10 +12,10 @@
   --vs-canvas-dot: #b8bec7;
 
   /* Compact node sizing — ~7–8 nodes fit at 100% zoom on typical screens */
-  --vs-node-width: 320px;
-  --vs-node-max-width: 400px;
-  --vs-node-font-size: 0.8125rem;
-  --vs-node-radius: 6px;
+  --vs-node-width: 230px;
+  --vs-node-max-width: 290px;
+  --vs-node-font-size: 0.75rem;
+  --vs-node-radius: 5px;
   --vs-indigo-50: #eef2ff;
   --vs-indigo-100: #e0e7ff;
   --vs-indigo-200: #c7d2fe;

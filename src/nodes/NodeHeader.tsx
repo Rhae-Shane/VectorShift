@@ -8,6 +8,7 @@ import {
 import { Icon } from '../components/Icon';
 import { PressableButton } from '../components/PressableButton';
 import type { UseNodeChromeResult } from '../hooks/useNodeChrome';
+import { NODE_HEADER_ICON_SIZE } from '../constants/nodeLayout';
 
 export interface NodeHeaderProps {
   title: string;
@@ -46,7 +47,7 @@ export const NodeHeader = ({ title, icon, chrome }: NodeHeaderProps) => {
           aria-label={collapsed ? 'Expand node' : 'Minimize node'}
           {...bindHoverTip('collapse')}
         >
-          <Icon icon={FiMinimize2} size={18} />
+          <Icon icon={FiMinimize2} size={NODE_HEADER_ICON_SIZE} />
         </PressableButton>
         <PressableButton
           className="vs-node__icon-btn"
@@ -63,7 +64,7 @@ export const NodeHeader = ({ title, icon, chrome }: NodeHeaderProps) => {
           title="Settings"
           onMouseDown={(e) => e.stopPropagation()}
         >
-          <Icon icon={FiSettings} size={18} />
+          <Icon icon={FiSettings} size={NODE_HEADER_ICON_SIZE} />
         </PressableButton>
         <PressableButton
           className={`vs-node__icon-btn ${confirmDelete ? 'vs-node__icon-btn--danger' : ''}`}
@@ -71,7 +72,7 @@ export const NodeHeader = ({ title, icon, chrome }: NodeHeaderProps) => {
           aria-label={confirmDelete ? 'Confirm delete node' : 'Delete node'}
           {...bindHoverTip('delete')}
         >
-          <Icon icon={FiXCircle} size={22} />
+          <Icon icon={FiXCircle} size={20} />
         </PressableButton>
       </div>
     </div>
